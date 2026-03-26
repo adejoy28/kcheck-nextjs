@@ -1,0 +1,17 @@
+// Footer Component
+.footer {
+    height: 36px;
+    background: var(--glo-blue);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-md);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    
+    &__text {
+        color: var(--white);
+        font-size: var(--font-size-sm);
+    }
+}

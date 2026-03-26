@@ -1,0 +1,15 @@
+// Hamburger Component
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    
+    &__line {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: var(--white);
+    }
+}

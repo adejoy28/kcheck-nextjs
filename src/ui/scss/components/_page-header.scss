@@ -1,0 +1,21 @@
+@use '../abstracts/mixins' as *;
+
+// Page Header Component
+.page-header {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--gray-800);
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    
+    @include respond-to(tablet) {
+        font-size: var(--font-size-base);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    @include respond-to(desktop) {
+        font-size: var(--font-size-md);
+        margin-bottom: var(--spacing-lg);
+    }
+}

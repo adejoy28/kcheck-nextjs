@@ -1,0 +1,31 @@
+@use 'abstracts/variables';
+@use 'abstracts/mixins' as *;
+
+// Base styles
+@use 'base/base';
+@use 'base/utilities' as base-utils;
+
+// Components styles
+@use 'components/layout-base';
+@use 'components/hamburger';
+@use 'components/logo';
+@use 'components/sidebar';
+@use 'components/footer';
+@use 'components/page-header';
+@use 'components/toolbar';
+@use 'components/dashboard';
+@use 'components/forms';
+@use 'components/buttons';
+@use 'components/modal';
+@use 'components/exams';
+@use 'components/results';
+@use 'components/utilities';
+@use 'components/topbar';
+@use 'components/login';
+@use 'components/table';
+
+// Tailwind CSS
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+

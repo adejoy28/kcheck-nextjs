@@ -1,0 +1,92 @@
+// CSS Variables - Design System
+:root {
+    /* Colors */
+    --glo-blue: #4a6fa5;
+    --glo-blue-dark: #3a5a8a;
+    --glo-blue-header: #4f72a6;
+    --glo-blue-col: #5578a8;
+    --glo-blue-light: #658ac3;
+    --glo-blue-gradient: linear-gradient(135deg, #658ac3 0%, #4a6fa5 100%);
+    --glo-login-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    
+    /* Neutral Colors */
+    --white: #ffffff;
+    --black: #000000;
+    --gray-50: #f8f9fa;
+    --gray-100: #e1e5e9;
+    --gray-200: #d0d0d0;
+    --gray-300: #ddd;
+    --gray-400: #ccc;
+    --gray-500: #aaa;
+    --gray-600: #666;
+    --gray-700: #555;
+    --gray-800: #333;
+    --gray-900: #222;
+    
+    /* Status Colors */
+    --success-bg: #efe;
+    --success-border: #cfc;
+    --success-text: #3c3;
+    --error-bg: #fee;
+    --error-border: #fcc;
+    --error-text: #c33;
+    
+    /* Layout */
+    --sidebar-bg: #f5f5f5;
+    --sidebar-active: #e8edf5;
+    --border: #d0d0d0;
+    --border-light: #eee;
+    --page-bg: #f0f0f0;
+    --content-bg: #f5f5f0;
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+    
+    /* Typography */
+    --font-family: 'Roboto', sans-serif;
+    --font-size-xs: 11.5px;
+    --font-size-sm: 12px;
+    --font-size-base: 14px;
+    --font-size-md: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 20px;
+    --font-size-xxl: 24px;
+    --font-size-xxxl: 32px;
+    --font-size-xxxxl: 36px;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* Border Radius */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 15px;
+    --radius-full: 50%;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
+    --shadow-focus: 0 0 0 3px rgba(101, 138, 195, 0.1);
+    
+    /* Transitions */
+    --transition-fast: 0.15s;
+    --transition-normal: 0.3s;
+    --transition-slow: 0.6s;
+    
+    /* Z-index */
+    --z-dropdown: 100;
+    --z-modal: 1000;
+    
+    /* Breakpoints */
+    --breakpoint-sm: 768px;
+    --breakpoint-md: 992px;
+    --breakpoint-lg: 1200px;
+}

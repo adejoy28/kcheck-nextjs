@@ -1,0 +1,95 @@
+// Ellipsis text for long content
+.ellipsis-text {
+    display: inline-block;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    @media (max-width: 767px) {
+        max-width: 80px;
+    }
+}
+
+// Section Header for Dashboard
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    
+    @media (max-width: 767px) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    h3 {
+        margin: 0;
+        color: var(--gray-800);
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-bold);
+    }
+}
+
+.section-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    
+    @media (max-width: 767px) {
+        justify-content: stretch;
+        
+        .toolbar__button {
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .toolbar__search {
+            width: 100%;
+        }
+    }
+}
+
+// Toast Component
+.toast {
+    &__container {
+        position: fixed;
+        top: 56px;
+        right: 16px;
+        z-index: var(--z-modal);
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        pointer-events: none;
+    }
+
+    & {
+        display: flex;
+        align-items: center;
+        padding: 10px var(--spacing-md);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--white);
+        min-width: 240px;
+        max-width: 360px;
+        box-shadow: var(--shadow-md);
+        opacity: 0;
+        transform: translateX(20px);
+        transition: opacity .25s ease, transform .25s ease;
+        pointer-events: auto;
+
+        &--visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        &--success { background: #1D9E75; }
+        &--error   { background: #E24B4A; }
+        &--warning { background: #BA7517; }
+        &--info    { background: var(--glo-blue); }
+    }
+}

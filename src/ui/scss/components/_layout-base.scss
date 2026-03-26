@@ -1,0 +1,80 @@
+@use '../abstracts/mixins' as *;
+
+// Layout Base Components - BEM Structure
+
+// Base/Mobile Styles
+.layout {
+    display: flex;
+    margin-top: 44px;
+    height: calc(100vh - 44px - 36px);
+    
+    @media (max-width: 767px) {
+        flex-direction: column;
+        margin-top: 44px;
+        height: calc(100vh - 44px - 36px);
+    }
+    
+    &__sidebar {
+        width: 220px;
+        background: var(--white);
+        border-right: 1px solid var(--border);
+        flex-shrink: 0;
+        overflow-y: auto;
+        
+        @include respond-to(desktop) {
+            width: 240px;
+        }
+        
+        @media (max-width: 767px) {
+            width: 100%;
+            height: auto;
+            order: 2;
+            display: none; // Hidden by default on mobile
+            position: absolute;
+            top: 44px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+        }
+    }
+    
+    &__main {
+        flex: 1;
+        background: var(--content-bg);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        
+        @media (max-width: 767px) {
+            order: 1;
+            height: 60vh;
+        }
+    }
+    
+    &__content {
+        flex: 1;
+        padding: var(--spacing-md);
+        overflow: auto;
+        
+        @include respond-to(tablet) {
+            padding: var(--spacing-md);
+        }
+        
+        @include respond-to(desktop) {
+            padding: var(--spacing-lg);
+        }
+        
+        @media (max-width: 767px) {
+            padding: var(--spacing-sm);
+        }
+    }
+}
+
+// Override to show sidebar when open
+.layout--open .layout__sidebar {
+    @media (max-width: 767px) {
+        display: block !important;
+    }
+}

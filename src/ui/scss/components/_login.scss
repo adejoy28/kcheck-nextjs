@@ -1,0 +1,188 @@
+// scss/components/_login.scss
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.login {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  padding: 15px; // Extra breathing room on mobile
+
+  &__card {
+    display: flex;
+    flex-direction: column; // Stacked by default (Mobile)
+    width: 100%;
+    max-width: 1400px;
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    @include respond-to(tablet) {
+      flex-direction: row; // Side-by-side for tablet and desktop
+      min-height: 350px;
+      height: auto;
+    }
+  }
+
+  &__brand {
+    flex: 0 0 45%;
+    background-color: #6489c0;
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px; // Reduced padding for mobile
+    text-align: center;
+
+    @include respond-to(tablet) {
+      padding: var(--spacing-xxl);
+    }
+  }
+
+  &__form {
+    flex: 1;
+    padding: 30px 20px; // Comfort for small screens
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    @include respond-to(tablet) {
+      padding: 40px;
+    }
+  }
+
+  &__heading {
+    font-size: 1.75rem; // Slightly smaller for mobile
+    margin-bottom: var(--spacing-lg);
+    color: #333;
+    text-align: center;
+
+    @include respond-to(tablet) {
+      font-size: 2.5rem;
+      text-align: left;
+    }
+  }
+
+  &__alert {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-base);
+    border: 1px solid;
+
+    &--error {
+      background: #fee;
+      border-color: #fcc;
+      color: #c33;
+    }
+
+    &--success {
+      background: #efe;
+      border-color: #cfc;
+      color: #3c3;
+    }
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column; // Stack labels above inputs on mobile
+    margin-bottom: var(--spacing-md);
+    gap: 12px;
+
+    @include respond-to(tablet) {
+      flex-direction: row; // Side-by-side on desktop
+      align-items: center;
+      gap: 0;
+    }
+
+    .login__label {
+      color: #555;
+      font-weight: 600;
+
+      @include respond-to(tablet) {
+        flex: 0 0 120px;
+        font-weight: normal;
+      }
+    }
+
+    .login__input {
+      flex: 1;
+      width: 100%; // Ensure input doesn't shrink
+      padding: 12px; // Thicker tap target for mobile
+      border: 1px solid #777;
+      border-radius: 4px;
+
+      @include respond-to(tablet) {
+        padding: 8px 12px;
+      }
+    }
+  }
+
+  &__checkbox {
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    @include respond-to(tablet) {
+      margin-left: 120px; // Align with inputs on desktop
+    }
+  }
+
+  &__button {
+    width: 100%; // Full-width button on mobile (easier to tap)
+    padding: 14px;
+    background-color: #6489c0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    user-select: none; // Prevent text selection on click
+
+    &:hover {
+      background-color: #4a6b8f;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(100, 137, 192, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(100, 137, 192, 0.2);
+    }
+
+    &:focus {
+      outline: 2px solid #6489c0;
+      outline-offset: 2px;
+    }
+
+    @include respond-to(tablet) {
+      width: fit-content;
+      margin-left: 120px;
+      padding: 8px 35px;
+    }
+  }
+
+  &__forgot {
+    text-align: center;
+    margin-top: var(--spacing-md);
+
+    @include respond-to(tablet) {
+      text-align: right;
+      margin-top: -38px; // Perfectly align with button row
+    }
+
+    &-link {
+      color: #6489c0;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+  }
+}

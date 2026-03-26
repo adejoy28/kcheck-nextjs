@@ -1,0 +1,123 @@
+// Base Reset
+* {
+    font-family: var(--font-family);
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--page-bg);
+}
+
+/* Universal Alert Styles */
+.alert {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-base);
+    border: 1px solid;
+    font-weight: 500;
+
+    &--success {
+        background: #efe;
+        border-color: #cfc;
+        color: #3c3;
+    }
+
+    &--error {
+        background: #fee;
+        border-color: #fcc;
+        color: #c33;
+    }
+
+    &--warning {
+        background: #fff3cd;
+        border-color: #ffeaa7;
+        color: #856404;
+    }
+
+    &--info {
+        background: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+    }
+}
+
+/* Toast Container */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: var(--z-modal);
+    pointer-events: none;
+    
+    @media (max-width: 768px) {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        right: 10px;
+    }
+}
+
+/* Toast Styles */
+.toast {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-base);
+    border: 1px solid;
+    font-weight: 500;
+    min-width: 300px;
+    max-width: 400px;
+    pointer-events: auto;
+    animation: slideInRight 0.3s ease-out;
+    box-shadow: var(--shadow-lg);
+    
+    @media (max-width: 768px) {
+        min-width: auto;
+        max-width: 100%;
+        width: 100%;
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    &--success {
+        background: #efe;
+        border-color: #cfc;
+        color: #3c3;
+    }
+
+    &--error {
+        background: #fee;
+        border-color: #fcc;
+        color: #c33;
+    }
+
+    &--warning {
+        background: #fff3cd;
+        border-color: #ffeaa7;
+        color: #856404;
+    }
+
+    &--info {
+        background: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+    }
+}
+
+/* Slide in from right animation */
+@keyframes slideInRight {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

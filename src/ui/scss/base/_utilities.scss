@@ -1,0 +1,83 @@
+@use '../abstracts/mixins' as *;
+
+// Utility Classes
+.u-hidden {
+    display: none !important;
+}
+
+.u-visible {
+    display: block !important;
+}
+
+.u-text-center {
+    text-align: center;
+}
+
+.u-text-left {
+    text-align: left;
+}
+
+.u-text-right {
+    text-align: right;
+}
+
+.u-flex {
+    display: flex;
+}
+
+.u-flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.u-flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.u-flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.u-width-full {
+    width: 100%;
+}
+
+.u-height-full {
+    height: 100%;
+}
+
+// Responsive Utilities
+@include respond-to(tablet) {
+    .u-hidden-tablet {
+        display: none !important;
+    }
+    
+    .u-visible-tablet {
+        display: block !important;
+    }
+}
+
+@include respond-to(desktop) {
+    .u-hidden-desktop {
+        display: none !important;
+    }
+    
+    .u-visible-desktop {
+        display: block !important;
+    }
+}
+
+// Mobile utilities (default styles)
+@media (max-width: 767px) {
+    .u-hidden-mobile {
+        display: none !important;
+    }
+    
+    .u-visible-mobile {
+        display: block !important;
+    }
+}
