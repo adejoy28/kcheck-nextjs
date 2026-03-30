@@ -24,6 +24,12 @@ const staffItems = [
 
 const adminItems = [
     {
+        section: 'Admin Overview',
+        items: [
+            { id: 'admin', label: 'Admin Dashboard', icon: <LayoutDashboard {...iconProps} />, href: '/dashboard/admin' },
+        ],
+    },
+    {
         section: 'Management',
         items: [
             { id: 'exams',      label: 'Exams',      icon: <ClipboardList {...iconProps} />, href: '/dashboard/exams' },

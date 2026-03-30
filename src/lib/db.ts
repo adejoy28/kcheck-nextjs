@@ -46,3 +46,35 @@ testConnection().then(isConnected => {
 
 export default sql
 export { testConnection }
+
+// Retry wrapper for database operations
+export async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3): Promise<T> {
+    let lastError: any
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            return await operation()
+        } catch (error: any) {
+            lastError = error
+            
+            // Don't retry on certain errors
+            if (error.code === '23505' || // Unique violation
+                error.code === '23503' || // Foreign key violation
+                error.code === '42501') {  // Insufficient privileges
+                throw error
+            }
+            
+            if (attempt === maxRetries) {
+                console.error(`[db] Operation failed after ${maxRetries} attempts:`, error)
+                throw error
+            }
+            
+            // Exponential backoff
+            const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000)
+            console.warn(`[db] Attempt ${attempt} failed, retrying in ${delay}ms:`, error.message)
+            await new Promise(resolve => setTimeout(resolve, delay))
+        }
+    }
+    
+    throw lastError
+}

@@ -1,5 +1,6 @@
 import { auth } from '@/auth';
 import sql from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth-utils';
 
 async function getUserProfile(userId: string) {
     try {
@@ -38,7 +39,7 @@ async function getUserProfile(userId: string) {
         `;
 
         const testsMissed = Number(totalBatches[0]?.total || 0) - Number(user?.tests_taken || 0);
-        return { ...user, tests_missed: Math.max(0, testsMissed) };
+        return { ...(user as any), tests_missed: Math.max(0, testsMissed) };
     } catch (error) {
         console.error('[getUserProfile]', error);
         return null;
@@ -46,8 +47,8 @@ async function getUserProfile(userId: string) {
 }
 
 export default async function ProfilePage() {
-    const session = await auth();
-    const userId = session?.user?.id!;
+    const user = await getCurrentUser();
+    const userId = user.id;
     const profile = await getUserProfile(userId);
 
     if (!profile) {

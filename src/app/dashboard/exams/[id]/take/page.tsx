@@ -29,7 +29,7 @@ async function getExam(examId: string, userId: string) {
             ORDER BY id
         `
 
-        return { alreadyTaken: false, exam: { ...exam, questions } }
+        return { alreadyTaken: false, exam: { ...exam, questions } } as any
     } catch (error) {
         console.error('[getExam]', error)
         return { alreadyTaken: false, exam: null }

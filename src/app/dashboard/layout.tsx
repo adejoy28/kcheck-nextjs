@@ -13,7 +13,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <SidebarProvider>
             <LayoutShell>
                 <div className="layout__topbar">
-                    <TopBar />
+                    <TopBar user={user} />
                 </div>
                 <div className="layout__sidebar">
                     <SideNav role={role} />

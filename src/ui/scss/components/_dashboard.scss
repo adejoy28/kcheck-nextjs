@@ -485,3 +485,192 @@
     0%, 100% { opacity: 1; }
     50% { opacity: .6; }
 }
+
+// Admin dashboard quick links
+.admin-quick-links {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+
+    @media (max-width: 767px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.admin-quick-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    text-decoration: none;
+    color: var(--glo-blue);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    transition: all var(--transition-fast);
+
+    &:hover {
+        border-color: var(--glo-blue);
+        background: #f0f4fa;
+        transform: translateY(-1px);
+    }
+
+    &__icon {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-bold);
+        color: var(--glo-blue);
+    }
+}
+
+// Admin action buttons in tables
+.admin-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.admin-action-btn {
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    border: 1px solid;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all var(--transition-fast);
+
+    &--edit {
+        color: var(--glo-blue);
+        border-color: var(--glo-blue);
+        background: var(--white);
+
+        &:hover { background: #f0f4fa; }
+    }
+
+    &--toggle {
+        color: #BA7517;
+        border-color: #BA7517;
+        background: var(--white);
+
+        &:hover { background: #fdf6e3; }
+    }
+
+    &--delete {
+        color: #791f1f;
+        border-color: #E24B4A;
+        background: var(--white);
+
+        &:hover { background: #fcebeb; }
+    }
+}
+
+// Admin search input
+.admin-search {
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--gray-800);
+    background: var(--white);
+    min-width: 200px;
+
+    &:focus {
+        outline: none;
+        border-color: var(--glo-blue);
+        box-shadow: var(--shadow-focus);
+    }
+}
+
+// Admin select
+.admin-select {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--gray-800);
+    background: var(--white);
+    width: 100%;
+
+    &:focus {
+        outline: none;
+        border-color: var(--glo-blue);
+    }
+}
+
+// Admin checkbox label
+.admin-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--gray-700);
+    cursor: pointer;
+    padding: var(--spacing-sm) 0;
+}
+
+// Batch assignment grid
+.batch-assign-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--spacing-sm);
+    max-height: 300px;
+    overflow-y: auto;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--gray-50);
+}
+
+.batch-assign-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+    background: var(--white);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    input[type='checkbox'] { margin-top: 2px; flex-shrink: 0; accent-color: var(--glo-blue); }
+
+    &--selected {
+        border-color: var(--glo-blue);
+        background: #eef2f8;
+    }
+
+    &:hover { border-color: var(--glo-blue); }
+}
+
+.batch-assign-name {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--gray-800);
+}
+
+.batch-assign-sub {
+    font-size: var(--font-size-xs);
+    color: var(--gray-600);
+    margin-top: 2px;
+}
+
+// Stat summary with 6 columns for admin dashboard
+.stat-summary--wide {
+    grid-template-columns: repeat(6, 1fr);
+
+    @media (max-width: 992px) { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 767px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+// Additional badge styles for admin
+.badge {
+    // ... existing styles ...
+
+    &--admin    { background: #e6f1fb; color: #0c447c; }
+    &--staff    { background: #f1f8f4; color: #1d6e3c; }
+}

@@ -21,6 +21,7 @@ declare module 'next-auth' {
     }
 }
 
+// @ts-ignore - NextAuth v5 beta module augmentation
 declare module 'next-auth/jwt' {
     interface JWT {
         id: string
@@ -68,7 +69,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 console.log('[AUTH] Authorize called with:', {
                     username: credentials?.username,
                     hasPassword: !!credentials?.password,
-                    passwordLength: credentials?.password?.length
+                    passwordLength: credentials?.password ? (credentials.password as string).length : 0
                 })
                 
                 if (!credentials?.username || !credentials?.password) {
@@ -79,7 +80,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 try {
                     
                     // Retry logic for Neon cold starts
-                    let users = [];
+                    let users: any[] = [];
                     let attempts = 0;
                     const maxAttempts = 3;
                     
@@ -95,7 +96,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                             break; // Success, exit retry loop
                         } catch (dbError) {
                             attempts++;
-                            console.log(`[AUTH] Database attempt ${attempts} failed:`, dbError.message)
+                            console.log(`[AUTH] Database attempt ${attempts} failed:`, (dbError as Error).message)
                             
                             if (attempts >= maxAttempts) {
                                 throw dbError; // Re-throw after max attempts
@@ -107,7 +108,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     }
                     
                     
-                    const user = users[0]
+                    const user = users[0] as any;
                     if (!user) {
                         console.log('[AUTH] User not found in database')
                         return null

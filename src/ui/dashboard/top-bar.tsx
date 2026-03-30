@@ -3,10 +3,9 @@ import { auth, signOut } from '@/auth';
 import { ChevronDown, LogOut, Menu } from 'lucide-react';
 import Hamburger from '@/ui/dashboard/hamburger';
 
-export default async function TopBar() {
-    const session = await auth();
-    const userName = session?.user?.name || 'User';
-    const userRole = session?.user?.role || '';
+export default async function TopBar({ user }: { user: { name?: string; role?: string } }) {
+    const userName = user?.name || 'User';
+    const userRole = user?.role || '';
 
     return (
         <div className="topbar">
