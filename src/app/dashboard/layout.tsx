@@ -11,10 +11,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
     return (
         <SidebarProvider>
+            <div className="layout__topbar">
+                <TopBar user={user} />
+            </div>
             <LayoutShell>
-                <div className="layout__topbar">
-                    <TopBar user={user} />
-                </div>
                 <div className="layout__sidebar">
                     <SideNav role={role} />
                 </div>
@@ -23,8 +23,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
                         {children}
                     </div>
                 </div>
-                <Footer />
             </LayoutShell>
+            <Footer />
         </SidebarProvider>
     )
 }

@@ -62,6 +62,7 @@ export default function NavLinks({ role }: { role: string }) {
                         key={item.id}
                         href={item.href}
                         className={`sidebar__item ${pathname === item.href ? 'sidebar__item--active' : ''}`}
+                        data-label={item.label}
                     >
                         <span className="sidebar__icon">{item.icon}</span>
                         {item.label}
@@ -79,6 +80,7 @@ export default function NavLinks({ role }: { role: string }) {
                             key={item.id}
                             href={item.href}
                             className={`sidebar__item ${pathname === item.href ? 'sidebar__item--active' : ''}`}
+                            data-label={item.label}
                         >
                             <span className="sidebar__icon">{item.icon}</span>
                             {item.label}

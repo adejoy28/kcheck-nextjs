@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { showToast } from '@/ui/dashboard/toast'
+import { DataTable, Column, Action } from '@/components/ui/DataTable'
 
 export default function BatchesClient({ batches: initial }: { batches: any[] }) {
     const [batches, setBatches] = useState(initial)
@@ -15,6 +16,21 @@ export default function BatchesClient({ batches: initial }: { batches: any[] }) 
         if (new Date(batch.start_date) > now) return 'upcoming'
         return 'active'
     }
+
+    const getActions = (row: any): Action[] => [
+        {
+            label: 'Edit',
+            onClick: () => {
+                window.location.href = `/dashboard/batches/${row.id}`
+            },
+            variant: 'primary'
+        },
+        {
+            label: 'Delete',
+            onClick: () => deleteBatch(row.id, row.name),
+            variant: 'danger'
+        }
+    ]
 
     async function deleteBatch(id: string, name: string) {
         if (!confirm(`Delete batch "${name}"?`)) return
@@ -37,48 +53,31 @@ export default function BatchesClient({ batches: initial }: { batches: any[] }) 
                 <span className="section-title">All Batches ({batches.length})</span>
                 <Link href="/dashboard/batches/create" className="btn btn--primary btn--sm">+ Create Batch</Link>
             </div>
-            <div className="table__wrap" style={{ overflowX: 'auto' }}>
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th className="table__header">Batch Name</th>
-                            <th className="table__header">Exam</th>
-                            <th className="table__header">Start Date</th>
-                            <th className="table__header">End Date</th>
-                            <th className="table__header">Members</th>
-                            <th className="table__header">Teams</th>
-                            <th className="table__header">Status</th>
-                            <th className="table__header">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {batches.length === 0 ? (
-                            <tr><td colSpan={8} className="table__empty">No batches yet.</td></tr>
-                        ) : batches.map(batch => {
-                            const status = getStatus(batch)
+            <DataTable
+                columns={[
+                    { key: 'name', label: 'Batch Name' },
+                    { key: 'exam_title', label: 'Exam' },
+                    { key: 'start_date', label: 'Start Date', render: (v) => new Date(v).toLocaleDateString('en-GB') },
+                    { key: 'end_date', label: 'End Date', render: (v) => new Date(v).toLocaleDateString('en-GB') },
+                    { key: 'member_count', label: 'Members' },
+                    { key: 'team_count', label: 'Teams' },
+                    { 
+                        key: 'status', 
+                        label: 'Status', 
+                        render: (_, row) => {
+                            const status = getStatus(row)
                             return (
-                                <tr key={batch.id} className="table__row">
-                                    <td className="table__cell table__cell--bold">{batch.name}</td>
-                                    <td className="table__cell">{batch.exam_title}</td>
-                                    <td className="table__cell">{new Date(batch.start_date).toLocaleDateString('en-GB')}</td>
-                                    <td className="table__cell">{new Date(batch.end_date).toLocaleDateString('en-GB')}</td>
-                                    <td className="table__cell">{batch.member_count}</td>
-                                    <td className="table__cell">{batch.team_count}</td>
-                                    <td className="table__cell">
-                                        <span className={`badge badge--${status}`}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>
-                                    </td>
-                                    <td className="table__cell">
-                                        <div className="admin-actions">
-                                            <Link href={`/dashboard/batches/${batch.id}`} className="admin-action-btn admin-action-btn--edit">Edit</Link>
-                                            <button onClick={() => deleteBatch(batch.id, batch.name)} className="admin-action-btn admin-action-btn--delete">Delete</button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <span className={`badge badge--${status}`}>
+                                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                                </span>
                             )
-                        })}
-                    </tbody>
-                </table>
-            </div>
+                        }
+                    },
+                ]}
+                data={batches}
+                actions={getActions}
+                emptyMessage="No batches yet."
+            />
         </div>
     )
 }

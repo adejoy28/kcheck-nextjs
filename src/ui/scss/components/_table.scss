@@ -6,25 +6,29 @@
 .table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 700px;
     
     @media (max-width: 767px) {
-        min-width: 600px;
         font-size: var(--font-size-xs);
     }
     
     &__wrap {
         border: 1px solid var(--border);
         background: var(--white);
-        overflow: auto;
+        overflow-x: hidden;
         
         @include respond-to(desktop) {
             box-shadow: var(--shadow-md);
         }
         
         @media (max-width: 767px) {
-            border-radius: var(--radius-md);
+            border: none;
+            background: transparent;
+            border-radius: 0;
             margin: var(--spacing-sm);
+        }
+        
+        @media (max-width: 480px) {
+            margin: var(--spacing-xs);
         }
     }
     
@@ -40,6 +44,10 @@
         border-right: 1px solid rgba(255, 255, 255, 0.15);
         white-space: nowrap;
         user-select: none;
+        
+        @media (max-width: 767px) {
+            white-space: normal;
+        }
         
         &:last-child {
             border-right: none;
@@ -275,5 +283,105 @@
         text-align: center;
         font-size: var(--font-size-sm);
         color: var(--gray-500);
+    }
+    
+    // Responsive column hiding
+    @media (max-width: 767px) {
+        .hide-mobile {
+            display: none;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .hide-small {
+            display: none;
+        }
+    }
+    
+    // Card-based layout for very small screens
+    @media (max-width: 480px) {
+        display: block;
+        
+        thead {
+            display: none;
+        }
+        
+        tbody, tr {
+            display: block;
+        }
+        
+        tr {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+            padding: var(--spacing-md);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.2s ease;
+            
+            // Create balanced 2-column grid layout
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-sm);
+            align-items: start;
+            
+            &:hover {
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            }
+        }
+        
+        td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: none;
+            padding: var(--spacing-sm) 0;
+            flex: 1;
+            min-width: 0;
+            
+            &:before {
+                content: attr(data-label);
+                font-weight: var(--font-weight-semibold);
+                color: var(--gray-600);
+                font-size: var(--font-size-xs);
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+                flex-shrink: 0;
+                margin-right: var(--spacing-sm);
+                min-width: 65px;
+            }
+            
+            // Full width for important columns
+            &:has(.admin-actions),
+            &[data-label="Test"],
+            &[data-label="Exam"],
+            &[data-label="Staff"],
+            &[data-label="User"],
+            &[data-label="Name"],
+            &[data-label="Title"] {
+                grid-column: 1 / -1;
+                border-bottom: 1px solid var(--border-light);
+                padding-bottom: var(--spacing-sm);
+                margin-bottom: var(--spacing-sm);
+            }
+            
+            // Properly sized badges and action buttons
+            .badge {
+                font-size: var(--font-size-xs);
+                padding: 3px 8px;
+            }
+            
+            .admin-actions {
+                display: flex;
+                gap: var(--spacing-sm);
+                flex-wrap: wrap;
+                margin-top: var(--spacing-xs);
+            }
+            
+            .admin-action-btn {
+                font-size: var(--font-size-xs);
+                padding: 6px 10px;
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { showToast } from '@/ui/dashboard/toast'
 import { exportToPDF, exportToExcel } from '@/lib/export-utils'
+import { DataTable } from '@/components/ui/DataTable'
 
 function formatDuration(seconds: number) {
     if (!seconds) return '—'
@@ -49,15 +50,16 @@ export default function ReportsClient({ exams, teams, batches }: Props) {
         setLoading(false)
     }, [view, examId, teamId, batchId, from, to])
 
-    const handleExportPDF = useCallback(() => {
+    const handleExportPDF = useCallback(async () => {
         if (results.length === 0) {
             showToast('No data to export', 'warning')
             return
         }
         try {
-            exportToPDF(results, view)
+            await exportToPDF(results, view)
             showToast('PDF exported successfully', 'success')
         } catch (error) {
+            console.error('[PDF Export] Error:', error)
             showToast('Failed to export PDF', 'error')
         }
     }, [results, view])
@@ -134,99 +136,141 @@ export default function ReportsClient({ exams, teams, batches }: Props) {
             )}
 
             {searched && view === 'staff' && (
-                <div className="table__wrap" style={{ overflowX: 'auto' }}>
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th className="table__header">Staff</th>
-                                <th className="table__header">Team</th>
-                                <th className="table__header">Exam</th>
-                                <th className="table__header">Batch</th>
-                                <th className="table__header">Score</th>
-                                <th className="table__header">%</th>
-                                <th className="table__header">Duration</th>
-                                <th className="table__header">Pass Mark</th>
-                                <th className="table__header">Result</th>
-                                <th className="table__header">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {results.length === 0 ? (
-                                <tr><td colSpan={10} className="table__empty">No results match your filters.</td></tr>
-                            ) : results.map(r => (
-                                <tr key={r.id} className="table__row">
-                                    <td className="table__cell table__cell--bold">{r.user_name}</td>
-                                    <td className="table__cell table__cell--muted">{r.team_name || '—'}</td>
-                                    <td className="table__cell">{r.exam_title}</td>
-                                    <td className="table__cell table__cell--muted">{r.batch_name || '—'}</td>
-                                    <td className="table__cell">{r.score} / {r.total_questions}</td>
-                                    <td className="table__cell">
-                                        <span style={{ fontWeight: 600, color: r.passed ? '#085041' : '#791f1f' }}>
-                                            {Number(r.percentage).toFixed(1)}%
-                                        </span>
-                                    </td>
-                                    <td className="table__cell">{formatDuration(r.time_taken)}</td>
-                                    <td className="table__cell">{r.passing_score}%</td>
-                                    <td className="table__cell">
-                                        <span className={`badge badge--${r.passed ? 'pass' : 'fail'}`}>
-                                            {r.passed ? 'Passed' : 'Failed'}
-                                        </span>
-                                    </td>
-                                    <td className="table__cell table__cell--muted">
-                                        {new Date(r.completed_at).toLocaleDateString('en-GB')}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <DataTable
+                    useBemStyles={true}
+                    columns={[
+                        { 
+                            key: 'user_name', 
+                            label: 'Staff',
+                            className: 'table__cell--bold'
+                        },
+                        { 
+                            key: 'team_name', 
+                            label: 'Team',
+                            hideOnMobile: true,
+                            className: 'table__cell--muted',
+                            render: (value) => value || '—'
+                        },
+                        { 
+                            key: 'exam_title', 
+                            label: 'Exam',
+                            hideOnMobile: true
+                        },
+                        { 
+                            key: 'batch_name', 
+                            label: 'Batch',
+                            hideOnSmall: true,
+                            className: 'table__cell--muted',
+                            render: (value) => value || '—'
+                        },
+                        { 
+                            key: 'score', 
+                            label: 'Score',
+                            hideOnSmall: true,
+                            render: (_, row) => `${row.score} / ${row.total_questions}`
+                        },
+                        { 
+                            key: 'percentage', 
+                            label: '%',
+                            render: (value, row) => (
+                                <span style={{ fontWeight: 600, color: row.passed ? '#085041' : '#791f1f' }}>
+                                    {Number(value).toFixed(1)}%
+                                </span>
+                            )
+                        },
+                        { 
+                            key: 'time_taken', 
+                            label: 'Duration',
+                            hideOnSmall: true,
+                            render: (value) => formatDuration(value)
+                        },
+                        { 
+                            key: 'passing_score', 
+                            label: 'Pass Mark',
+                            hideOnSmall: true,
+                            render: (value) => `${value}%`
+                        },
+                        { 
+                            key: 'passed', 
+                            label: 'Result',
+                            render: (value) => (
+                                <span className={`badge badge--${value ? 'pass' : 'fail'}`}>
+                                    {value ? 'Passed' : 'Failed'}
+                                </span>
+                            )
+                        },
+                        { 
+                            key: 'completed_at', 
+                            label: 'Date',
+                            hideOnMobile: true,
+                            className: 'table__cell--muted',
+                            render: (value) => new Date(value).toLocaleDateString('en-GB')
+                        }
+                    ]}
+                    data={results}
+                    emptyMessage="No results match your filters."
+                />
             )}
 
             {searched && view === 'exam' && (
-                <div className="table__wrap">
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th className="table__header">Exam</th>
-                                <th className="table__header">Pass Mark</th>
-                                <th className="table__header">Total Attempts</th>
-                                <th className="table__header">Passed</th>
-                                <th className="table__header">Pass Rate</th>
-                                <th className="table__header">Avg Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {results.length === 0 ? (
-                                <tr><td colSpan={6} className="table__empty">No data matches your filters.</td></tr>
-                            ) : results.map(r => (
-                                <tr key={r.exam_id} className="table__row">
-                                    <td className="table__cell table__cell--bold">{r.exam_title}</td>
-                                    <td className="table__cell">{r.passing_score}%</td>
-                                    <td className="table__cell">{r.total_attempts}</td>
-                                    <td className="table__cell">{r.total_passed}</td>
-                                    <td className="table__cell">
-                                        <div className="score-cell">
-                                            <span style={{ fontWeight: 600, color: Number(r.pass_rate) >= Number(r.passing_score) ? '#085041' : '#791f1f' }}>
-                                                {r.pass_rate}%
-                                            </span>
-                                            <div className="score-bar-wrap">
-                                                <div className={`score-bar score-bar--${Number(r.pass_rate) >= Number(r.passing_score) ? 'pass' : 'fail'}`}
-                                                    style={{ width: `${r.pass_rate}%` }} />
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="table__cell">{r.avg_percentage}%</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <DataTable
+                    useBemStyles={true}
+                    columns={[
+                        { 
+                            key: 'exam_title', 
+                            label: 'Exam',
+                            className: 'table__cell--bold'
+                        },
+                        { 
+                            key: 'passing_score', 
+                            label: 'Pass Mark',
+                            hideOnSmall: true,
+                            render: (value) => `${value}%`
+                        },
+                        { 
+                            key: 'total_attempts', 
+                            label: 'Total Attempts',
+                            hideOnMobile: true
+                        },
+                        { 
+                            key: 'total_passed', 
+                            label: 'Passed',
+                            hideOnMobile: true
+                        },
+                        { 
+                            key: 'pass_rate', 
+                            label: 'Pass Rate',
+                            render: (value, row) => (
+                                <div className="score-cell">
+                                    <span style={{ fontWeight: 600, color: Number(value) >= Number(row.passing_score) ? '#085041' : '#791f1f' }}>
+                                        {value}%
+                                    </span>
+                                    <div className="score-bar-wrap">
+                                        <div className={`score-bar score-bar--${Number(value) >= Number(row.passing_score) ? 'pass' : 'fail'}`}
+                                            style={{ width: `${value}%` }} />
+                                    </div>
+                                </div>
+                            )
+                        },
+                        { 
+                            key: 'avg_percentage', 
+                            label: 'Avg Score',
+                            hideOnMobile: true,
+                            render: (value) => `${value}%`
+                        }
+                    ]}
+                    data={results}
+                    emptyMessage="No data matches your filters."
+                />
             )}
 
             {!searched && (
-                <div className="table__empty" style={{ padding: '48px', textAlign: 'center' }}>
-                    Set your filters above and click Search to load reports.
-                </div>
+                <DataTable
+                    useBemStyles={true}
+                    columns={[]}
+                    data={[]}
+                    emptyMessage="Set your filters above and click Search to load reports."
+                />
             )}
         </div>
     )

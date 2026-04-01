@@ -159,4 +159,53 @@
             }
         }
     }
+    
+    // Mobile Responsive Styles
+    @media (max-width: 767px) {
+        height: 44px;
+        padding: 0 var(--spacing-sm);
+        
+        &__left {
+            gap: var(--spacing-xs);
+        }
+        
+        &__title {
+            display: none; // Hide long title on mobile
+        }
+        
+        &__user-info {
+            display: none; // Hide user name/role on mobile
+        }
+        
+        &__user-trigger {
+            padding: var(--spacing-xs);
+        }
+        
+        &__dropdown {
+            min-width: 180px;
+            right: -8px; // Adjust position for smaller screens
+        }
+    }
+    
+    // Small mobile devices
+    @media (max-width: 480px) {
+        padding: 0 var(--spacing-xs);
+        
+        &__logo {
+            img {
+                width: 24px;
+                height: 24px;
+            }
+        }
+        
+        &__avatar {
+            width: 24px;
+            height: 24px;
+            font-size: 11px;
+        }
+        
+        &__dropdown {
+            min-width: 160px;
+        }
+    }
 }

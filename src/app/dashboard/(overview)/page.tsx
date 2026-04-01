@@ -1,6 +1,8 @@
 import { auth } from '@/auth';
 import sql from '@/lib/db';
 import Link from 'next/link';
+import { getDemoExam } from '@/lib/demo-exam';
+import { DataTable, Column } from '@/components/ui/DataTable';
 
 async function getAvailableTests(userId: string) {
     try {
@@ -63,6 +65,7 @@ export default async function NewTestsPage() {
     console.log('[DASHBOARD] Session valid, loading tests...');
     const userId = session.user.id;
     const tests = await getAvailableTests(userId);
+    const demoExam = await getDemoExam();
 
     return (
         <div>
@@ -70,7 +73,18 @@ export default async function NewTestsPage() {
 
             <div className="section-hdr">
                 <span className="section-title">Available Tests</span>
-                <button className="btn btn--outline btn--sm">Try Demo Test</button>
+                {demoExam ? (
+                    <Link
+                        href={`/dashboard/exams/${demoExam.id}/take`}
+                        className="btn btn--outline btn--sm"
+                    >
+                        Try Demo Test
+                    </Link>
+                ) : (
+                    <button className="btn btn--outline btn--sm" disabled>
+                        Demo Test Unavailable
+                    </button>
+                )}
             </div>
 
             <div className="toolbar-row">
@@ -83,69 +97,80 @@ export default async function NewTestsPage() {
                 </span>
             </div>
 
-            <div className="table__wrap">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th className="table__header">Test</th>
-                            <th className="table__header">Batch</th>
-                            <th className="table__header">Duration</th>
-                            <th className="table__header">Scheduled Date</th>
-                            <th className="table__header">End Date</th>
-                            <th className="table__header">Status</th>
-                            <th className="table__header">Is Missed</th>
-                            <th className="table__header"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tests.length === 0 ? (
-                            <tr>
-                                <td colSpan={8} className="table__empty">
-                                    No tests assigned to you at the moment.
-                                </td>
-                            </tr>
-                        ) : tests.map((test: any) => (
-                            <tr key={test.batch_id} className="table__row">
-                                <td className="table__cell table__cell--bold">{test.title}</td>
-                                <td className="table__cell table__cell--muted">{test.batch_name}</td>
-                                <td className="table__cell">{test.duration} mins</td>
-                                <td className="table__cell">
-                                    {new Date(test.start_date).toLocaleDateString('en-GB')}
-                                </td>
-                                <td className="table__cell">
-                                    {new Date(test.end_date).toLocaleDateString('en-GB')}
-                                </td>
-                                <td className="table__cell">
-                                    <span className={`badge badge--${test.status}`}>
-                                        {test.status.charAt(0).toUpperCase() + test.status.slice(1)}
+            <DataTable
+                useBemStyles={true}
+                columns={[
+                    { 
+                        key: 'title', 
+                        label: 'Test',
+                        className: 'table__cell--bold'
+                    },
+                    { 
+                        key: 'batch_name', 
+                        label: 'Batch',
+                        className: 'table__cell--muted'
+                    },
+                    { 
+                        key: 'duration', 
+                        label: 'Duration',
+                        render: (value) => `${value} mins`
+                    },
+                    { 
+                        key: 'start_date', 
+                        label: 'Scheduled Date',
+                        render: (value) => new Date(value).toLocaleDateString('en-GB')
+                    },
+                    { 
+                        key: 'end_date', 
+                        label: 'End Date',
+                        render: (value) => new Date(value).toLocaleDateString('en-GB')
+                    },
+                    { 
+                        key: 'status', 
+                        label: 'Status',
+                        render: (value) => (
+                            <span className={`badge badge--${value}`}>
+                                {value.charAt(0).toUpperCase() + value.slice(1)}
+                            </span>
+                        )
+                    },
+                    { 
+                        key: 'is_missed', 
+                        label: 'Is Missed',
+                        render: (value) => (
+                            <span className={`badge badge--${value ? 'missed' : 'ok'}`}>
+                                {value ? 'Yes' : 'No'}
+                            </span>
+                        )
+                    },
+                    { 
+                        key: 'actions', 
+                        label: '',
+                        render: (_, row) => {
+                            if (row.status === 'active') {
+                                return (
+                                    <Link
+                                        href={`/dashboard/exams/${row.id}/take`}
+                                        className="btn btn--primary btn--sm"
+                                    >
+                                        Take Test
+                                    </Link>
+                                )
+                            } else if (row.status === 'upcoming') {
+                                return (
+                                    <span className="table__cell--muted" style={{ fontSize: '11px' }}>
+                                        Not yet open
                                     </span>
-                                </td>
-                                <td className="table__cell">
-                                    <span className={`badge badge--${test.is_missed ? 'missed' : 'ok'}`}>
-                                        {test.is_missed ? 'Yes' : 'No'}
-                                    </span>
-                                </td>
-                                <td className="table__cell">
-                                    {test.status === 'active' ? (
-                                        <Link
-                                            href={`/dashboard/exams/${test.id}/take`}
-                                            className="btn btn--primary btn--sm"
-                                        >
-                                            Take Test
-                                        </Link>
-                                    ) : test.status === 'upcoming' ? (
-                                        <span className="table__cell--muted" style={{ fontSize: '11px' }}>
-                                            Not yet open
-                                        </span>
-                                    ) : (
-                                        <span style={{ color: '#ccc', fontSize: '11px' }}>—</span>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                                )
+                            } else {
+                                return <span style={{ color: '#ccc', fontSize: '11px' }}>—</span>
+                            }
+                        }
+                    }
+                ]}
+                data={tests}
+                emptyMessage="No tests assigned to you at the moment."
+            />
         </div>
     );
 }

@@ -55,7 +55,7 @@ export default async function ProfilePage() {
         return (
             <div>
                 <div className="page-header">My Profile</div>
-                <div className="table__empty" style={{ padding: '40px', textAlign: 'center' }}>
+                <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>
                     Unable to load profile. Please try refreshing the page.
                 </div>
             </div>

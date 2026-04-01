@@ -85,6 +85,38 @@ async function seed() {
     console.log('✓ Users seeded')
 
     // ── Exams ──────────────────────────────────────────────────────
+    const [demoExam] = await sql`
+        INSERT INTO exams (title, description, duration, passing_score, is_active, category_id, created_by_id)
+        VALUES (
+            'Demo Test',
+            'A sample test for users to try out the system',
+            10, 80, TRUE, ${cat1.id}, ${admin.id}
+        )
+        ON CONFLICT DO NOTHING
+        RETURNING id
+    `
+    if (demoExam) {
+        await sql`
+            INSERT INTO questions (text, options, correct_answer, weight, exam_id) VALUES
+            (
+                'What is 2 + 2?',
+                ARRAY['3', '4', '5', '6'],
+                1, 1, ${demoExam.id}
+            ),
+            (
+                'Which color is the sky?',
+                ARRAY['Red', 'Green', 'Blue', 'Yellow'],
+                2, 1, ${demoExam.id}
+            ),
+            (
+                'How many days in a week?',
+                ARRAY['5', '6', '7', '8'],
+                2, 1, ${demoExam.id}
+            )
+        `
+    }
+    console.log('✓ Demo exam seeded')
+
     const [exam1] = await sql`
         INSERT INTO exams (title, description, duration, passing_score, is_active, category_id, created_by_id)
         VALUES (

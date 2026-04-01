@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { showToast } from '@/ui/dashboard/toast'
+import { DataTable, Action } from '@/components/ui/DataTable'
 
 export default function UsersClient({ users: initial }: { users: any[] }) {
     const [users, setUsers] = useState(initial)
@@ -13,6 +14,21 @@ export default function UsersClient({ users: initial }: { users: any[] }) {
         u.username.toLowerCase().includes(search.toLowerCase()) ||
         (u.team_name || '').toLowerCase().includes(search.toLowerCase())
     )
+
+    const getActions = (row: any): Action[] => [
+        {
+            label: 'Edit',
+            onClick: () => {
+                window.location.href = `/dashboard/users/${row.id}`
+            },
+            variant: 'primary'
+        },
+        {
+            label: row.is_active ? 'Deactivate' : 'Activate',
+            onClick: () => toggleActive(row.id),
+            variant: 'default'
+        }
+    ]
 
     async function toggleActive(id: string) {
         try {
@@ -44,53 +60,36 @@ export default function UsersClient({ users: initial }: { users: any[] }) {
                 />
                 <span className="pag-info">{filtered.length} results</span>
             </div>
-            <div className="table__wrap" style={{ overflowX: 'auto' }}>
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th className="table__header">Name</th>
-                            <th className="table__header">Username</th>
-                            <th className="table__header">Role</th>
-                            <th className="table__header">Team</th>
-                            <th className="table__header">Unit</th>
-                            <th className="table__header">Tests Taken</th>
-                            <th className="table__header">Status</th>
-                            <th className="table__header">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filtered.length === 0 ? (
-                            <tr><td colSpan={8} className="table__empty">No users found.</td></tr>
-                        ) : filtered.map(user => (
-                            <tr key={user.id} className="table__row">
-                                <td className="table__cell table__cell--bold">{user.name}</td>
-                                <td className="table__cell">{user.username}</td>
-                                <td className="table__cell">
-                                    <span className={`badge badge--${user.role === 'ADMIN' ? 'admin' : 'staff'}`}>
-                                        {user.role}
-                                    </span>
-                                </td>
-                                <td className="table__cell table__cell--muted">{user.team_name || '—'}</td>
-                                <td className="table__cell table__cell--muted">{user.unit || '—'}</td>
-                                <td className="table__cell">{user.tests_taken}</td>
-                                <td className="table__cell">
-                                    <span className={`badge badge--${user.is_active ? 'active' : 'expired'}`}>
-                                        {user.is_active ? 'Active' : 'Inactive'}
-                                    </span>
-                                </td>
-                                <td className="table__cell">
-                                    <div className="admin-actions">
-                                        <Link href={`/dashboard/users/${user.id}`} className="admin-action-btn admin-action-btn--edit">Edit</Link>
-                                        <button onClick={() => toggleActive(user.id)} className="admin-action-btn admin-action-btn--toggle">
-                                            {user.is_active ? 'Deactivate' : 'Activate'}
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <DataTable
+                columns={[
+                    { key: 'name', label: 'Name' },
+                    { key: 'username', label: 'Username' },
+                    { 
+                        key: 'role', 
+                        label: 'Role', 
+                        render: (v) => (
+                            <span className={`badge badge--${v === 'ADMIN' ? 'admin' : 'staff'}`}>
+                                {v}
+                            </span>
+                        )
+                    },
+                    { key: 'team_name', label: 'Team', render: (v) => v || '—' },
+                    { key: 'unit', label: 'Unit', render: (v) => v || '—' },
+                    { key: 'tests_taken', label: 'Tests Taken' },
+                    { 
+                        key: 'is_active', 
+                        label: 'Status', 
+                        render: (v) => (
+                            <span className={`badge badge--${v ? 'active' : 'expired'}`}>
+                                {v ? 'Active' : 'Inactive'}
+                            </span>
+                        )
+                    },
+                ]}
+                data={filtered}
+                actions={getActions}
+                emptyMessage="No users found."
+            />
         </div>
     )
 }

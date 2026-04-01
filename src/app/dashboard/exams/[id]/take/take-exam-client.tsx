@@ -17,6 +17,7 @@ interface Exam {
     duration: number
     passing_score: number
     questions: Question[]
+    isDemo?: boolean
 }
 
 export default function TakeExamClient({
@@ -34,6 +35,7 @@ export default function TakeExamClient({
     const [timeLeft, setTimeLeft] = useState(exam.duration * 60)
     const [submitting, setSubmitting] = useState(false)
     const [startTime] = useState(Date.now())
+    const [isWideMode, setIsWideMode] = useState(false)
 
     const submitExam = useCallback(
         async (autoSubmit = false) => {
@@ -68,14 +70,26 @@ export default function TakeExamClient({
                     return
                 }
 
-                showToast(
-                    data.passed
-                        ? `Congratulations! You passed with ${data.percentage}%` 
-                        : `You scored ${data.percentage}%. Keep studying!`,
-                    data.passed ? 'success' : 'error'
-                )
-
-                router.push('/dashboard/results')
+                // Show different messages for demo vs regular exams
+                if (data.isDemo) {
+                    // Navigate to demo results page with score data
+                    const params = new URLSearchParams({
+                        score: data.score.toString(),
+                        total: data.total.toString(),
+                        percentage: data.percentage.toString(),
+                        passed: data.passed.toString(),
+                        examTitle: exam.title
+                    })
+                    router.push(`/dashboard/exams/${exam.id}/take/demo-results?${params.toString()}`)
+                } else {
+                    showToast(
+                        data.passed
+                            ? `Congratulations! You passed with ${data.percentage}%` 
+                            : `You scored ${data.percentage}%. Keep studying!`,
+                        data.passed ? 'success' : 'error'
+                    )
+                    router.push('/dashboard/results')
+                }
             } catch (error) {
                 console.error('[submitExam]', error)
                 showToast('Something went wrong. Please try again.', 'error')
@@ -105,7 +119,7 @@ export default function TakeExamClient({
     const progress = Math.round((answeredCount / exam.questions.length) * 100)
 
     return (
-        <div className="exam-take">
+        <div className={`exam-take ${isWideMode ? 'exam-take--wide' : ''}`}>
             {/* Header */}
             <div className="exam-take__header">
                 <div className="exam-take__info">
@@ -115,10 +129,19 @@ export default function TakeExamClient({
                         {answeredCount} answered
                     </span>
                 </div>
-                <div
-                    className={`exam-take__timer ${timerCritical ? 'exam-take__timer--critical' : timerWarning ? 'exam-take__timer--warning' : ''}`}
-                >
-                    {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                <div className="exam-take__header-right">
+                    <button
+                        onClick={() => setIsWideMode(!isWideMode)}
+                        className={`btn btn--outline btn--sm exam-take__wide-toggle`}
+                        title={isWideMode ? "Exit wide mode" : "Enter wide mode (reduce distractions)"}
+                    >
+                        {isWideMode ? "⊟" : "⊞"}
+                    </button>
+                    <div
+                        className={`exam-take__timer ${timerCritical ? 'exam-take__timer--critical' : timerWarning ? 'exam-take__timer--warning' : ''}`}
+                    >
+                        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                    </div>
                 </div>
             </div>
 

@@ -31,35 +31,40 @@ export async function POST(
             )
         }
 
-        // Check already taken
-        const [existing] = await sql`
-            SELECT id FROM results
-            WHERE exam_id = ${examId} AND user_id = ${userId}
-        `
-        if (existing) {
-            return NextResponse.json(
-                { message: 'You have already taken this exam' },
-                { status: 400 }
-            )
-        }
-
-        // Check retake request
-        const [retake] = await sql`
-            SELECT id FROM retake_requests
-            WHERE exam_id = ${examId} AND user_id = ${userId}
-        `
-        if (retake) {
-            // Delete old result and retake request
-            await sql`DELETE FROM results WHERE exam_id = ${examId} AND user_id = ${userId}` 
-            await sql`DELETE FROM retake_requests WHERE exam_id = ${examId} AND user_id = ${userId}` 
-        }
-
-        // Fetch exam with correct answers
+        // Fetch exam with correct answers and check if it's a demo
         const [exam] = await sql`
-            SELECT id, passing_score FROM exams WHERE id = ${examId}
+            SELECT id, title, passing_score FROM exams WHERE id = ${examId}
         `
         if (!exam) {
             return NextResponse.json({ message: 'Exam not found' }, { status: 404 })
+        }
+
+        const isDemo = exam.title === 'Demo Test'
+        
+        // For demo exams, skip the "already taken" check
+        if (!isDemo) {
+            // Check already taken
+            const [existing] = await sql`
+                SELECT id FROM results
+                WHERE exam_id = ${examId} AND user_id = ${userId}
+            `
+            if (existing) {
+                return NextResponse.json(
+                    { message: 'You have already taken this exam' },
+                    { status: 400 }
+                )
+            }
+
+            // Check retake request
+            const [retake] = await sql`
+                SELECT id FROM retake_requests
+                WHERE exam_id = ${examId} AND user_id = ${userId}
+            `
+            if (retake) {
+                // Delete old result and retake request
+                await sql`DELETE FROM results WHERE exam_id = ${examId} AND user_id = ${userId}` 
+                await sql`DELETE FROM retake_requests WHERE exam_id = ${examId} AND user_id = ${userId}` 
+            }
         }
 
         const questions = await sql`
@@ -94,13 +99,21 @@ export async function POST(
         const percentage = Math.round((score / total) * 100)
         const passed = percentage >= exam.passing_score
 
-        // Save result
-        await sql`
-            INSERT INTO results (user_id, exam_id, score, total_questions, percentage, passed, time_taken, answers)
-            VALUES (${userId}, ${examId}, ${score}, ${total}, ${percentage}, ${passed}, ${timeTaken}, ${JSON.stringify(answers)})
-        `
+        // Save result only for non-demo exams
+        if (!isDemo) {
+            await sql`
+                INSERT INTO results (user_id, exam_id, score, total_questions, percentage, passed, time_taken, answers)
+                VALUES (${userId}, ${examId}, ${score}, ${total}, ${percentage}, ${passed}, ${timeTaken}, ${JSON.stringify(answers)})
+            `
+        }
 
-        return NextResponse.json({ score, total, percentage, passed })
+        return NextResponse.json({ 
+            score, 
+            total, 
+            percentage, 
+            passed, 
+            isDemo 
+        })
     } catch (error) {
         console.error('[submit exam]', error)
         

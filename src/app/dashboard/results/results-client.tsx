@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { DataTable } from '@/components/ui/DataTable'
 
 function formatDuration(seconds: number) {
     const m = Math.floor(seconds / 60)
@@ -83,77 +84,49 @@ export default function ResultsClient({
                         </span>
                     </div>
 
-                    <div className="table__wrap" style={{ overflowX: 'auto' }}>
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th className="table__header">Test</th>
-                                    <th className="table__header">Batch</th>
-                                    <th className="table__header">Completed</th>
-                                    <th className="table__header">Duration</th>
-                                    <th className="table__header">Pass Mark</th>
-                                    <th className="table__header">Score</th>
-                                    <th className="table__header">%</th>
-                                    <th className="table__header">Result</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredResults.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={8} className="table__empty">
-                                            No results found.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filteredResults.map((r) => (
-                                        <tr key={r.id} className="table__row">
-                                            <td className="table__cell table__cell--bold">
-                                                {r.exam_title}
-                                            </td>
-                                            <td className="table__cell table__cell--muted">
-                                                {r.batch_name || '—'}
-                                            </td>
-                                            <td className="table__cell">
-                                                {new Date(r.completed_at).toLocaleString('en-GB')}
-                                            </td>
-                                            <td className="table__cell">
-                                                {formatDuration(r.time_taken)}
-                                            </td>
-                                            <td className="table__cell">{r.passing_score}%</td>
-                                            <td className="table__cell">
-                                                {r.score} / {r.total_questions}
-                                            </td>
-                                            <td className="table__cell">
-                                                <div className="score-cell">
-                                                    <span
-                                                        style={{
-                                                            fontWeight: 600,
-                                                            color: r.passed ? '#085041' : '#791f1f',
-                                                        }}
-                                                    >
-                                                        {Number(r.percentage).toFixed(1)}%
-                                                    </span>
-                                                    <div className="score-bar-wrap">
-                                                        <div
-                                                            className={`score-bar score-bar--${r.passed ? 'pass' : 'fail'}`}
-                                                            style={{ width: `${r.percentage}%` }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="table__cell">
-                                                <span
-                                                    className={`badge badge--${r.passed ? 'pass' : 'fail'}`}
-                                                >
-                                                    {r.passed ? 'Passed' : 'Failed'}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                    <DataTable
+                        columns={[
+                            { key: 'exam_title', label: 'Test' },
+                            { key: 'batch_name', label: 'Batch', render: (v) => v || '—' },
+                            { key: 'completed_at', label: 'Completed', render: (v) => new Date(v).toLocaleString('en-GB') },
+                            { key: 'time_taken', label: 'Duration', render: formatDuration },
+                            { key: 'passing_score', label: 'Pass Mark', render: (v) => `${v}%` },
+                            { key: 'score', label: 'Score', render: (v, row) => `${v} / ${row.total_questions}` },
+                            { 
+                                key: 'percentage', 
+                                label: '%', 
+                                render: (v, row) => (
+                                    <div className="score-cell">
+                                        <span
+                                            style={{
+                                                fontWeight: 600,
+                                                color: row.passed ? '#085041' : '#791f1f',
+                                            }}
+                                        >
+                                            {Number(v).toFixed(1)}%
+                                        </span>
+                                        <div className="score-bar-wrap">
+                                            <div
+                                                className={`score-bar score-bar--${row.passed ? 'pass' : 'fail'}`}
+                                                style={{ width: `${v}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                )
+                            },
+                            { 
+                                key: 'passed', 
+                                label: 'Result', 
+                                render: (v) => (
+                                    <span className={`badge badge--${v ? 'pass' : 'fail'}`}>
+                                        {v ? 'Passed' : 'Failed'}
+                                    </span>
+                                )
+                            },
+                        ]}
+                        data={filteredResults}
+                        emptyMessage="No results found."
+                    />
                 </div>
             )}
 
@@ -186,64 +159,39 @@ export default function ResultsClient({
                         </span>
                     </div>
 
-                    <div className="table__wrap">
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th className="table__header">Category</th>
-                                    <th className="table__header">Tests Taken</th>
-                                    <th className="table__header">Total Duration</th>
-                                    <th className="table__header">Total Questions</th>
-                                    <th className="table__header">Total Passed</th>
-                                    <th className="table__header">Avg %</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredCategories.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={6} className="table__empty">
-                                            No category data available.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filteredCategories.map((c) => (
-                                        <tr key={c.category} className="table__row">
-                                            <td className="table__cell table__cell--bold">
-                                                {c.category}
-                                            </td>
-                                            <td className="table__cell">{c.tests_taken}</td>
-                                            <td className="table__cell">
-                                                {formatDuration(Number(c.total_time))}
-                                            </td>
-                                            <td className="table__cell">{c.total_questions}</td>
-                                            <td className="table__cell">{c.total_passed}</td>
-                                            <td className="table__cell">
-                                                <div className="score-cell">
-                                                    <span
-                                                        style={{
-                                                            fontWeight: 600,
-                                                            color:
-                                                                c.avg_percentage >= 50
-                                                                    ? '#085041'
-                                                                    : '#791f1f',
-                                                        }}
-                                                    >
-                                                        {c.avg_percentage}%
-                                                    </span>
-                                                    <div className="score-bar-wrap">
-                                                        <div
-                                                            className={`score-bar score-bar--${c.avg_percentage >= 50 ? 'pass' : 'fail'}`}
-                                                            style={{ width: `${c.avg_percentage}%` }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                    <DataTable
+                        columns={[
+                            { key: 'category', label: 'Category' },
+                            { key: 'tests_taken', label: 'Tests Taken' },
+                            { key: 'total_time', label: 'Total Duration', render: (v) => formatDuration(Number(v)) },
+                            { key: 'total_questions', label: 'Total Questions' },
+                            { key: 'total_passed', label: 'Total Passed' },
+                            { 
+                                key: 'avg_percentage', 
+                                label: 'Avg %', 
+                                render: (v) => (
+                                    <div className="score-cell">
+                                        <span
+                                            style={{
+                                                fontWeight: 600,
+                                                color: v >= 50 ? '#085041' : '#791f1f',
+                                            }}
+                                        >
+                                            {v}%
+                                        </span>
+                                        <div className="score-bar-wrap">
+                                            <div
+                                                className={`score-bar score-bar--${v >= 50 ? 'pass' : 'fail'}`}
+                                                style={{ width: `${v}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                )
+                            },
+                        ]}
+                        data={filteredCategories}
+                        emptyMessage="No category data available."
+                    />
                 </div>
             )}
         </div>

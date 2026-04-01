@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { showToast } from '@/ui/dashboard/toast'
+import { DataTable, Column, Action } from '@/components/ui/DataTable'
 
 export default function CategoriesClient({ categories: initial }: { categories: any[] }) {
     const [categories, setCategories] = useState(initial)
@@ -29,6 +30,14 @@ export default function CategoriesClient({ categories: initial }: { categories: 
         } catch { showToast('Failed to create category', 'error') }
         setSaving(false)
     }
+
+    const getActions = (row: any): Action[] => [
+        {
+            label: 'Delete',
+            onClick: () => handleDelete(row.id, row.name, Number(row.exam_count)),
+            variant: 'danger'
+        }
+    ]
 
     async function handleDelete(id: string, name: string, examCount: number) {
         if (examCount > 0) {
@@ -74,39 +83,16 @@ export default function CategoriesClient({ categories: initial }: { categories: 
                 </form>
             </div>
 
-            <div className="table__wrap">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th className="table__header">Category Name</th>
-                            <th className="table__header">Exams</th>
-                            <th className="table__header">Created</th>
-                            <th className="table__header">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {categories.length === 0 ? (
-                            <tr><td colSpan={4} className="table__empty">No categories yet.</td></tr>
-                        ) : categories.map(c => (
-                            <tr key={c.id} className="table__row">
-                                <td className="table__cell table__cell--bold">{c.name}</td>
-                                <td className="table__cell">{c.exam_count}</td>
-                                <td className="table__cell table__cell--muted">
-                                    {new Date(c.created_at).toLocaleDateString('en-GB')}
-                                </td>
-                                <td className="table__cell">
-                                    <button
-                                        onClick={() => handleDelete(c.id, c.name, Number(c.exam_count))}
-                                        className="admin-action-btn admin-action-btn--delete"
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <DataTable
+                columns={[
+                    { key: 'name', label: 'Category Name' },
+                    { key: 'exam_count', label: 'Exams' },
+                    { key: 'created_at', label: 'Created', render: (v) => new Date(v).toLocaleDateString('en-GB') },
+                ]}
+                data={categories}
+                actions={getActions}
+                emptyMessage="No categories yet."
+            />
         </div>
     )
 }

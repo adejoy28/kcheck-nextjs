@@ -4,6 +4,7 @@ import sql from '@/lib/db'
 import { withRetry } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth-utils'
 import Link from 'next/link'
+import { DataTable, Column } from '@/components/ui/DataTable'
 
 async function getAdminStats() {
     try {
@@ -120,38 +121,42 @@ export default async function AdminDashboardPage() {
                 <span className="section-title">Recent Results</span>
                 <Link href="/dashboard/reports" className="toggle-link">View all →</Link>
             </div>
-            <div className="table__wrap">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th className="table__header">Staff</th>
-                            <th className="table__header">Exam</th>
-                            <th className="table__header">Score</th>
-                            <th className="table__header">Result</th>
-                            <th className="table__header">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {recentResults.length === 0 ? (
-                            <tr><td colSpan={5} className="table__empty">No results yet.</td></tr>
-                        ) : recentResults.map((r: any) => (
-                            <tr key={r.id} className="table__row">
-                                <td className="table__cell table__cell--bold">{r.user_name}</td>
-                                <td className="table__cell">{r.exam_title}</td>
-                                <td className="table__cell">{Number(r.percentage).toFixed(1)}%</td>
-                                <td className="table__cell">
-                                    <span className={`badge badge--${r.passed ? 'pass' : 'fail'}`}>
-                                        {r.passed ? 'Passed' : 'Failed'}
-                                    </span>
-                                </td>
-                                <td className="table__cell table__cell--muted">
-                                    {new Date(r.completed_at).toLocaleDateString('en-GB')}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <DataTable
+                useBemStyles={true}
+                columns={[
+                    { 
+                        key: 'user_name', 
+                        label: 'Staff',
+                        className: 'table__cell--bold'
+                    },
+                    { 
+                        key: 'exam_title', 
+                        label: 'Exam'
+                    },
+                    { 
+                        key: 'percentage', 
+                        label: 'Score',
+                        render: (value) => `${Number(value).toFixed(1)}%`
+                    },
+                    { 
+                        key: 'passed', 
+                        label: 'Result',
+                        render: (value) => (
+                            <span className={`badge badge--${value ? 'pass' : 'fail'}`}>
+                                {value ? 'Passed' : 'Failed'}
+                            </span>
+                        )
+                    },
+                    { 
+                        key: 'completed_at', 
+                        label: 'Date',
+                        className: 'table__cell--muted',
+                        render: (value) => new Date(value).toLocaleDateString('en-GB')
+                    }
+                ]}
+                data={recentResults}
+                emptyMessage="No results yet."
+            />
         </div>
     )
 }

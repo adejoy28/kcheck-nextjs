@@ -6,12 +6,12 @@
 .layout {
     display: flex;
     margin-top: 44px;
-    height: calc(100vh - 44px - 36px);
+    height: calc(100vh - 44px);
     
     @media (max-width: 767px) {
         flex-direction: column;
         margin-top: 44px;
-        height: calc(100vh - 44px - 36px);
+        height: calc(100vh - 44px);
     }
     
     &__sidebar {
@@ -20,6 +20,7 @@
         border-right: 1px solid var(--border);
         flex-shrink: 0;
         overflow-y: auto;
+        transition: width var(--transition-normal);
         
         @include respond-to(desktop) {
             width: 240px;
@@ -37,6 +38,13 @@
             z-index: 1000;
             border-right: none;
             border-bottom: 1px solid var(--border);
+        }
+        
+        // Collapsed state for desktop
+        @media (min-width: 768px) {
+            .layout--collapsed & {
+                width: 60px;
+            }
         }
     }
     

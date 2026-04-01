@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { showToast } from '@/ui/dashboard/toast'
+import { DataTable } from '@/components/ui/DataTable'
 
 function formatDuration(seconds: number) {
     return `${Math.floor(seconds / 60)}m ${seconds % 60}s` 
@@ -29,51 +30,71 @@ export default function UserResults({ results: initial, userId }: { results: any
     }
 
     if (results.length === 0) {
-        return <div className="table__empty" style={{ padding: '24px', textAlign: 'center' }}>This user has not taken any tests yet.</div>
+        return (
+            <DataTable
+                useBemStyles={true}
+                columns={[]}
+                data={[]}
+                emptyMessage="This user has not taken any tests yet."
+            />
+        )
     }
 
     return (
-        <div className="table__wrap" style={{ overflowX: 'auto' }}>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th className="table__header">Exam</th>
-                        <th className="table__header">Score</th>
-                        <th className="table__header">%</th>
-                        <th className="table__header">Duration</th>
-                        <th className="table__header">Result</th>
-                        <th className="table__header">Date</th>
-                        <th className="table__header">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {results.map(r => (
-                        <tr key={r.id} className="table__row">
-                            <td className="table__cell table__cell--bold">{r.exam_title}</td>
-                            <td className="table__cell">{r.score} / {r.total_questions}</td>
-                            <td className="table__cell">
-                                <span style={{ fontWeight: 600, color: r.passed ? '#085041' : '#791f1f' }}>
-                                    {Number(r.percentage).toFixed(1)}%
-                                </span>
-                            </td>
-                            <td className="table__cell">{formatDuration(r.time_taken)}</td>
-                            <td className="table__cell">
-                                <span className={`badge badge--${r.passed ? 'pass' : 'fail'}`}>
-                                    {r.passed ? 'Passed' : 'Failed'}
-                                </span>
-                            </td>
-                            <td className="table__cell table__cell--muted">
-                                {new Date(r.completed_at).toLocaleDateString('en-GB')}
-                            </td>
-                            <td className="table__cell">
-                                <button onClick={() => grantRetake(r.exam_id, r.exam_title)} className="admin-action-btn admin-action-btn--toggle">
-                                    Grant Retake
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+        <DataTable
+            useBemStyles={true}
+            columns={[
+                { 
+                    key: 'exam_title', 
+                    label: 'Exam',
+                    className: 'table__cell--bold'
+                },
+                { 
+                    key: 'score', 
+                    label: 'Score',
+                    hideOnSmall: true,
+                    render: (_, row) => `${row.score} / ${row.total_questions}`
+                },
+                { 
+                    key: 'percentage', 
+                    label: '%',
+                    render: (value, row) => (
+                        <span style={{ fontWeight: 600, color: row.passed ? '#085041' : '#791f1f' }}>
+                            {Number(value).toFixed(1)}%
+                        </span>
+                    )
+                },
+                { 
+                    key: 'time_taken', 
+                    label: 'Duration',
+                    hideOnSmall: true,
+                    render: (value) => formatDuration(value)
+                },
+                { 
+                    key: 'passed', 
+                    label: 'Result',
+                    render: (value) => (
+                        <span className={`badge badge--${value ? 'pass' : 'fail'}`}>
+                            {value ? 'Passed' : 'Failed'}
+                        </span>
+                    )
+                },
+                { 
+                    key: 'completed_at', 
+                    label: 'Date',
+                    hideOnMobile: true,
+                    className: 'table__cell--muted',
+                    render: (value) => new Date(value).toLocaleDateString('en-GB')
+                }
+            ]}
+            data={results}
+            actions={(row) => [
+                {
+                    label: 'Grant Retake',
+                    onClick: () => grantRetake(row.exam_id, row.exam_title),
+                    variant: 'primary' as const
+                }
+            ]}
+        />
     )
 }

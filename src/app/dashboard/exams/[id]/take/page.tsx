@@ -5,23 +5,29 @@ import TakeExamClient from './take-exam-client'
 
 async function getExam(examId: string, userId: string) {
     try {
-        // Check if already taken
-        const [existing] = await sql`
-            SELECT id FROM results
-            WHERE exam_id = ${examId} AND user_id = ${userId}
-            LIMIT 1
-        `
-        if (existing) return { alreadyTaken: true, exam: null }
-
-        // Fetch exam with questions — strip correct answers
-        const [exam] = await sql`
+        // Fetch exam details first to check if it's a demo
+        const [examDetails] = await sql`
             SELECT id, title, description, duration, passing_score
             FROM exams
             WHERE id = ${examId} AND is_active = true
             LIMIT 1
         `
-        if (!exam) return { alreadyTaken: false, exam: null }
+        
+        if (!examDetails) return { alreadyTaken: false, exam: null }
+        
+        // Only check if already taken for non-demo exams
+        const isDemo = examDetails.title === 'Demo Test'
+        if (!isDemo) {
+            // Check if already taken
+            const [existing] = await sql`
+                SELECT id FROM results
+                WHERE exam_id = ${examId} AND user_id = ${userId}
+                LIMIT 1
+            `
+            if (existing) return { alreadyTaken: true, exam: null }
+        }
 
+        // Fetch exam with questions — strip correct answers
         const questions = await sql`
             SELECT id, text, options
             FROM questions
@@ -29,7 +35,7 @@ async function getExam(examId: string, userId: string) {
             ORDER BY id
         `
 
-        return { alreadyTaken: false, exam: { ...exam, questions } } as any
+        return { alreadyTaken: false, exam: { ...examDetails, questions, isDemo } } as any
     } catch (error) {
         console.error('[getExam]', error)
         return { alreadyTaken: false, exam: null }

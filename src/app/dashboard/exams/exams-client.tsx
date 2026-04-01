@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { showToast } from '@/ui/dashboard/toast'
+import { DataTable, Column, Action } from '@/components/ui/DataTable'
 
 export default function ExamsClient({ exams: initial }: { exams: any[] }) {
     const [exams, setExams] = useState(initial)
@@ -12,6 +13,26 @@ export default function ExamsClient({ exams: initial }: { exams: any[] }) {
         e.title.toLowerCase().includes(search.toLowerCase()) ||
         (e.category_name || '').toLowerCase().includes(search.toLowerCase())
     )
+
+    const getActions = (row: any): Action[] => [
+        {
+            label: 'Edit',
+            onClick: () => {
+                window.location.href = `/dashboard/exams/${row.id}/edit`
+            },
+            variant: 'primary'
+        },
+        {
+            label: row.is_active ? 'Deactivate' : 'Activate',
+            onClick: () => toggleActive(row.id),
+            variant: 'default'
+        },
+        {
+            label: 'Delete',
+            onClick: () => deleteExam(row.id, row.title),
+            variant: 'danger'
+        }
+    ]
 
     async function toggleActive(id: string) {
         try {
@@ -57,50 +78,28 @@ export default function ExamsClient({ exams: initial }: { exams: any[] }) {
                 />
                 <span className="pag-info">{filtered.length} results</span>
             </div>
-            <div className="table__wrap" style={{ overflowX: 'auto' }}>
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th className="table__header">Title</th>
-                            <th className="table__header">Category</th>
-                            <th className="table__header">Duration</th>
-                            <th className="table__header">Pass Mark</th>
-                            <th className="table__header">Questions</th>
-                            <th className="table__header">Results</th>
-                            <th className="table__header">Status</th>
-                            <th className="table__header">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filtered.length === 0 ? (
-                            <tr><td colSpan={8} className="table__empty">No exams found.</td></tr>
-                        ) : filtered.map(exam => (
-                            <tr key={exam.id} className="table__row">
-                                <td className="table__cell table__cell--bold">{exam.title}</td>
-                                <td className="table__cell table__cell--muted">{exam.category_name || '—'}</td>
-                                <td className="table__cell">{exam.duration} mins</td>
-                                <td className="table__cell">{exam.passing_score}%</td>
-                                <td className="table__cell">{exam.question_count}</td>
-                                <td className="table__cell">{exam.result_count}</td>
-                                <td className="table__cell">
-                                    <span className={`badge badge--${exam.is_active ? 'active' : 'expired'}`}>
-                                        {exam.is_active ? 'Active' : 'Inactive'}
-                                    </span>
-                                </td>
-                                <td className="table__cell">
-                                    <div className="admin-actions">
-                                        <Link href={`/dashboard/exams/${exam.id}/edit`} className="admin-action-btn admin-action-btn--edit">Edit</Link>
-                                        <button onClick={() => toggleActive(exam.id)} className="admin-action-btn admin-action-btn--toggle">
-                                            {exam.is_active ? 'Deactivate' : 'Activate'}
-                                        </button>
-                                        <button onClick={() => deleteExam(exam.id, exam.title)} className="admin-action-btn admin-action-btn--delete">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <DataTable
+                columns={[
+                    { key: 'title', label: 'Title' },
+                    { key: 'category_name', label: 'Category', render: (v) => v || '—' },
+                    { key: 'duration', label: 'Duration', render: (v) => `${v} mins` },
+                    { key: 'passing_score', label: 'Pass Mark', render: (v) => `${v}%` },
+                    { key: 'question_count', label: 'Questions' },
+                    { key: 'result_count', label: 'Results' },
+                    { 
+                        key: 'is_active', 
+                        label: 'Status', 
+                        render: (v) => (
+                            <span className={`badge badge--${v ? 'active' : 'expired'}`}>
+                                {v ? 'Active' : 'Inactive'}
+                            </span>
+                        )
+                    },
+                ]}
+                data={filtered}
+                actions={getActions}
+                emptyMessage="No exams found."
+            />
         </div>
     )
 }

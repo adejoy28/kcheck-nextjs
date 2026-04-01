@@ -121,7 +121,7 @@ export default function ExamForm({ categories, exam }: Props) {
                         </div>
                         <div className="form-group">
                             <label>Settings</label>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                            <div className="settings-group">
                                 <label className="admin-checkbox-label">
                                     <input type="checkbox" checked={retakeAllowed} onChange={e => setRetakeAllowed(e.target.checked)} />
                                     Allow retakes
@@ -138,14 +138,14 @@ export default function ExamForm({ categories, exam }: Props) {
                 </div>
 
                 <div className="exam-details-section">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <div className="questions-header">
                         <h3>Questions ({questions.length})</h3>
                         <button type="button" className="btn btn--outline btn--sm" onClick={addQuestion}>+ Add Question</button>
                     </div>
                     
                     {questions.map((q, qIndex) => (
                         <div key={qIndex} className="question-block">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                            <div className="question-header">
                                 <h4>Question {qIndex + 1}</h4>
                                 <button type="button" className="btn btn--outline btn--sm" onClick={() => removeQuestion(qIndex)}>Remove</button>
                             </div>
@@ -163,7 +163,7 @@ export default function ExamForm({ categories, exam }: Props) {
                             <div className="form-group">
                                 <label>Options *</label>
                                 {q.options.map((opt, optIndex) => (
-                                    <div key={optIndex} style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
+                                    <div key={optIndex} className="option-input-group">
                                         <input
                                             type="radio"
                                             name={`correct-${qIndex}`}
@@ -175,7 +175,6 @@ export default function ExamForm({ categories, exam }: Props) {
                                             value={opt}
                                             onChange={e => updateOption(qIndex, optIndex, e.target.value)}
                                             placeholder={`Option ${optIndex + 1}`}
-                                            style={{ flex: 1 }}
                                             required
                                         />
                                     </div>
