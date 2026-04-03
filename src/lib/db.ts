@@ -17,19 +17,19 @@ async function testConnection() {
         await sql`SELECT 1`
         console.log('[db] Database connection successful')
         return true
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('[db] Connection failed:', {
-            message: error.message,
-            code: error.code,
-            severity: error.severity
+            message: error instanceof Error ? error.message : String(error),
+            code: (error as { code?: string })?.code,
+            severity: (error as { severity?: string })?.severity
         })
         
         // Provide specific guidance for common errors
-        if (error.message.includes('ENOTFOUND') || error.message.includes('ECONNREFUSED')) {
+        if (error instanceof Error && (error.message.includes('ENOTFOUND') || error.message.includes('ECONNREFUSED'))) {
             console.error('[db] Network error - check database host and connectivity')
-        } else if (error.message.includes('access denied') || error.message.includes('authentication')) {
+        } else if (error instanceof Error && (error.message.includes('access denied') || error.message.includes('authentication'))) {
             console.error('[db] Authentication error - check credentials')
-        } else if (error.message.includes('database') && error.message.includes('does not exist')) {
+        } else if (error instanceof Error && error.message.includes('database') && error.message.includes('does not exist')) {
             console.error('[db] Database does not exist - create the database first')
         }
         
@@ -49,18 +49,18 @@ export { testConnection }
 
 // Retry wrapper for database operations
 export async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3): Promise<T> {
-    let lastError: any
+    let lastError: unknown
     
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
             return await operation()
-        } catch (error: any) {
+        } catch (error: unknown) {
             lastError = error
             
             // Don't retry on certain errors
-            if (error.code === '23505' || // Unique violation
-                error.code === '23503' || // Foreign key violation
-                error.code === '42501') {  // Insufficient privileges
+            if ((error as { code?: string })?.code === '23505' || // Unique violation
+                (error as { code?: string })?.code === '23503' || // Foreign key violation
+                (error as { code?: string })?.code === '42501') {  // Insufficient privileges
                 throw error
             }
             
@@ -71,7 +71,7 @@ export async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3):
             
             // Exponential backoff
             const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000)
-            console.warn(`[db] Attempt ${attempt} failed, retrying in ${delay}ms:`, error.message)
+            console.warn(`[db] Attempt ${attempt} failed, retrying in ${delay}ms:`, error instanceof Error ? error.message : String(error))
             await new Promise(resolve => setTimeout(resolve, delay))
         }
     }

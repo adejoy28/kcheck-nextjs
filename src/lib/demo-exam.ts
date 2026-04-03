@@ -18,7 +18,14 @@ export async function getDemoExam() {
             ORDER BY id
         `
 
-        return { ...exam, questions } as any
+        return { 
+            id: exam.id, 
+            title: exam.title, 
+            description: exam.description, 
+            duration: exam.duration, 
+            passing_score: exam.passing_score, 
+            questions 
+        }
     } catch (error) {
         console.error('[getDemoExam]', error)
         return null

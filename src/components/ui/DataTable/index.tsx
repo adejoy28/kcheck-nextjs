@@ -3,32 +3,32 @@
 import React, { useState } from 'react'
 import styles from './DataTable.module.scss'
 
-export interface Column<T = any> {
+export interface Column<T = Record<string, unknown>> {
   key: keyof T
   label: string
-  render?: (value: any, row: T) => React.ReactNode
+  render?: (value: T[keyof T], row: T) => React.ReactNode
   className?: string
   hideOnMobile?: boolean
   hideOnSmall?: boolean
 }
 
-export interface Action {
+export interface Action<T = Record<string, unknown>> {
   label: string
-  onClick: (row: any) => void
+  onClick: (row: T) => void
   variant?: 'primary' | 'danger' | 'default'
 }
 
-interface DataTableProps<T = any> {
+interface DataTableProps<T = Record<string, unknown>> {
   columns: Column<T>[]
   data: T[]
   emptyMessage?: string
   cardBreakpoint?: number
-  actions?: (row: T) => Action[]
+  actions?: (row: T) => Action<T>[]
   className?: string
   useBemStyles?: boolean
 }
 
-function ActionDropdown({ row, actions, useBemStyles }: { row: any; actions: Action[]; useBemStyles?: boolean }) {
+function ActionDropdown<T>({ row, actions, useBemStyles }: { row: T; actions: Action<T>[]; useBemStyles?: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
 
   const dropdownStyles = useBemStyles ? {
@@ -71,7 +71,7 @@ function ActionDropdown({ row, actions, useBemStyles }: { row: any; actions: Act
   )
 }
 
-export function DataTable<T = any>({ 
+export function DataTable<T = Record<string, unknown>>({ 
   columns, 
   data, 
   emptyMessage = 'No data available',

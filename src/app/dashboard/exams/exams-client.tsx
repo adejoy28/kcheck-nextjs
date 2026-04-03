@@ -81,9 +81,9 @@ export default function ExamsClient({ exams: initial }: { exams: any[] }) {
             <DataTable
                 columns={[
                     { key: 'title', label: 'Title' },
-                    { key: 'category_name', label: 'Category', render: (v) => v || '—' },
-                    { key: 'duration', label: 'Duration', render: (v) => `${v} mins` },
-                    { key: 'passing_score', label: 'Pass Mark', render: (v) => `${v}%` },
+                    { key: 'category_name', label: 'Category', render: (v) => (v as string) || '—' },
+                    { key: 'duration', label: 'Duration', render: (v) => `${v as number} mins` },
+                    { key: 'passing_score', label: 'Pass Mark', render: (v) => `${v as number}%` },
                     { key: 'question_count', label: 'Questions' },
                     { key: 'result_count', label: 'Results' },
                     { 

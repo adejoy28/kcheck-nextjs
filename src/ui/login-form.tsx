@@ -44,7 +44,7 @@ export default function LoginForm() {
 
             showToast('Login successful', 'success')
             window.location.href = '/dashboard'
-        } catch (error) {
+        } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
             setLoading(false)
             setError('Login failed. Please try again.')
             showToast('Login failed. Please try again.', 'error')

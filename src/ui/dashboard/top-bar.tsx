@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import { auth, signOut } from '@/auth';
-import { ChevronDown, LogOut, Menu } from 'lucide-react';
+import { signOut } from '@/auth';
+import { ChevronDown, LogOut } from 'lucide-react';
 import Hamburger from '@/ui/dashboard/hamburger';
 
 export default async function TopBar({ user }: { user: { name?: string; role?: string } }) {

@@ -87,7 +87,7 @@ export default function CategoriesClient({ categories: initial }: { categories: 
                 columns={[
                     { key: 'name', label: 'Category Name' },
                     { key: 'exam_count', label: 'Exams' },
-                    { key: 'created_at', label: 'Created', render: (v) => new Date(v).toLocaleDateString('en-GB') },
+                    { key: 'created_at', label: 'Created', render: (v) => new Date(v as string).toLocaleDateString('en-GB') },
                 ]}
                 data={categories}
                 actions={getActions}

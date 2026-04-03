@@ -94,14 +94,14 @@ export async function exportToPDF(data: ReportData[], viewType: 'staff' | 'exam'
   }
 
     doc.save(`kcheck-reports-${viewType}-${new Date().toISOString().split('T')[0]}.pdf`)
-  } catch (error) {
-    console.error('Failed to generate PDF:', error)
+  } catch (error: unknown) {
+    console.error('Failed to generate PDF:', error instanceof Error ? error.message : String(error))
     throw error
   }
 }
 
 export function exportToExcel(data: ReportData[], viewType: 'staff' | 'exam') {
-  let worksheetData: any[] = []
+  let worksheetData: (string | number)[][] = []
 
   if (viewType === 'staff') {
     worksheetData = [
@@ -123,7 +123,7 @@ export function exportToExcel(data: ReportData[], viewType: 'staff' | 'exam') {
     worksheetData = [
       ['Exam', 'Pass Mark', 'Total Attempts', 'Passed', 'Pass Rate', 'Average Score'],
       ...data.map(row => [
-        row.exam_title,
+        row.exam_title || '—',
         `${row.passing_score}%`,
         `${row.total_attempts}`,
         `${row.total_passed}`,
@@ -133,7 +133,7 @@ export function exportToExcel(data: ReportData[], viewType: 'staff' | 'exam') {
     ]
   }
 
-  const worksheet = XLSX.utils.aoa_to_sheet(worksheetData as any[][])
+  const worksheet = XLSX.utils.aoa_to_sheet(worksheetData)
   const workbook = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Reports')
 

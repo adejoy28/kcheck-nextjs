@@ -1,7 +1,7 @@
 import 'server-only'
 import { cache } from 'react'
 import { auth } from '@/auth'
-import { redirect, notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 // Cached auth functions to minimize database/session calls
 export const getCurrentUser = cache(async () => {

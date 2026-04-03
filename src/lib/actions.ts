@@ -18,14 +18,14 @@ export async function authenticate(
         })
         
         await signIn('credentials', { username, password, redirectTo: '/dashboard' })
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.log('[ACTIONS] SignIn error:', {
-            message: error?.message,
-            type: error?.type,
-            isRedirect: error?.message?.includes('NEXT_REDIRECT')
+            message: error instanceof Error ? error.message : String(error),
+            type: (error as { type?: string })?.type,
+            isRedirect: error instanceof Error && error.message.includes('NEXT_REDIRECT')
         })
         
-        if (error?.message?.includes('NEXT_REDIRECT')) throw error
+        if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) throw error
         return 'Invalid credentials.'
     }
 }

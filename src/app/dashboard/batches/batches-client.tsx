@@ -57,8 +57,8 @@ export default function BatchesClient({ batches: initial }: { batches: any[] }) 
                 columns={[
                     { key: 'name', label: 'Batch Name' },
                     { key: 'exam_title', label: 'Exam' },
-                    { key: 'start_date', label: 'Start Date', render: (v) => new Date(v).toLocaleDateString('en-GB') },
-                    { key: 'end_date', label: 'End Date', render: (v) => new Date(v).toLocaleDateString('en-GB') },
+                    { key: 'start_date', label: 'Start Date', render: (v) => new Date(v as string).toLocaleDateString('en-GB') },
+                    { key: 'end_date', label: 'End Date', render: (v) => new Date(v as string).toLocaleDateString('en-GB') },
                     { key: 'member_count', label: 'Members' },
                     { key: 'team_count', label: 'Teams' },
                     { 

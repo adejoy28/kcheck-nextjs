@@ -1,4 +1,3 @@
-import { auth } from '@/auth';
 import sql from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth-utils';
 

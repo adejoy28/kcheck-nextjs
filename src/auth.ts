@@ -21,7 +21,7 @@ declare module 'next-auth' {
     }
 }
 
-// @ts-ignore - NextAuth v5 beta module augmentation
+// @ts-expect-error - NextAuth v5 beta module augmentation
 declare module 'next-auth/jwt' {
     interface JWT {
         id: string
@@ -80,7 +80,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 try {
                     
                     // Retry logic for Neon cold starts
-                    let users: any[] = [];
+                    let users: { id: string; username: string; password: string; name: string; role: string; is_active: boolean }[] = [];
                     let attempts = 0;
                     const maxAttempts = 3;
                     
@@ -108,7 +108,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     }
                     
                     
-                    const user = users[0] as any;
+                    const user = users[0];
                     if (!user) {
                         console.log('[AUTH] User not found in database')
                         return null

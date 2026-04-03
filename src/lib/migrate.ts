@@ -20,21 +20,21 @@ async function migrate() {
         await sql.unsafe(migration)
         console.log('✓ Migration complete — all tables created')
         
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Migration failed:', {
-            message: error.message,
-            code: error.code,
-            severity: error.severity
+            message: error instanceof Error ? error.message : String(error),
+            code: (error as { code?: string })?.code,
+            severity: (error as { severity?: string })?.severity
         })
         
         // Provide specific error guidance
-        if (error.message.includes('ENOTFOUND') || error.message.includes('ECONNREFUSED')) {
+        if (error instanceof Error && (error.message.includes('ENOTFOUND') || error.message.includes('ECONNREFUSED'))) {
             console.error('[migrate] Network error - check database host and connectivity')
-        } else if (error.message.includes('access denied') || error.message.includes('authentication')) {
+        } else if (error instanceof Error && (error.message.includes('access denied') || error.message.includes('authentication'))) {
             console.error('[migrate] Authentication error - check credentials')
-        } else if (error.message.includes('already exists')) {
+        } else if (error instanceof Error && error.message.includes('already exists')) {
             console.warn('[migrate] Some tables may already exist - this is usually safe')
-        } else if (error.message.includes('syntax') || error.message.includes('SQL')) {
+        } else if (error instanceof Error && (error.message.includes('syntax') || error.message.includes('SQL'))) {
             console.error('[migrate] SQL syntax error - check migration.sql')
         }
         

@@ -37,7 +37,8 @@ async function seed() {
     console.log('✓ Teams seeded')
 
     // ── Categories ─────────────────────────────────────────────────
-    const [cat1] = await sql`
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_cat1] = await sql`
         INSERT INTO categories (name) VALUES ('Compliance')
         ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
         RETURNING id
@@ -90,7 +91,7 @@ async function seed() {
         VALUES (
             'Demo Test',
             'A sample test for users to try out the system',
-            10, 80, TRUE, ${cat1.id}, ${admin.id}
+            10, 80, TRUE, ${_cat1.id}, ${admin.id}
         )
         ON CONFLICT DO NOTHING
         RETURNING id
@@ -260,23 +261,23 @@ async function seed() {
 
     await sql.end()
     
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Seed failed:', {
-            message: error.message,
-            code: error.code,
-            severity: error.severity
+            message: error instanceof Error ? error.message : String(error),
+            code: (error as { code?: string })?.code,
+            severity: (error as { severity?: string })?.severity
         })
         
         // Provide specific error guidance
-        if (error.message.includes('ENOTFOUND') || error.message.includes('ECONNREFUSED')) {
+        if (error instanceof Error && (error.message.includes('ENOTFOUND') || error.message.includes('ECONNREFUSED'))) {
             console.error('[seed] Network error - check database host and connectivity')
-        } else if (error.message.includes('access denied') || error.message.includes('authentication')) {
+        } else if (error instanceof Error && (error.message.includes('access denied') || error.message.includes('authentication'))) {
             console.error('[seed] Authentication error - check credentials')
-        } else if (error.message.includes('already exists')) {
+        } else if (error instanceof Error && error.message.includes('already exists')) {
             console.warn('[seed] Some data may already exist - this is usually safe')
-        } else if (error.message.includes('syntax') || error.message.includes('SQL')) {
+        } else if (error instanceof Error && (error.message.includes('syntax') || error.message.includes('SQL'))) {
             console.error('[seed] SQL syntax error - check table structure')
-        } else if (error.message.includes('constraint') || error.message.includes('duplicate')) {
+        } else if (error instanceof Error && (error.message.includes('constraint') || error.message.includes('duplicate'))) {
             console.warn('[seed] Duplicate data detected - this is usually safe')
         }
         

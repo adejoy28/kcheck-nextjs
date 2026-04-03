@@ -68,13 +68,13 @@ export default function UsersClient({ users: initial }: { users: any[] }) {
                         key: 'role', 
                         label: 'Role', 
                         render: (v) => (
-                            <span className={`badge badge--${v === 'ADMIN' ? 'admin' : 'staff'}`}>
-                                {v}
+                            <span className={`badge badge--${(v as string) === 'ADMIN' ? 'admin' : 'staff'}`}>
+                                {v as string}
                             </span>
                         )
                     },
-                    { key: 'team_name', label: 'Team', render: (v) => v || '—' },
-                    { key: 'unit', label: 'Unit', render: (v) => v || '—' },
+                    { key: 'team_name', label: 'Team', render: (v) => (v as string) || '—' },
+                    { key: 'unit', label: 'Unit', render: (v) => (v as string) || '—' },
                     { key: 'tests_taken', label: 'Tests Taken' },
                     { 
                         key: 'is_active', 
