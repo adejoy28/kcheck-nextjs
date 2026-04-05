@@ -2,9 +2,20 @@ import { auth } from '@/auth';
 import sql from '@/lib/db';
 import Link from 'next/link';
 import { getDemoExam } from '@/lib/demo-exam';
-import { DataTable, Column } from '@/components/ui/DataTable';
+import TestsClient from './tests-client';
 
-async function getAvailableTests(userId: string) {
+interface Test {
+    id: string
+    title: string
+    duration: number
+    batch_name: string
+    start_date: string
+    end_date: string
+    status: string
+    is_missed: boolean
+}
+
+async function getAvailableTests(userId: string): Promise<Test[]> {
     try {
         const now = new Date().toISOString();
         const rows = await sql`
@@ -39,7 +50,7 @@ async function getAvailableTests(userId: string) {
             )
             ORDER BY b.end_date ASC
         `;
-        return rows;
+        return rows as unknown as Test[];
     } catch (error) {
         console.error('[getAvailableTests]', error);
         return [];
@@ -97,80 +108,7 @@ export default async function NewTestsPage() {
                 </span>
             </div>
 
-            <DataTable
-                useBemStyles={true}
-                columns={[
-                    { 
-                        key: 'title', 
-                        label: 'Test',
-                        className: 'table__cell--bold'
-                    },
-                    { 
-                        key: 'batch_name', 
-                        label: 'Batch',
-                        className: 'table__cell--muted'
-                    },
-                    { 
-                        key: 'duration', 
-                        label: 'Duration',
-                        render: (value) => `${value} mins`
-                    },
-                    { 
-                        key: 'start_date', 
-                        label: 'Scheduled Date',
-                        render: (value) => new Date(value).toLocaleDateString('en-GB')
-                    },
-                    { 
-                        key: 'end_date', 
-                        label: 'End Date',
-                        render: (value) => new Date(value).toLocaleDateString('en-GB')
-                    },
-                    { 
-                        key: 'status', 
-                        label: 'Status',
-                        render: (value) => (
-                            <span className={`badge badge--${value}`}>
-                                {value.charAt(0).toUpperCase() + value.slice(1)}
-                            </span>
-                        )
-                    },
-                    { 
-                        key: 'is_missed', 
-                        label: 'Is Missed',
-                        render: (value) => (
-                            <span className={`badge badge--${value ? 'missed' : 'ok'}`}>
-                                {value ? 'Yes' : 'No'}
-                            </span>
-                        )
-                    },
-                    { 
-                        key: 'actions', 
-                        label: '',
-                        render: (_, row) => {
-                            if (row.status === 'active') {
-                                return (
-                                    <Link
-                                        href={`/dashboard/exams/${row.id}/take`}
-                                        className="btn btn--primary btn--sm"
-                                    >
-                                        Take Test
-                                    </Link>
-                                )
-                            } else if (row.status === 'upcoming') {
-                                return (
-                                    <span className="table__cell--muted" style={{ fontSize: '11px' }}>
-                                        Not yet open
-                                    </span>
-                                )
-                            } else {
-                                return <span style={{ color: '#ccc', fontSize: '11px' }}>—</span>
-                            }
-                        }
-                    }
-                ]}
-                data={tests}
-                emptyMessage="No tests assigned to you at the moment."
-            />
+            <TestsClient tests={tests as Test[]} />
         </div>
     );
 }

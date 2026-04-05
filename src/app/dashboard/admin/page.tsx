@@ -4,7 +4,7 @@ import sql from '@/lib/db'
 import { withRetry } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth-utils'
 import Link from 'next/link'
-import { DataTable, Column } from '@/components/ui/DataTable'
+import AdminClient from './admin-client'
 
 async function getAdminStats() {
     try {
@@ -121,42 +121,7 @@ export default async function AdminDashboardPage() {
                 <span className="section-title">Recent Results</span>
                 <Link href="/dashboard/reports" className="toggle-link">View all →</Link>
             </div>
-            <DataTable
-                useBemStyles={true}
-                columns={[
-                    { 
-                        key: 'user_name', 
-                        label: 'Staff',
-                        className: 'table__cell--bold'
-                    },
-                    { 
-                        key: 'exam_title', 
-                        label: 'Exam'
-                    },
-                    { 
-                        key: 'percentage', 
-                        label: 'Score',
-                        render: (value) => `${Number(value).toFixed(1)}%`
-                    },
-                    { 
-                        key: 'passed', 
-                        label: 'Result',
-                        render: (value) => (
-                            <span className={`badge badge--${value ? 'pass' : 'fail'}`}>
-                                {value ? 'Passed' : 'Failed'}
-                            </span>
-                        )
-                    },
-                    { 
-                        key: 'completed_at', 
-                        label: 'Date',
-                        className: 'table__cell--muted',
-                        render: (value) => new Date(value).toLocaleDateString('en-GB')
-                    }
-                ]}
-                data={recentResults}
-                emptyMessage="No results yet."
-            />
+            <AdminClient recentResults={recentResults as any[]} />
         </div>
     )
 }
