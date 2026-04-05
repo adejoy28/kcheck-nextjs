@@ -28,14 +28,104 @@ export default function TakeExamClient({
     userId: string
 }) {
     const router = useRouter()
+    
+    // Check if exam was auto-submitted and redirect
+    useEffect(() => {
+        const autoSubmitResult = sessionStorage.getItem('examAutoSubmitResult')
+        if (autoSubmitResult) {
+            sessionStorage.removeItem('examAutoSubmitResult')
+            const result = JSON.parse(autoSubmitResult)
+            
+            if (result.isDemo) {
+                const params = new URLSearchParams({
+                    score: result.score.toString(),
+                    total: result.total.toString(),
+                    percentage: result.percentage.toString(),
+                    passed: result.passed.toString(),
+                    examTitle: result.examTitle
+                })
+                router.push(`/dashboard/exams/${exam.id}/take/demo-results?${params.toString()}`)
+            } else {
+                showToast(
+                    result.passed
+                        ? `Congratulations! You passed with ${result.percentage}%` 
+                        : `You scored ${result.percentage}%. Keep studying!`,
+                    result.passed ? 'success' : 'error'
+                )
+                router.push('/dashboard/results')
+            }
+            return
+        }
+    }, [exam.id, router])
+    
+    const [submitting, setSubmitting] = useState(false)
+    const [isWideMode, setIsWideMode] = useState(false)
     const [currentIndex, setCurrentIndex] = useState(0)
     const [answers, setAnswers] = useState<(number | null)[]>(
         new Array(exam.questions.length).fill(null)
     )
     const [timeLeft, setTimeLeft] = useState(exam.duration * 60)
-    const [submitting, setSubmitting] = useState(false)
-    const [startTime] = useState(Date.now())
-    const [isWideMode, setIsWideMode] = useState(false)
+    const startTime = Date.now()
+
+    // Prevent refresh and submit exam
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault()
+            e.returnValue = 'Your exam will be submitted automatically. Are you sure you want to leave?'
+            return e.returnValue
+        }
+
+        const handleUnload = () => {
+            // Submit exam when page is unloaded
+            const submitOnUnload = async () => {
+                try {
+                    const res = await fetch(`/api/exams/${exam.id}/submit`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            answers, 
+                            timeTaken: Math.floor((Date.now() - startTime) / 1000),
+                            autoSubmit: true
+                        }),
+                    })
+                    
+                    if (res.ok) {
+                        const data = await res.json()
+                        // Store result info for redirect after page reload
+                        sessionStorage.setItem('examAutoSubmitResult', JSON.stringify({
+                            score: data.score,
+                            total: data.total,
+                            percentage: data.percentage,
+                            passed: data.passed,
+                            isDemo: data.isDemo,
+                            examTitle: exam.title
+                        }))
+                    }
+                } catch (error) {
+                    console.error('Auto-submit failed:', error)
+                }
+            }
+            
+            // Use sendBeacon for more reliable submission during page unload
+            const data = new Blob([
+                JSON.stringify({
+                    answers,
+                    timeTaken: Math.floor((Date.now() - startTime) / 1000),
+                    autoSubmit: true
+                })
+            ], { type: 'application/json' })
+            
+            navigator.sendBeacon(`/api/exams/${exam.id}/submit`, data)
+        }
+
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        window.addEventListener('unload', handleUnload)
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload)
+            window.removeEventListener('unload', handleUnload)
+        }
+    }, [answers, exam.id, startTime])
 
     const submitExam = useCallback(
         async (autoSubmit = false) => {
@@ -69,6 +159,8 @@ export default function TakeExamClient({
                     setSubmitting(false)
                     return
                 }
+
+                // No progress to clear
 
                 // Show different messages for demo vs regular exams
                 if (data.isDemo) {

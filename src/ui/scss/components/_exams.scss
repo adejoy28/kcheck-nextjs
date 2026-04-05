@@ -523,6 +523,16 @@
             border-color: var(--glo-blue);
             color: var(--glo-blue);
             transform: scale(1.1);
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+
+        // Combined state: current and answered
+        &--answered.exam-take__dot--current {
+            background: var(--glo-blue);
+            border-color: var(--glo-blue);
+            color: var(--white);
+            transform: scale(1.1);
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
         }
     }
 }

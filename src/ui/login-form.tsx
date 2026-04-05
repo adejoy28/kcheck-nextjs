@@ -1,12 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signIn, getCsrfToken } from 'next-auth/react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { showToast } from '@/ui/dashboard/toast'
 
 export default function LoginForm() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const router = useRouter()
+    const searchParams = useSearchParams()
+
+    // Get redirect URL from query params
+    const redirectUrl = searchParams.get('redirect') || '/dashboard'
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -43,7 +49,7 @@ export default function LoginForm() {
             }
 
             showToast('Login successful', 'success')
-            window.location.href = '/dashboard'
+            window.location.href = redirectUrl
         } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
             setLoading(false)
             setError('Login failed. Please try again.')

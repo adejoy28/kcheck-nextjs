@@ -14,11 +14,21 @@
     gap: var(--spacing-xs);
 
     &--primary {
-        background: var(--glo-blue);
+        background: linear-gradient(135deg, #1758b7 0%, #0d3a7a 100%);
         color: var(--white);
+        box-shadow: 0 2px 8px rgba(23, 88, 183, 0.2);
+        border: none;
+        font-weight: 600;
 
         &:hover {
-            background: var(--glo-blue-dark);
+            background: linear-gradient(135deg, #0d3a7a 0%, #1758b7 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(23, 88, 183, 0.3);
+        }
+
+        &:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(23, 88, 183, 0.2);
         }
     }
 
@@ -53,11 +63,15 @@
 
     &--outline {
         background: var(--white);
-        color: var(--glo-blue);
-        border: 1px solid var(--glo-blue);
+        color: #1758b7;
+        border: 2px solid #1758b7;
+        font-weight: 500;
 
         &:hover {
-            background: #f0f4fa;
+            background: #1758b7;
+            color: var(--white);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(23, 88, 183, 0.2);
         }
     }
 
@@ -86,7 +100,7 @@
     }
     
     &.role-user {
-        background: #3b82f6;
+        background: #1758b7;
         color: white;
     }
     

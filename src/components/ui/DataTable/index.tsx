@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import styles from './DataTable.module.scss'
 
 export interface Column<T = Record<string, unknown>> {
@@ -30,6 +31,47 @@ interface DataTableProps<T = Record<string, unknown>> {
 
 function ActionDropdown<T>({ row, actions, useBemStyles }: { row: T; actions: Action<T>[]; useBemStyles?: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, right: 0 as number | 'auto' })
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', handleEscape)
+      
+      // Calculate position for portal dropdown
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect()
+        
+        // For position: fixed, we use viewport coordinates directly
+        const top = rect.bottom + 4
+        const left = rect.left
+        
+        console.log('Button rect:', rect)
+        console.log('Calculated position:', { top, left })
+        
+        setDropdownPosition({ top, left, right: 0 })
+      }
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen])
 
   const dropdownStyles = useBemStyles ? {
     actionDropdown: 'admin-actions',
@@ -44,15 +86,32 @@ function ActionDropdown<T>({ row, actions, useBemStyles }: { row: T; actions: Ac
   }
 
   return (
-    <div className={dropdownStyles.actionDropdown}>
-      <button 
-        className={dropdownStyles.dropdownToggle}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        Actions ▼
-      </button>
-      {isOpen && (
-        <div className={dropdownStyles.dropdownMenu}>
+    <>
+      <div className={dropdownStyles.actionDropdown}>
+        <button 
+          ref={buttonRef}
+          className={dropdownStyles.dropdownToggle}
+          onClick={() => setIsOpen(!isOpen)}
+          type="button"
+          aria-haspopup="true"
+          aria-expanded={isOpen}
+        >
+          Actions ▼
+        </button>
+      </div>
+      
+      {isOpen && createPortal(
+        <div 
+          ref={dropdownRef}
+          className={dropdownStyles.dropdownMenu}
+          style={{
+            position: 'fixed',
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+            right: 'auto',
+            zIndex: 1000
+          }}
+        >
           {actions.map((action, index) => (
             <button
               key={index}
@@ -61,13 +120,15 @@ function ActionDropdown<T>({ row, actions, useBemStyles }: { row: T; actions: Ac
                 action.onClick(row)
                 setIsOpen(false)
               }}
+              type="button"
             >
               {action.label}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   )
 }
 

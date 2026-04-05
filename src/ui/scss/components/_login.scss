@@ -31,7 +31,9 @@
 
   &__brand {
     flex: 0 0 45%;
-    background-color: #6489c0;
+    background: var(--glo-login-gradient);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     color: var(--white);
     display: flex;
     flex-direction: column;
@@ -39,6 +41,19 @@
     align-items: center;
     padding: 40px 20px; // Reduced padding for mobile
     text-align: center;
+    position: relative;
+    
+    // Add subtle overlay for depth
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.05);
+      pointer-events: none;
+    }
 
     @include respond-to(tablet) {
       padding: var(--spacing-xxl);
@@ -115,11 +130,25 @@
       flex: 1;
       width: 100%; // Ensure input doesn't shrink
       padding: 12px; // Thicker tap target for mobile
-      border: 1px solid #777;
-      border-radius: 4px;
+      border: 2px solid var(--gray-200);
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      background: var(--white);
+
+      &:focus {
+        outline: none;
+        border-color: var(--glo-blue);
+        box-shadow: 0 0 0 3px rgba(23, 88, 183, 0.1);
+        background: var(--white);
+      }
+
+      &:hover {
+        border-color: var(--gray-300);
+      }
 
       @include respond-to(tablet) {
-        padding: 8px 12px;
+        padding: 10px 12px;
       }
     }
   }
@@ -138,35 +167,36 @@
   &__button {
     width: 100%; // Full-width button on mobile (easier to tap)
     padding: 14px;
-    background-color: #6489c0;
-    color: white;
+    background: var(--glo-login-gradient);
+    color: var(--white);
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: bold;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    transition: all 0.3s ease;
     user-select: none; // Prevent text selection on click
+    box-shadow: 0 4px 15px rgba(23, 88, 183, 0.3);
 
     &:hover {
-      background-color: #4a6b8f;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(100, 137, 192, 0.3);
+      background: var(--glo-blue-gradient);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(23, 88, 183, 0.4);
     }
 
     &:active {
       transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(100, 137, 192, 0.2);
+      box-shadow: 0 2px 10px rgba(23, 88, 183, 0.3);
     }
 
     &:focus {
-      outline: 2px solid #6489c0;
+      outline: 2px solid var(--glo-blue);
       outline-offset: 2px;
     }
 
     @include respond-to(tablet) {
       width: fit-content;
       margin-left: 120px;
-      padding: 8px 35px;
+      padding: 10px 35px;
     }
   }
 
@@ -180,9 +210,16 @@
     }
 
     &-link {
-      color: #6489c0;
+      color: var(--glo-blue);
       text-decoration: none;
       font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      
+      &:hover {
+        color: var(--glo-blue-dark);
+        text-decoration: underline;
+      }
     }
   }
 }

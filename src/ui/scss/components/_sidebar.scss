@@ -84,8 +84,9 @@
                 &:hover::after {
                     content: attr(data-label);
                     position: absolute;
-                    left: 100%;
-                    margin-left: var(--spacing-sm);
+                    left: calc(100% + 8px);
+                    top: 50%;
+                    transform: translateY(-50%);
                     background: var(--gray-800);
                     color: white;
                     padding: var(--spacing-xs) var(--spacing-sm);
@@ -94,6 +95,7 @@
                     white-space: nowrap;
                     z-index: 1000;
                     pointer-events: none;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
                 }
             }
         }
