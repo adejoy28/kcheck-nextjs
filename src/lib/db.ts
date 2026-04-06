@@ -1,3 +1,33 @@
+// ==================== MYSQL VERSION ====================
+import mysql from 'mysql2/promise'
+
+const pool = mysql.createPool({
+    host: process.env.HOST,
+    port: parseInt(process.env.PORT || '4000'),
+    user: process.env.USERNAME,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
+    ssl: { rejectUnauthorized: true },
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    namedPlaceholders: true
+})
+
+// MySQL query wrapper that mimics postgres API
+const sql = {
+    async query<T = any>(query: string, params?: any[]): Promise<T[]> {
+        const [rows] = await pool.execute(query, params)
+        return rows as T[]
+    },
+    async unsafe<T = any>(query: string, params?: any[]): Promise<T[]> {
+        const [rows] = await pool.execute(query, params)
+        return rows as T[]
+    }
+}
+
+// ==================== POSTGRESQL VERSION (COMMENTED) ====================
+/*
 import postgres from 'postgres'
 
 const sql = postgres(process.env.DATABASE_URL!, {
@@ -10,18 +40,19 @@ const sql = postgres(process.env.DATABASE_URL!, {
     },
     onnotice: () => {},
 })
+*/
 
 // Enhanced connection test with detailed error reporting
 async function testConnection() {
     try {
-        await sql`SELECT 1`
+        await sql.query('SELECT 1')
         console.log('[db] Database connection successful')
         return true
     } catch (error: unknown) {
         console.error('[db] Connection failed:', {
             message: error instanceof Error ? error.message : String(error),
             code: (error as { code?: string })?.code,
-            severity: (error as { severity?: string })?.severity
+            errno: (error as { errno?: number })?.errno
         })
         
         // Provide specific guidance for common errors
@@ -57,10 +88,10 @@ export async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3):
         } catch (error: unknown) {
             lastError = error
             
-            // Don't retry on certain errors
-            if ((error as { code?: string })?.code === '23505' || // Unique violation
-                (error as { code?: string })?.code === '23503' || // Foreign key violation
-                (error as { code?: string })?.code === '42501') {  // Insufficient privileges
+            // Don't retry on certain errors (MySQL error codes)
+            if ((error as { errno?: number })?.errno === 1062 || // Duplicate entry
+                (error as { errno?: number })?.errno === 1452 || // Foreign key violation
+                (error as { errno?: number })?.errno === 1142) {  // Insufficient privileges
                 throw error
             }
             
