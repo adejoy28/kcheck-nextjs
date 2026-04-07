@@ -13,7 +13,7 @@ export default function LoginForm() {
     const { data: session, status } = useSession()
 
     // Get redirect URL from query params
-    const redirectUrl = searchParams.get('redirect') || '/dashboard'
+    const redirectUrl = searchParams?.get('redirect') || '/dashboard'
 
     // Redirect authenticated users away from login
     useEffect(() => {
