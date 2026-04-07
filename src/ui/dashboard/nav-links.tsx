@@ -65,7 +65,7 @@ export default function NavLinks({ role }: { role: string }) {
                         data-label={item.label}
                     >
                         <span className="sidebar__icon">{item.icon}</span>
-                        {item.label}
+                        <span>{item.label}</span>
                     </Link>
                 ))}
             </div>
@@ -83,7 +83,7 @@ export default function NavLinks({ role }: { role: string }) {
                             data-label={item.label}
                         >
                             <span className="sidebar__icon">{item.icon}</span>
-                            {item.label}
+                            <span>{item.label}</span>
                         </Link>
                     ))}
                 </div>

@@ -61,8 +61,9 @@ export default function UsersClient({ users: initial }: { users: any[] }) {
                 <span className="pag-info">{filtered.length} results</span>
             </div>
             <DataTable
+                useBemStyles={true}
                 columns={[
-                    { key: 'name', label: 'Name' },
+                    { key: 'name', label: 'Name', className: 'table__cell--bold' },
                     { key: 'username', label: 'Username' },
                     { 
                         key: 'role', 
@@ -73,8 +74,8 @@ export default function UsersClient({ users: initial }: { users: any[] }) {
                             </span>
                         )
                     },
-                    { key: 'team_name', label: 'Team', render: (v) => (v as string) || '—' },
-                    { key: 'unit', label: 'Unit', render: (v) => (v as string) || '—' },
+                    { key: 'team_name', label: 'Team', render: (v) => (v as string) || '—', className: 'table__cell--muted' },
+                    { key: 'unit', label: 'Unit', render: (v) => (v as string) || '—', className: 'table__cell--muted' },
                     { key: 'tests_taken', label: 'Tests Taken' },
                     { 
                         key: 'is_active', 

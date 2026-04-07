@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import styles from './DataTable.module.scss'
 
 export interface Column<T = Record<string, unknown>> {
   key: keyof T
@@ -25,22 +24,16 @@ interface DataTableProps<T = Record<string, unknown>> {
   cardBreakpoint?: number
   actions?: (row: T) => Action<T>[]
   className?: string
-  useBemStyles?: boolean
 }
 
-function ActionDropdown<T>({ row, actions, useBemStyles }: { row: T; actions: Action<T>[]; useBemStyles?: boolean }) {
+function ActionDropdown<T>({ row, actions }: { row: T; actions: Action<T>[] }) {
   const [isOpen, setIsOpen] = useState(false)
 
-  const dropdownStyles = useBemStyles ? {
+  const dropdownStyles = {
     actionDropdown: 'admin-actions',
     dropdownToggle: 'admin-action-btn',
     dropdownMenu: 'dropdown-menu',
     dropdownItem: 'dropdown-item'
-  } : {
-    actionDropdown: styles.actionDropdown,
-    dropdownToggle: styles.dropdownToggle,
-    dropdownMenu: styles.dropdownMenu,
-    dropdownItem: styles.dropdownItem
   }
 
   return (
@@ -56,7 +49,7 @@ function ActionDropdown<T>({ row, actions, useBemStyles }: { row: T; actions: Ac
           {actions.map((action, index) => (
             <button
               key={index}
-              className={`${dropdownStyles.dropdownItem} ${useBemStyles ? '' : styles[`dropdownItem--${action.variant || 'default'}`]}`}
+              className={dropdownStyles.dropdownItem}
               onClick={() => {
                 action.onClick(row)
                 setIsOpen(false)
@@ -77,23 +70,15 @@ export function DataTable<T = Record<string, unknown>>({
   emptyMessage = 'No data available',
   cardBreakpoint,
   actions,
-  className = '',
-  useBemStyles = false
+  className = ''
 }: DataTableProps<T>) {
-  const tableStyles = useBemStyles ? {
+  const tableStyles = {
     tableWrap: 'table__wrap',
     table: 'table',
     header: 'table__header',
     row: 'table__row',
     cell: 'table__cell',
     empty: 'table__empty'
-  } : {
-    tableWrap: styles.tableWrap,
-    table: styles.table,
-    header: styles.header,
-    row: styles.row,
-    cell: styles.cell,
-    empty: styles.empty
   }
 
   if (data.length === 0) {
@@ -161,7 +146,7 @@ export function DataTable<T = Record<string, unknown>>({
               })}
               {actions && (
                 <td className={tableStyles.cell} data-label="Actions">
-                  <ActionDropdown row={row} actions={actions(row)} useBemStyles={useBemStyles} />
+                  <ActionDropdown row={row} actions={actions(row)} />
                 </td>
               )}
             </tr>

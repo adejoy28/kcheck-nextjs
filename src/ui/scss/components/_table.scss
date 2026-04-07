@@ -15,9 +15,12 @@
         border: 1px solid var(--border);
         background: var(--white);
         overflow-x: hidden;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         
         @include respond-to(desktop) {
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
         }
         
         @media (max-width: 767px) {
@@ -25,6 +28,7 @@
             background: transparent;
             border-radius: 0;
             margin: var(--spacing-sm);
+            box-shadow: none;
         }
         
         @media (max-width: 480px) {
@@ -33,17 +37,22 @@
     }
     
     &__header {
-        background: var(--glo-blue-col);
+        background: var(--glo-blue-dark);
         color: var(--white);
-        font-size: var(--font-size-xs);
-        font-weight: var(--font-weight-bold);
+        font-size: 12px;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.6px;
-        padding: var(--spacing-sm) var(--spacing-md);
+        letter-spacing: 0.5px;
+        padding: 16px 12px;
         text-align: left;
-        border-right: 1px solid rgba(255, 255, 255, 0.15);
+        border-right: 1px solid #e5e7eb;
+        border-bottom: 3px solid #3b82f6;
         white-space: nowrap;
         user-select: none;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         
         @media (max-width: 767px) {
             white-space: normal;
@@ -194,9 +203,12 @@
     
     &__row {
         border-bottom: 1px solid var(--border-light);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         
         &:hover {
-            background: #f5f8ff;
+            background: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
     }
     
@@ -205,6 +217,7 @@
         font-size: var(--font-size-sm);
         color: var(--gray-800);
         border-right: 1px solid var(--border-light);
+        transition: all 0.2s ease;
         
         &:last-child {
             border-right: none;
@@ -225,8 +238,15 @@
             font-size: var(--font-size-xs);
         }
         
-        &--bold { font-weight: var(--font-weight-semibold); color: var(--glo-blue-dark); }
-        &--muted { color: var(--gray-600); font-size: var(--font-size-xs); }
+        &--bold { 
+            font-weight: var(--font-weight-semibold); 
+            color: var(--glo-blue-dark); 
+        }
+        
+        &--muted { 
+            color: var(--gray-600); 
+            font-size: var(--font-size-xs); 
+        }
         
         // Column Width Modifiers
         &--id {
@@ -283,6 +303,10 @@
         text-align: center;
         font-size: var(--font-size-sm);
         color: var(--gray-500);
+        background: white;
+        border-radius: var(--radius-md);
+        margin: var(--spacing-md) 0;
+        font-style: italic;
     }
     
     // Responsive column hiding
@@ -311,23 +335,24 @@
         }
         
         tr {
-            background: var(--white);
+            background: white;
             border: 1px solid var(--border-light);
             border-radius: var(--radius-md);
             margin-bottom: var(--spacing-md);
             padding: var(--spacing-md);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
             
-            // Create balanced 2-column grid layout
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            }
+            
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: var(--spacing-sm);
             align-items: start;
-            
-            &:hover {
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            }
         }
         
         td {
@@ -338,6 +363,12 @@
             padding: var(--spacing-sm) 0;
             flex: 1;
             min-width: 0;
+            transition: background-color 0.2s ease;
+            
+            &:hover {
+                background: rgba(59, 130, 246, 0.02);
+                border-radius: var(--radius-sm);
+            }
             
             &:before {
                 content: attr(data-label);
@@ -368,7 +399,15 @@
             // Properly sized badges and action buttons
             .badge {
                 font-size: var(--font-size-xs);
-                padding: 3px 8px;
+                padding: 4px 10px;
+                border-radius: var(--radius-sm);
+                font-weight: var(--font-weight-medium);
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
             }
             
             .admin-actions {
@@ -380,7 +419,14 @@
             
             .admin-action-btn {
                 font-size: var(--font-size-xs);
-                padding: 6px 10px;
+                padding: 8px 12px;
+                border-radius: var(--radius-sm);
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
             }
         }
     }

@@ -79,13 +79,14 @@ export default function ExamsClient({ exams: initial }: { exams: any[] }) {
                 <span className="pag-info">{filtered.length} results</span>
             </div>
             <DataTable
+                useBemStyles={true}
                 columns={[
-                    { key: 'title', label: 'Title' },
-                    { key: 'category_name', label: 'Category', render: (v) => (v as string) || '—' },
-                    { key: 'duration', label: 'Duration', render: (v) => `${v as number} mins` },
-                    { key: 'passing_score', label: 'Pass Mark', render: (v) => `${v as number}%` },
-                    { key: 'question_count', label: 'Questions' },
-                    { key: 'result_count', label: 'Results' },
+                    { key: 'title', label: 'Title', className: 'table__cell--bold' },
+                    { key: 'category_name', label: 'Category', render: (v) => (v as string) || '—', className: 'table__cell--muted' },
+                    { key: 'duration', label: 'Duration', render: (v) => `${v as number} mins`, hideOnSmall: true },
+                    { key: 'passing_score', label: 'Pass Mark', render: (v) => `${v as number}%`, hideOnSmall: true },
+                    { key: 'question_count', label: 'Questions', hideOnMobile: true },
+                    { key: 'result_count', label: 'Results', hideOnMobile: true },
                     { 
                         key: 'is_active', 
                         label: 'Status', 

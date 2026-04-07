@@ -7,11 +7,13 @@
     display: flex;
     margin-top: 44px;
     height: calc(100vh - 44px);
+    overflow: visible; // Allow tooltips to overflow
     
     @media (max-width: 767px) {
         flex-direction: column;
         margin-top: 44px;
         height: calc(100vh - 44px);
+        overflow: visible;
     }
     
     &__sidebar {
@@ -44,6 +46,7 @@
         @media (min-width: 768px) {
             .layout--collapsed & {
                 width: 60px;
+                overflow: visible; // Allow tooltips to overflow
             }
         }
     }

@@ -36,7 +36,7 @@ export default async function TopBar({ user }: { user: { name?: string; role?: s
                         <div className="topbar__dropdown-divider" />
                         <form action={async () => {
                             'use server';
-                            await signOut({ redirectTo: '/login' });
+                            await signOut();
                         }}>
                             <button type="submit" className="topbar__dropdown-item topbar__dropdown-item--danger">
                                 <LogOut size={14} strokeWidth={1.8} />

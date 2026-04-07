@@ -54,13 +54,14 @@ export default function BatchesClient({ batches: initial }: { batches: any[] }) 
                 <Link href="/dashboard/batches/create" className="btn btn--primary btn--sm">+ Create Batch</Link>
             </div>
             <DataTable
+                useBemStyles={true}
                 columns={[
-                    { key: 'name', label: 'Batch Name' },
-                    { key: 'exam_title', label: 'Exam' },
-                    { key: 'start_date', label: 'Start Date', render: (v) => new Date(v as string).toLocaleDateString('en-GB') },
-                    { key: 'end_date', label: 'End Date', render: (v) => new Date(v as string).toLocaleDateString('en-GB') },
-                    { key: 'member_count', label: 'Members' },
-                    { key: 'team_count', label: 'Teams' },
+                    { key: 'name', label: 'Batch Name', className: 'table__cell--bold' },
+                    { key: 'exam_title', label: 'Exam', className: 'table__cell--muted', hideOnSmall: true },
+                    { key: 'start_date', label: 'Start Date', render: (v) => new Date(v as string).toLocaleDateString('en-GB'), className: 'table__cell--muted', hideOnMobile: true },
+                    { key: 'end_date', label: 'End Date', render: (v) => new Date(v as string).toLocaleDateString('en-GB'), className: 'table__cell--muted', hideOnMobile: true },
+                    { key: 'member_count', label: 'Members', hideOnMobile: true },
+                    { key: 'team_count', label: 'Teams', hideOnMobile: true },
                     { 
                         key: 'status', 
                         label: 'Status', 

@@ -84,10 +84,11 @@ export default function CategoriesClient({ categories: initial }: { categories: 
             </div>
 
             <DataTable
+                useBemStyles={true}
                 columns={[
-                    { key: 'name', label: 'Category Name' },
+                    { key: 'name', label: 'Category Name', className: 'table__cell--bold' },
                     { key: 'exam_count', label: 'Exams' },
-                    { key: 'created_at', label: 'Created', render: (v) => new Date(v as string).toLocaleDateString('en-GB') },
+                    { key: 'created_at', label: 'Created', render: (v) => new Date(v as string).toLocaleDateString('en-GB'), className: 'table__cell--muted', hideOnMobile: true },
                 ]}
                 data={categories}
                 actions={getActions}

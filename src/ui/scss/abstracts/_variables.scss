@@ -1,13 +1,13 @@
 // CSS Variables - Design System
 :root {
     /* Colors */
-    --glo-blue: #4a6fa5;
-    --glo-blue-dark: #3a5a8a;
-    --glo-blue-header: #4f72a6;
-    --glo-blue-col: #5578a8;
-    --glo-blue-light: #658ac3;
-    --glo-blue-gradient: linear-gradient(135deg, #658ac3 0%, #4a6fa5 100%);
-    --glo-login-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --glo-blue: #1758b7;
+    --glo-blue-dark: #0d3a7a;
+    --glo-blue-header: #1758b7;
+    --glo-blue-col: #1758b7;
+    --glo-blue-light: #4a7cc7;
+    --glo-blue-gradient: linear-gradient(135deg, #1758b7 0%, #0d3a7a 100%);
+    --glo-login-gradient: linear-gradient(135deg, #1758b7 0%, #0d3a7a 100%);
     
     /* Neutral Colors */
     --white: #ffffff;
@@ -37,7 +37,7 @@
     --border: #d0d0d0;
     --border-light: #eee;
     --page-bg: #f0f0f0;
-    --content-bg: #f5f5f0;
+    --content-bg: #ffffff;
     
     /* Spacing */
     --spacing-xs: 4px;

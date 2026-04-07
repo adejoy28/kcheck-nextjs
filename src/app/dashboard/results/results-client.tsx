@@ -85,12 +85,13 @@ export default function ResultsClient({
                     </div>
 
                     <DataTable
+                        useBemStyles={true}
                         columns={[
-                            { key: 'exam_title', label: 'Test' },
-                            { key: 'batch_name', label: 'Batch', render: (v) => v || '—' },
-                            { key: 'completed_at', label: 'Completed', render: (v) => new Date(v).toLocaleString('en-GB') },
-                            { key: 'time_taken', label: 'Duration', render: formatDuration },
-                            { key: 'passing_score', label: 'Pass Mark', render: (v) => `${v}%` },
+                            { key: 'exam_title', label: 'Test', className: 'table__cell--bold' },
+                            { key: 'batch_name', label: 'Batch', render: (v) => v || '—', className: 'table__cell--muted', hideOnSmall: true },
+                            { key: 'completed_at', label: 'Completed', render: (v) => new Date(v).toLocaleString('en-GB'), hideOnMobile: true, className: 'table__cell--muted' },
+                            { key: 'time_taken', label: 'Duration', render: formatDuration, hideOnSmall: true },
+                            { key: 'passing_score', label: 'Pass Mark', render: (v) => `${v}%`, hideOnSmall: true },
                             { key: 'score', label: 'Score', render: (v, row) => `${v} / ${row.total_questions}` },
                             { 
                                 key: 'percentage', 
@@ -160,12 +161,13 @@ export default function ResultsClient({
                     </div>
 
                     <DataTable
+                        useBemStyles={true}
                         columns={[
-                            { key: 'category', label: 'Category' },
+                            { key: 'category', label: 'Category', className: 'table__cell--bold' },
                             { key: 'tests_taken', label: 'Tests Taken' },
-                            { key: 'total_time', label: 'Total Duration', render: (v) => formatDuration(Number(v)) },
-                            { key: 'total_questions', label: 'Total Questions' },
-                            { key: 'total_passed', label: 'Total Passed' },
+                            { key: 'total_time', label: 'Total Duration', render: (v) => formatDuration(Number(v)), hideOnSmall: true },
+                            { key: 'total_questions', label: 'Total Questions', hideOnMobile: true },
+                            { key: 'total_passed', label: 'Total Passed', hideOnMobile: true },
                             { 
                                 key: 'avg_percentage', 
                                 label: 'Avg %', 
