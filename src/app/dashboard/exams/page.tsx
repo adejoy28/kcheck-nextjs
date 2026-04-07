@@ -6,7 +6,7 @@ import ExamsClient from '@/app/dashboard/exams/exams-client'
 
 async function getExams() {
     try {
-        return await withRetry(() => sql`
+        return await withRetry(() => sql.query(`
             SELECT e.id, e.title, e.description, e.duration, e.passing_score,
                 e.is_active, e.retake_allowed, e.created_at,
                 c.name AS category_name, u.name AS created_by_name,
@@ -19,7 +19,7 @@ async function getExams() {
             LEFT JOIN results r ON r.exam_id = e.id
             GROUP BY e.id, c.name, u.name
             ORDER BY e.created_at DESC
-        `)
+        `))
     } catch (error) {
         console.error('[getExams]', error)
         return []

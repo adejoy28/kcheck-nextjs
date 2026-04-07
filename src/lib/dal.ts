@@ -19,11 +19,16 @@ export const verifySession = cache(async () => {
 })
 
 export const getUser = cache(async () => {
-    const session = await auth()
+    try {
+        const session = await auth()
 
-    if (!session?.user?.id) {
+        if (!session?.user?.id) {
+            redirect('/login')
+        }
+
+        return session.user
+    } catch (error) {
+        console.error('[DAL] Auth error, redirecting to login:', error)
         redirect('/login')
     }
-
-    return session.user
 })

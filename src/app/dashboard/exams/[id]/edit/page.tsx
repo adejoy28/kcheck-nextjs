@@ -6,17 +6,14 @@ import ExamForm from '@/app/dashboard/exams/exam-form'
 
 async function getExam(id: string) {
     try {
-        const [exam] = await withRetry(() => sql`
+        const [exam] = await withRetry(() => sql.query(`
             SELECT e.*, c.name AS category_name
             FROM exams e
             LEFT JOIN categories c ON e.category_id = c.id
-            WHERE e.id = ${id}
-        `)
+            WHERE e.id = ?
+        `, [id]))
         if (!exam) return null
-        const questions = await sql`
-            SELECT id, text, options, correct_answer, weight
-            FROM questions WHERE exam_id = ${id} ORDER BY id
-        `
+        const questions = await sql.query('SELECT id, text, options, correct_answer, weight FROM questions WHERE exam_id = ? ORDER BY id', [id])
         return { ...exam, questions }
     } catch (error) {
         console.error('[getExam]', error)
@@ -26,7 +23,7 @@ async function getExam(id: string) {
 
 async function getCategories() {
     try {
-        return await withRetry(() => sql`SELECT id, name FROM categories ORDER BY name`)
+        return await withRetry(() => sql.query('SELECT id, name FROM categories ORDER BY name'))
     } catch { return [] }
 }
 

@@ -6,12 +6,12 @@ import TakeExamClient from './take-exam-client'
 async function getExam(examId: string, userId: string) {
     try {
         // Fetch exam details first to check if it's a demo
-        const [examDetails] = await sql`
+        const [examDetails] = await sql.query(`
             SELECT id, title, description, duration, passing_score
             FROM exams
-            WHERE id = ${examId} AND is_active = true
+            WHERE id = ? AND is_active = true
             LIMIT 1
-        `
+        `, [examId])
         
         if (!examDetails) return { alreadyTaken: false, exam: null }
         
@@ -19,21 +19,12 @@ async function getExam(examId: string, userId: string) {
         const isDemo = examDetails.title === 'Demo Test'
         if (!isDemo) {
             // Check if already taken
-            const [existing] = await sql`
-                SELECT id FROM results
-                WHERE exam_id = ${examId} AND user_id = ${userId}
-                LIMIT 1
-            `
+            const [existing] = await sql.query('SELECT id FROM results WHERE exam_id = ? AND user_id = ? LIMIT 1', [examId, userId])
             if (existing) return { alreadyTaken: true, exam: null }
         }
 
         // Fetch exam with questions — strip correct answers
-        const questions = await sql`
-            SELECT id, text, options
-            FROM questions
-            WHERE exam_id = ${examId}
-            ORDER BY id
-        `
+        const questions = await sql.query('SELECT id, text, options FROM questions WHERE exam_id = ? ORDER BY id', [examId])
 
         return { alreadyTaken: false, exam: { ...examDetails, questions, isDemo } } as any
     } catch (error) {

@@ -13,7 +13,7 @@ export async function GET() {
         const session = await auth()
         if (!session?.user?.id) return NextResponse.json({ message: 'Unauthorised' }, { status: 401 })
 
-        const exams = await sql`
+        const exams = await sql.query(`
             SELECT
                 e.id, e.title, e.description, e.duration, e.passing_score,
                 e.is_active, e.retake_allowed, e.created_at,
@@ -28,7 +28,7 @@ export async function GET() {
             LEFT JOIN results r ON r.exam_id = e.id
             GROUP BY e.id, c.name, u.name
             ORDER BY e.created_at DESC
-        `
+        `)
         return NextResponse.json(exams)
     } catch (error) {
         console.error('[GET /api/exams]', error)
@@ -47,25 +47,25 @@ export async function POST(req: NextRequest) {
         if (!duration || duration < 1) return NextResponse.json({ message: 'Valid duration is required' }, { status: 400 })
         if (!questions || questions.length < 1) return NextResponse.json({ message: 'At least one question is required' }, { status: 400 })
 
-        const [exam] = await sql`
+        const result = await sql.query(`
             INSERT INTO exams (title, description, duration, passing_score, category_id, retake_allowed, created_by_id)
-            VALUES (
-                ${title.trim()},
-                ${description?.trim() || null},
-                ${duration},
-                ${passing_score || 50},
-                ${category_id || null},
-                ${retake_allowed || false},
-                ${session.user.id}
-            )
-            RETURNING id
-        `
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `, [
+            title.trim(),
+            description?.trim() || null,
+            duration,
+            passing_score || 50,
+            category_id || null,
+            retake_allowed || false,
+            session.user.id
+        ]) as any
+        const exam = { id: result.insertId }
 
         for (const q of questions) {
-            await sql`
+            await sql.query(`
                 INSERT INTO questions (text, options, correct_answer, weight, exam_id)
-                VALUES (${q.text}, ${q.options}, ${q.correct_answer}, ${q.weight || 1}, ${exam.id})
-            `
+                VALUES (?, ?, ?, ?, ?)
+            `, [q.text, q.options, q.correct_answer, q.weight || 1, exam.id])
         }
 
         return NextResponse.json({ message: 'Exam created', id: exam.id }, { status: 201 })

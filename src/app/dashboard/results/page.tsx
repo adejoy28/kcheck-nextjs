@@ -4,7 +4,7 @@ import ResultsClient from './results-client'
 
 async function getMyResults(userId: string) {
     try {
-        const rows = await sql`
+        const rows = await sql.query(`
             SELECT
                 r.id,
                 r.score,
@@ -20,9 +20,9 @@ async function getMyResults(userId: string) {
             FROM results r
             JOIN exams e ON r.exam_id = e.id
             LEFT JOIN batches b ON b.exam_id = e.id
-            WHERE r.user_id = ${userId}
+            WHERE r.user_id = ?
             ORDER BY r.completed_at DESC
-        `;
+        `, [userId]);
         return rows;
     } catch (error) {
         console.error('[getMyResults]', error);
@@ -32,21 +32,21 @@ async function getMyResults(userId: string) {
 
 async function getMyResultsByCategory(userId: string) {
     try {
-        const rows = await sql`
+        const rows = await sql.query(`
             SELECT
                 COALESCE(c.name, 'Uncategorised') AS category,
                 COUNT(r.id) AS tests_taken,
                 SUM(r.time_taken) AS total_time,
                 SUM(r.total_questions) AS total_questions,
                 SUM(CASE WHEN r.passed THEN 1 ELSE 0 END) AS total_passed,
-                ROUND(AVG(r.percentage)::numeric, 2) AS avg_percentage
+                ROUND(AVG(r.percentage), 2) AS avg_percentage
             FROM results r
             JOIN exams e ON r.exam_id = e.id
             LEFT JOIN categories c ON e.category_id = c.id
-            WHERE r.user_id = ${userId}
+            WHERE r.user_id = ?
             GROUP BY c.name
             ORDER BY c.name
-        `;
+        `, [userId]);
         return rows;
     } catch (error) {
         console.error('[getMyResultsByCategory]', error);

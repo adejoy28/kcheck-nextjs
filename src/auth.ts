@@ -80,7 +80,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 try {
                     
-                    // Retry logic for Neon cold starts
+                    // Retry logic for database connection
                     let users: { id: string; username: string; password: string; name: string; role: string; is_active: boolean }[] = [];
                     let attempts = 0;
                     const maxAttempts = 3;
@@ -88,11 +88,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     while (attempts < maxAttempts) {
                         try {
                             console.log(`[AUTH] Database attempt ${attempts + 1} for user: ${credentials.username}`)
-                            users = await sql`
+                            users = await sql.query(`
                                 SELECT * FROM users
-                                WHERE username = ${(credentials.username as string).toLowerCase()}
+                                WHERE username = ?
                                 LIMIT 1
-                            `
+                            `, [(credentials.username as string).toLowerCase()])
                             console.log(`[AUTH] Database query returned ${users.length} users`)
                             break; // Success, exit retry loop
                         } catch (dbError) {

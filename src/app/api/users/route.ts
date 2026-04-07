@@ -14,7 +14,7 @@ export async function GET() {
         const session = await requireAdmin()
         if (!session) return NextResponse.json({ message: 'Forbidden' }, { status: 403 })
 
-        const users = await sql`
+        const users = await sql.query(`
             SELECT
                 u.id, u.name, u.username, u.role, u.is_active,
                 u.phone, u.unit, u.access_group, u.created_at,
@@ -25,7 +25,7 @@ export async function GET() {
             LEFT JOIN results r ON r.user_id = u.id
             GROUP BY u.id, t.name
             ORDER BY u.created_at DESC
-        `
+        `)
         return NextResponse.json(users)
     } catch (error) {
         console.error('[GET /api/users]', error)
@@ -47,26 +47,26 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: 'Password must be at least 6 characters' }, { status: 400 })
         }
 
-        const existing = await sql`SELECT id FROM users WHERE username = ${username.toLowerCase().trim()}` 
+        const existing = await sql.query('SELECT id FROM users WHERE username = ?', [username.toLowerCase().trim()]) 
         if (existing.length > 0) {
             return NextResponse.json({ message: 'Username already exists' }, { status: 409 })
         }
 
         const hashed = await bcrypt.hash(password, 12)
-        const [user] = await sql`
+        const result = await sql.query(`
             INSERT INTO users (name, username, password, role, phone, unit, access_group, team_id)
-            VALUES (
-                ${name.trim()},
-                ${username.toLowerCase().trim()},
-                ${hashed},
-                ${role || 'STAFF'},
-                ${phone || null},
-                ${unit || null},
-                ${access_group || null},
-                ${team_id || null}
-            )
-            RETURNING id, name, username, role
-        `
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `, [
+            name.trim(),
+            username.toLowerCase().trim(),
+            hashed,
+            role || 'STAFF',
+            phone || null,
+            unit || null,
+            access_group || null,
+            team_id || null
+        ]) as any
+        const user = { id: result.insertId, name: name.trim(), username: username.toLowerCase().trim(), role: role || 'STAFF' }
         return NextResponse.json(user, { status: 201 })
     } catch (error) {
         console.error('[POST /api/users]', error)

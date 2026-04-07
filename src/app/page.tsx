@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 'use client'
 
 import { useEffect } from 'react'
@@ -27,10 +26,4 @@ export default function Home() {
       </div>
     </div>
   )
-=======
-import { redirect } from 'next/navigation'
-
-export default function Home() {
-  redirect('/dashboard')
->>>>>>> 9166d611faa5420ae02861ee07127e277e586174
 }

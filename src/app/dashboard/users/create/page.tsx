@@ -6,7 +6,7 @@ import UserForm from '../user-form'
 
 async function getTeams() {
     try {
-        return await withRetry(() => sql`SELECT id, name, unit FROM teams ORDER BY name`)
+        return await withRetry(() => sql.query('SELECT id, name, unit FROM teams ORDER BY name'))
     } catch { return [] }
 }
 

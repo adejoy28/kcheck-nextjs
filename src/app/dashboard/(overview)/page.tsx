@@ -18,7 +18,7 @@ interface Test {
 async function getAvailableTests(userId: string): Promise<Test[]> {
     try {
         const now = new Date().toISOString();
-        const rows = await sql`
+        const rows = await sql.query(`
             SELECT
                 e.id,
                 e.title,
@@ -28,29 +28,29 @@ async function getAvailableTests(userId: string): Promise<Test[]> {
                 b.start_date,
                 b.end_date,
                 CASE
-                    WHEN b.end_date < ${now} THEN 'expired'
-                    WHEN b.start_date > ${now} THEN 'upcoming'
+                    WHEN b.end_date < ? THEN 'expired'
+                    WHEN b.start_date > ? THEN 'upcoming'
                     ELSE 'active'
                 END AS status,
                 CASE
-                    WHEN r.id IS NULL AND b.end_date < ${now} THEN true
+                    WHEN r.id IS NULL AND b.end_date < ? THEN true
                     ELSE false
                 END AS is_missed
             FROM batches b
             JOIN exams e ON b.exam_id = e.id
-            LEFT JOIN results r ON r.exam_id = e.id AND r.user_id = ${userId}
+            LEFT JOIN results r ON r.exam_id = e.id AND r.user_id = ?
             WHERE (
-                b.id IN (SELECT batch_id FROM batch_members WHERE user_id = ${userId})
+                b.id IN (SELECT batch_id FROM batch_members WHERE user_id = ?)
                 OR
                 b.id IN (
                     SELECT bt.batch_id FROM batch_teams bt
                     JOIN users u ON u.team_id = bt.team_id
-                    WHERE u.id = ${userId}
+                    WHERE u.id = ?
                 )
             )
             AND r.id IS NULL
             ORDER BY b.end_date ASC
-        `;
+        `, [now, now, now, userId, userId, userId]);
         return rows as unknown as Test[];
     } catch (error) {
         console.error('[getAvailableTests]', error);

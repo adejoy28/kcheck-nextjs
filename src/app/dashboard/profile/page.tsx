@@ -3,7 +3,7 @@ import { getCurrentUser } from '@/lib/auth-utils';
 
 async function getUserProfile(userId: string) {
     try {
-        const [user] = await sql`
+        const [user] = await sql.query(`
             SELECT
                 u.id, u.name, u.username, u.phone, u.unit, u.access_group, u.role,
                 t.name AS team_name,
@@ -15,27 +15,27 @@ async function getUserProfile(userId: string) {
                     THEN ROUND(r.percentage * r.total_questions / 100)
                     ELSE 0 END
                 ), 0) AS total_questions_passed,
-                COALESCE(ROUND(AVG(r.percentage)::numeric, 2), 0) AS avg_percentage
+                COALESCE(ROUND(AVG(r.percentage), 2), 0) AS avg_percentage
             FROM users u
             LEFT JOIN teams t ON u.team_id = t.id
             LEFT JOIN results r ON r.user_id = u.id
-            WHERE u.id = ${userId}
+            WHERE u.id = ?
             GROUP BY u.id, t.name
-        `;
+        `, [userId]);
 
-        const totalBatches = await sql`
+        const totalBatches = await sql.query(`
             SELECT COUNT(DISTINCT b.id) AS total
             FROM batches b
             WHERE (
-                b.id IN (SELECT batch_id FROM batch_members WHERE user_id = ${userId})
+                b.id IN (SELECT batch_id FROM batch_members WHERE user_id = ?)
                 OR b.id IN (
                     SELECT bt.batch_id FROM batch_teams bt
                     JOIN users u ON u.team_id = bt.team_id
-                    WHERE u.id = ${userId}
+                    WHERE u.id = ?
                 )
             )
             AND b.end_date < NOW()
-        `;
+        `, [userId, userId]);
 
         const testsMissed = Number(totalBatches[0]?.total || 0) - Number(user?.tests_taken || 0);
         return { ...(user as any), tests_missed: Math.max(0, testsMissed) };

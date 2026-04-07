@@ -7,18 +7,18 @@ import UserResults from '@/app/dashboard/users/[id]/user-results'
 
 async function getUserWithResults(id: string) {
     try {
-        const [user] = await withRetry(() => sql`
+        const [user] = await withRetry(() => sql.query(`
             SELECT u.*, t.name AS team_name
-            FROM users u LEFT JOIN teams t ON u.team_id = t.id WHERE u.id = ${id}
-        `)
+            FROM users u LEFT JOIN teams t ON u.team_id = t.id WHERE u.id = ?
+        `, [id]))
         if (!user) return null
-        const results = await sql`
+        const results = await sql.query(`
             SELECT r.id, r.score, r.total_questions, r.percentage, r.passed,
                 r.time_taken, r.completed_at, e.id AS exam_id, e.title AS exam_title
             FROM results r JOIN exams e ON r.exam_id = e.id
-            WHERE r.user_id = ${id} ORDER BY r.completed_at DESC
-        `
-        const teams = await sql`SELECT id, name, unit FROM teams ORDER BY name` 
+            WHERE r.user_id = ? ORDER BY r.completed_at DESC
+        `, [id])
+        const teams = await sql.query('SELECT id, name, unit FROM teams ORDER BY name') 
         return { user, results, teams }
     } catch (error) {
         console.error('[getUserWithResults]', error)

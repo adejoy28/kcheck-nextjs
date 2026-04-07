@@ -6,11 +6,11 @@ import CategoriesClient from './categories-client'
 
 async function getCategories() {
     try {
-        return await withRetry(() => sql`
+        return await withRetry(() => sql.query(`
             SELECT id, name, created_at,
                 (SELECT COUNT(*) FROM exams WHERE category_id = categories.id) AS exam_count
             FROM categories ORDER BY name
-        `)
+        `))
     } catch (error) {
         console.error('[getCategories]', error)
         return []

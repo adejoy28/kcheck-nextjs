@@ -18,28 +18,28 @@ export async function GET(req: NextRequest) {
         const view = searchParams.get('view') || 'staff'
 
         if (view === 'exam') {
-            const rows = await sql`
+            const rows = await sql.query(`
                 SELECT
                     e.id AS exam_id,
                     e.title AS exam_title,
                     e.passing_score,
                     COUNT(DISTINCT r.id) AS total_attempts,
                     SUM(CASE WHEN r.passed THEN 1 ELSE 0 END) AS total_passed,
-                    ROUND(AVG(r.percentage)::numeric, 2) AS avg_percentage,
-                    ROUND((SUM(CASE WHEN r.passed THEN 1 ELSE 0 END)::numeric / NULLIF(COUNT(r.id), 0)) * 100, 2) AS pass_rate
+                    ROUND(AVG(r.percentage), 2) AS avg_percentage,
+                    ROUND((SUM(CASE WHEN r.passed THEN 1 ELSE 0 END) / NULLIF(COUNT(r.id), 0)) * 100, 2) AS pass_rate
                 FROM exams e
                 LEFT JOIN results r ON r.exam_id = e.id
-                WHERE (${examId}::text IS NULL OR e.id = ${examId})
-                AND (${from}::text IS NULL OR r.completed_at >= ${from}::timestamp)
-                AND (${to}::text IS NULL OR r.completed_at <= ${to}::timestamp)
+                WHERE (? IS NULL OR e.id = ?)
+                AND (? IS NULL OR r.completed_at >= ?)
+                AND (? IS NULL OR r.completed_at <= ?)
                 GROUP BY e.id, e.title, e.passing_score
                 ORDER BY e.title
-            `
+            `, [examId, examId, from, from, to, to])
             return NextResponse.json(rows)
         }
 
         // By staff view
-        const rows = await sql`
+        const rows = await sql.query(`
             SELECT
                 r.id, r.score, r.total_questions, r.percentage, r.passed,
                 r.time_taken, r.completed_at,
@@ -52,13 +52,13 @@ export async function GET(req: NextRequest) {
             JOIN exams e ON r.exam_id = e.id
             LEFT JOIN teams t ON u.team_id = t.id
             LEFT JOIN batches b ON b.exam_id = e.id
-            WHERE (${examId}::text IS NULL OR e.id = ${examId})
-            AND (${teamId}::text IS NULL OR t.id = ${teamId})
-            AND (${batchId}::text IS NULL OR b.id = ${batchId})
-            AND (${from}::text IS NULL OR r.completed_at >= ${from}::timestamp)
-            AND (${to}::text IS NULL OR r.completed_at <= ${to}::timestamp)
+            WHERE (? IS NULL OR e.id = ?)
+            AND (? IS NULL OR t.id = ?)
+            AND (? IS NULL OR b.id = ?)
+            AND (? IS NULL OR r.completed_at >= ?)
+            AND (? IS NULL OR r.completed_at <= ?)
             ORDER BY r.completed_at DESC
-        `
+        `, [examId, examId, teamId, teamId, batchId, batchId, from, from, to, to])
         return NextResponse.json(rows)
     } catch (error) {
         console.error('[GET /api/reports]', error)

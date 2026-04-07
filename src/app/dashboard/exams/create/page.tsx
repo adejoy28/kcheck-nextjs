@@ -6,7 +6,7 @@ import ExamForm from '@/app/dashboard/exams/exam-form'
 
 async function getCategories() {
     try {
-        return await withRetry(() => sql`SELECT id, name FROM categories ORDER BY name`)
+        return await withRetry(() => sql.query('SELECT id, name FROM categories ORDER BY name'))
     } catch { return [] }
 }
 

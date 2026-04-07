@@ -6,7 +6,7 @@ import BatchesClient from './batches-client'
 
 async function getBatches() {
     try {
-        return await withRetry(() => sql`
+        return await withRetry(() => sql.query(`
             SELECT b.id, b.name, b.start_date, b.end_date, b.is_active, b.created_at,
                 e.title AS exam_title,
                 COUNT(DISTINCT bm.user_id) AS member_count,
@@ -17,7 +17,7 @@ async function getBatches() {
             LEFT JOIN batch_teams bt ON bt.batch_id = b.id
             GROUP BY b.id, e.title
             ORDER BY b.created_at DESC
-        `)
+        `))
     } catch (error) {
         console.error('[getBatches]', error)
         return []

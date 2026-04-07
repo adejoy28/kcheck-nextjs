@@ -15,10 +15,10 @@ export async function POST(req: NextRequest) {
         }
 
         // Delete old result
-        await sql`DELETE FROM results WHERE user_id = ${user_id} AND exam_id = ${exam_id}` 
+        await sql.query('DELETE FROM results WHERE user_id = ? AND exam_id = ?', [user_id, exam_id]) 
 
         // Remove any existing retake request
-        await sql`DELETE FROM retake_requests WHERE user_id = ${user_id} AND exam_id = ${exam_id}` 
+        await sql.query('DELETE FROM retake_requests WHERE user_id = ? AND exam_id = ?', [user_id, exam_id]) 
 
         return NextResponse.json({ message: 'Retake granted. Old result deleted.' })
     } catch (error) {

@@ -7,9 +7,9 @@ import ReportsClient from '@/app/dashboard/reports/reports-client'
 async function getFilterOptions() {
     try {
         const [exams, teams, batches] = await Promise.all([
-            withRetry(() => sql`SELECT id, title FROM exams ORDER BY title`),
-            withRetry(() => sql`SELECT id, name FROM teams ORDER BY name`),
-            withRetry(() => sql`SELECT id, name FROM batches ORDER BY name`),
+            withRetry(() => sql.query('SELECT id, title FROM exams ORDER BY title')),
+            withRetry(() => sql.query('SELECT id, name FROM teams ORDER BY name')),
+            withRetry(() => sql.query('SELECT id, name FROM batches ORDER BY name')),
         ])
         return { exams, teams, batches }
     } catch (error) {

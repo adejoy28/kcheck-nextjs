@@ -8,7 +8,7 @@ import AdminClient from './admin-client'
 
 async function getAdminStats() {
     try {
-        const [stats] = await withRetry(() => sql`
+        const [stats] = await withRetry(() => sql.query(`
             SELECT
                 (SELECT COUNT(*) FROM exams) AS total_exams,
                 (SELECT COUNT(*) FROM exams WHERE is_active = true) AS active_exams,
@@ -17,7 +17,7 @@ async function getAdminStats() {
                 (SELECT COUNT(*) FROM results) AS total_results,
                 (SELECT COUNT(*) FROM results WHERE passed = true) AS total_passed,
                 (SELECT COUNT(*) FROM batches WHERE is_active = true AND end_date > NOW()) AS active_batches
-        `)
+        `))
         return stats
     } catch (error) {
         console.error('[getAdminStats]', error)
@@ -27,7 +27,7 @@ async function getAdminStats() {
 
 async function getRecentResults() {
     try {
-        return await withRetry(() => sql`
+        return await withRetry(() => sql.query(`
             SELECT
                 r.id, r.percentage, r.passed, r.completed_at,
                 u.name AS user_name,
@@ -37,7 +37,7 @@ async function getRecentResults() {
             JOIN exams e ON r.exam_id = e.id
             ORDER BY r.completed_at DESC
             LIMIT 10
-        `)
+        `))
     } catch (error) {
         console.error('[getRecentResults]', error)
         return []

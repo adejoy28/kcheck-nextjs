@@ -7,9 +7,9 @@ import BatchForm from '@/app/dashboard/batches/batch-form'
 async function getFormData() {
     try {
         const [exams, teams, users] = await Promise.all([
-            withRetry(() => sql`SELECT id, title FROM exams WHERE is_active = true ORDER BY title`),
-            withRetry(() => sql`SELECT id, name, unit FROM teams ORDER BY name`),
-            withRetry(() => sql`SELECT id, name, username, unit FROM users WHERE role = 'STAFF' AND is_active = true ORDER BY name`),
+            withRetry(() => sql.query('SELECT id, title FROM exams WHERE is_active = true ORDER BY title')),
+            withRetry(() => sql.query('SELECT id, name, unit FROM teams ORDER BY name')),
+            withRetry(() => sql.query('SELECT id, name, username, unit FROM users WHERE role = \'STAFF\' AND is_active = true ORDER BY name')),
         ])
         return { exams, teams, users }
     } catch (error) {

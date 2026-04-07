@@ -13,18 +13,18 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         const session = await auth()
         if (!session?.user?.id) return NextResponse.json({ message: 'Unauthorised' }, { status: 401 })
 
-        const [exam] = await sql`
+        const [exam] = await sql.query(`
             SELECT e.*, c.name AS category_name
             FROM exams e
             LEFT JOIN categories c ON e.category_id = c.id
-            WHERE e.id = ${params.id}
-        `
+            WHERE e.id = ?
+        `, [params.id])
         if (!exam) return NextResponse.json({ message: 'Not found' }, { status: 404 })
 
-        const questions = await sql`
+        const questions = await sql.query(`
             SELECT id, text, options, correct_answer, weight
-            FROM questions WHERE exam_id = ${params.id} ORDER BY id
-        `
+            FROM questions WHERE exam_id = ? ORDER BY id
+        `, [params.id])
         return NextResponse.json({ ...exam, questions })
     } catch (error) {
         console.error('[GET /api/exams/:id]', error)
@@ -39,26 +39,26 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
         const { title, description, duration, passing_score, category_id, retake_allowed, is_active, questions } = await req.json()
 
-        await sql`
+        await sql.query(`
             UPDATE exams SET
-                title = ${title},
-                description = ${description || null},
-                duration = ${duration},
-                passing_score = ${passing_score || 50},
-                category_id = ${category_id || null},
-                retake_allowed = ${retake_allowed || false},
-                is_active = ${is_active ?? true},
+                title = ?,
+                description = ?,
+                duration = ?,
+                passing_score = ?,
+                category_id = ?,
+                retake_allowed = ?,
+                is_active = ?,
                 updated_at = NOW()
-            WHERE id = ${params.id}
-        `
+            WHERE id = ?
+        `, [title, description || null, duration, passing_score || 50, category_id || null, retake_allowed || false, is_active ?? true, params.id])
 
         if (questions) {
-            await sql`DELETE FROM questions WHERE exam_id = ${params.id}` 
+            await sql.query('DELETE FROM questions WHERE exam_id = ?', [params.id]) 
             for (const q of questions) {
-                await sql`
+                await sql.query(`
                     INSERT INTO questions (text, options, correct_answer, weight, exam_id)
-                    VALUES (${q.text}, ${q.options}, ${q.correct_answer}, ${q.weight || 1}, ${params.id})
-                `
+                    VALUES (?, ?, ?, ?, ?)
+                `, [q.text, q.options, q.correct_answer, q.weight || 1, params.id])
             }
         }
 
@@ -74,8 +74,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
         const session = await requireAdmin()
         if (!session) return NextResponse.json({ message: 'Forbidden' }, { status: 403 })
 
-        await sql`DELETE FROM results WHERE exam_id = ${params.id}` 
-        await sql`DELETE FROM exams WHERE id = ${params.id}` 
+        await sql.query('DELETE FROM results WHERE exam_id = ?', [params.id]) 
+        await sql.query('DELETE FROM exams WHERE id = ?', [params.id]) 
 
         return NextResponse.json({ message: 'Exam deleted' })
     } catch (error) {

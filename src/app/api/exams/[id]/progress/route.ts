@@ -13,7 +13,7 @@ export async function GET(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const progress = await sql`
+        const progress = await sql.query(`
             SELECT 
                 current_question_index,
                 answers,
@@ -22,12 +22,12 @@ export async function GET(
                 last_updated,
                 is_completed
             FROM exam_progress
-            WHERE user_id = ${session.user.id} 
-            AND exam_id = ${params.id}
+            WHERE user_id = ? 
+            AND exam_id = ?
             AND is_completed = FALSE
             ORDER BY last_updated DESC
             LIMIT 1
-        `
+        `, [session.user.id, params.id])
 
         if (progress.length === 0) {
             return NextResponse.json({ progress: null })
@@ -38,11 +38,11 @@ export async function GET(
         const ageInHours = (Date.now() - new Date(progressData.last_updated).getTime()) / (1000 * 60 * 60)
         if (ageInHours > 24) {
             // Delete old progress and return null
-            await sql`
+            await sql.query(`
                 DELETE FROM exam_progress
-                WHERE user_id = ${session.user.id} 
-                AND exam_id = ${params.id}
-            `
+                WHERE user_id = ? 
+                AND exam_id = ?
+            `, [session.user.id, params.id])
             return NextResponse.json({ progress: null })
         }
 
@@ -89,7 +89,7 @@ export async function POST(
         }
 
         // Upsert progress
-        await sql`
+        await sql.query(`
             INSERT INTO exam_progress (
                 user_id, 
                 exam_id, 
@@ -98,20 +98,21 @@ export async function POST(
                 time_left,
                 last_updated
             ) VALUES (
-                ${session.user.id},
-                ${params.id},
-                ${currentQuestionIndex},
-                ${JSON.stringify(answers)},
-                ${timeLeft},
-                NOW()
+                ?, ?, ?, ?, ?, ?
             )
-            ON CONFLICT (user_id, exam_id)
-            DO UPDATE SET
-                current_question_index = EXCLUDED.current_question_index,
-                answers = EXCLUDED.answers,
-                time_left = EXCLUDED.time_left,
+            ON DUPLICATE KEY UPDATE
+                current_question_index = VALUES(current_question_index),
+                answers = VALUES(answers),
+                time_left = VALUES(time_left),
                 last_updated = NOW()
-        `
+        `, [
+            session.user.id,
+            params.id,
+            currentQuestionIndex,
+            JSON.stringify(answers),
+            timeLeft,
+            new Date().toISOString()
+        ])
 
         return NextResponse.json({ success: true })
     } catch (error) {
@@ -137,11 +138,11 @@ export async function DELETE(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        await sql`
+        await sql.query(`
             DELETE FROM exam_progress
-            WHERE user_id = ${session.user.id} 
-            AND exam_id = ${params.id}
-        `
+            WHERE user_id = ? 
+            AND exam_id = ?
+        `, [session.user.id, params.id])
 
         return NextResponse.json({ success: true })
     } catch (error) {

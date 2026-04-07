@@ -6,7 +6,7 @@ import UsersClient from '@/app/dashboard/users/users-client'
 
 async function getUsers() {
     try {
-        return await withRetry(() => sql`
+        return await withRetry(() => sql.query(`
             SELECT
                 u.id, u.name, u.username, u.role, u.is_active,
                 u.phone, u.unit, u.access_group, u.created_at,
@@ -17,7 +17,7 @@ async function getUsers() {
             LEFT JOIN results r ON r.user_id = u.id
             GROUP BY u.id, t.name
             ORDER BY u.created_at DESC
-        `)
+        `))
     } catch (error) {
         console.error('[getUsers]', error)
         return []

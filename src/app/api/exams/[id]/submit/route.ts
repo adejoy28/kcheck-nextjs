@@ -32,9 +32,7 @@ export async function POST(
         }
 
         // Fetch exam with correct answers and check if it's a demo
-        const [exam] = await sql`
-            SELECT id, title, passing_score FROM exams WHERE id = ${examId}
-        `
+        const [exam] = await sql.query('SELECT id, title, passing_score FROM exams WHERE id = ?', [examId])
         if (!exam) {
             return NextResponse.json({ message: 'Exam not found' }, { status: 404 })
         }
@@ -44,10 +42,7 @@ export async function POST(
         // For demo exams, skip the "already taken" check
         if (!isDemo) {
             // Check already taken
-            const [existing] = await sql`
-                SELECT id FROM results
-                WHERE exam_id = ${examId} AND user_id = ${userId}
-            `
+            const [existing] = await sql.query('SELECT id FROM results WHERE exam_id = ? AND user_id = ?', [examId, userId])
             if (existing) {
                 return NextResponse.json(
                     { message: 'You have already taken this exam' },
@@ -56,22 +51,15 @@ export async function POST(
             }
 
             // Check retake request
-            const [retake] = await sql`
-                SELECT id FROM retake_requests
-                WHERE exam_id = ${examId} AND user_id = ${userId}
-            `
+            const [retake] = await sql.query('SELECT id FROM retake_requests WHERE exam_id = ? AND user_id = ?', [examId, userId])
             if (retake) {
                 // Delete old result and retake request
-                await sql`DELETE FROM results WHERE exam_id = ${examId} AND user_id = ${userId}` 
-                await sql`DELETE FROM retake_requests WHERE exam_id = ${examId} AND user_id = ${userId}` 
+                await sql.query('DELETE FROM results WHERE exam_id = ? AND user_id = ?', [examId, userId]) 
+                await sql.query('DELETE FROM retake_requests WHERE exam_id = ? AND user_id = ?', [examId, userId]) 
             }
         }
 
-        const questions = await sql`
-            SELECT id, correct_answer, weight FROM questions
-            WHERE exam_id = ${examId}
-            ORDER BY id
-        `
+        const questions = await sql.query('SELECT id, correct_answer, weight FROM questions WHERE exam_id = ? ORDER BY id', [examId])
 
         if (questions.length === 0) {
             return NextResponse.json(
@@ -101,10 +89,10 @@ export async function POST(
 
         // Save result only for non-demo exams
         if (!isDemo) {
-            await sql`
+            await sql.query(`
                 INSERT INTO results (user_id, exam_id, score, total_questions, percentage, passed, time_taken, answers)
-                VALUES (${userId}, ${examId}, ${score}, ${total}, ${percentage}, ${passed}, ${timeTaken}, ${JSON.stringify(answers)})
-            `
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `, [userId, examId, score, total, percentage, passed, timeTaken, JSON.stringify(answers)])
         }
 
         return NextResponse.json({ 

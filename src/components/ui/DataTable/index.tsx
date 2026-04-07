@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 export interface Column<T = Record<string, unknown>> {
   key: keyof T
@@ -24,10 +25,13 @@ interface DataTableProps<T = Record<string, unknown>> {
   cardBreakpoint?: number
   actions?: (row: T) => Action<T>[]
   className?: string
+  useBemStyles?: boolean
 }
 
 function ActionDropdown<T>({ row, actions }: { row: T; actions: Action<T>[] }) {
   const [isOpen, setIsOpen] = useState(false)
+  const buttonRef = React.useRef<HTMLButtonElement>(null)
+  const dropdownRef = React.useRef<HTMLDivElement>(null)
 
   const dropdownStyles = {
     actionDropdown: 'admin-actions',
@@ -35,6 +39,18 @@ function ActionDropdown<T>({ row, actions }: { row: T; actions: Action<T>[] }) {
     dropdownMenu: 'dropdown-menu',
     dropdownItem: 'dropdown-item'
   }
+
+  const [dropdownPosition, setDropdownPosition] = React.useState({ top: 0, left: 0 })
+
+  React.useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setDropdownPosition({
+        top: rect.bottom + 4,
+        left: rect.left
+      })
+    }
+  }, [isOpen])
 
   return (
     <>

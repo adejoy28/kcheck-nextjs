@@ -15,12 +15,12 @@ export async function GET() {
         if (!session) {
             return NextResponse.json({ message: 'Unauthorised' }, { status: 401 })
         }
-        const categories = await sql`
+        const categories = await sql.query(`
             SELECT id, name, created_at,
                 (SELECT COUNT(*) FROM exams WHERE category_id = categories.id) AS exam_count
             FROM categories
             ORDER BY name ASC
-        `
+        `)
         return NextResponse.json(categories)
     } catch (error) {
         console.error('[GET /api/categories]', error)
@@ -38,11 +38,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: 'Category name is required' }, { status: 400 })
         }
 
-        const [category] = await sql`
-            INSERT INTO categories (name) VALUES (${name.trim()})
-            ON CONFLICT (name) DO NOTHING
-            RETURNING id, name
-        `
+        const result = await sql.query(`
+            INSERT INTO categories (name) VALUES (?)
+        `, [name.trim()]) as any
+        const category = { id: result.insertId, name: name.trim() }
         if (!category) {
             return NextResponse.json({ message: 'Category already exists' }, { status: 409 })
         }
@@ -59,7 +58,7 @@ export async function DELETE(req: NextRequest) {
         if (!session) return NextResponse.json({ message: 'Forbidden' }, { status: 403 })
 
         const { id } = await req.json()
-        await sql`DELETE FROM categories WHERE id = ${id}` 
+        await sql.query('DELETE FROM categories WHERE id = ?', [id]) 
         return NextResponse.json({ message: 'Category deleted' })
     } catch (error) {
         console.error('[DELETE /api/categories]', error)
