@@ -11,16 +11,32 @@ const nextConfig = {
       '.js': ['.js', '.ts', '.tsx'],
     };
 
-    // Handle node: imports by stripping the prefix
+    // Handle node: imports by stripping the prefix for common Node.js modules
+    const nodeModules = [
+      'diagnostics_channel',
+      'events',
+      'stream',
+      'util',
+      'buffer',
+      'crypto',
+      'net',
+      'tls',
+      'fs',
+      'path',
+      'os',
+      'url',
+      'querystring',
+      'zlib',
+      'http',
+      'https',
+      'assert'
+    ];
+
     config.resolve.alias = {
       ...config.resolve.alias,
-      "node:diagnostics_channel": "diagnostics_channel",
-    };
-
-    // Ignore node: modules that aren't available
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      "node:diagnostics_channel": false,
+      ...Object.fromEntries(
+        nodeModules.map(module => [`node:${module}`, module])
+      ),
     };
 
     // Handle MySQL2 for client-side build
@@ -29,6 +45,25 @@ const nextConfig = {
         ...config.resolve.fallback,
         "mysql2": false,
         "mysql2/promise": false,
+        "fs": false,
+        "net": false,
+        "tls": false,
+        "crypto": false,
+        "stream": false,
+        "url": false,
+        "zlib": false,
+        "http": false,
+        "https": false,
+        "assert": false,
+        "os": false,
+        "path": false,
+      };
+      
+      // Exclude mysql2 from client bundle
+      config.externals = {
+        ...config.externals,
+        'mysql2': 'mysql2',
+        'mysql2/promise': 'mysql2/promise',
       };
     }
 
