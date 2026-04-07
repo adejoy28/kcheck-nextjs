@@ -37,15 +37,32 @@ function ActionDropdown<T>({ row, actions }: { row: T; actions: Action<T>[] }) {
   }
 
   return (
-    <div className={dropdownStyles.actionDropdown}>
-      <button 
-        className={dropdownStyles.dropdownToggle}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        Actions ▼
-      </button>
-      {isOpen && (
-        <div className={dropdownStyles.dropdownMenu}>
+    <>
+      <div className={dropdownStyles.actionDropdown}>
+        <button 
+          ref={buttonRef}
+          className={dropdownStyles.dropdownToggle}
+          onClick={() => setIsOpen(!isOpen)}
+          type="button"
+          aria-haspopup="true"
+          aria-expanded={isOpen}
+        >
+          Actions ▼
+        </button>
+      </div>
+      
+      {isOpen && createPortal(
+        <div 
+          ref={dropdownRef}
+          className={dropdownStyles.dropdownMenu}
+          style={{
+            position: 'fixed',
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+            right: 'auto',
+            zIndex: 1000
+          }}
+        >
           {actions.map((action, index) => (
             <button
               key={index}
@@ -54,13 +71,15 @@ function ActionDropdown<T>({ row, actions }: { row: T; actions: Action<T>[] }) {
                 action.onClick(row)
                 setIsOpen(false)
               }}
+              type="button"
             >
               {action.label}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   )
 }
 

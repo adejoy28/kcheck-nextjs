@@ -59,6 +59,7 @@ export default function LoginForm() {
 
             showToast('Login successful', 'success')
             window.location.href = redirectUrl
+            window.location.href = redirectUrl
         } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
             setLoading(false)
             setError('Login failed. Please try again.')

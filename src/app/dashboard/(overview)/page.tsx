@@ -48,6 +48,7 @@ async function getAvailableTests(userId: string): Promise<Test[]> {
                     WHERE u.id = ${userId}
                 )
             )
+            AND r.id IS NULL
             ORDER BY b.end_date ASC
         `;
         return rows as unknown as Test[];

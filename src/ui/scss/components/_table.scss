@@ -18,8 +18,12 @@
         border-radius: 12px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         
         @include respond-to(desktop) {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
         }
         
@@ -28,6 +32,7 @@
             background: transparent;
             border-radius: 0;
             margin: var(--spacing-sm);
+            box-shadow: none;
             box-shadow: none;
         }
         
@@ -204,8 +209,12 @@
     &__row {
         border-bottom: 1px solid var(--border-light);
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         
         &:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             background: #f8fafc;
             transform: translateY(-1px);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -217,6 +226,7 @@
         font-size: var(--font-size-sm);
         color: var(--gray-800);
         border-right: 1px solid var(--border-light);
+        transition: all 0.2s ease;
         transition: all 0.2s ease;
         
         &:last-child {
@@ -238,6 +248,15 @@
             font-size: var(--font-size-xs);
         }
         
+        &--bold { 
+            font-weight: var(--font-weight-semibold); 
+            color: var(--glo-blue-dark); 
+        }
+        
+        &--muted { 
+            color: var(--gray-600); 
+            font-size: var(--font-size-xs); 
+        }
         &--bold { 
             font-weight: var(--font-weight-semibold); 
             color: var(--glo-blue-dark); 
@@ -307,6 +326,10 @@
         border-radius: var(--radius-md);
         margin: var(--spacing-md) 0;
         font-style: italic;
+        background: white;
+        border-radius: var(--radius-md);
+        margin: var(--spacing-md) 0;
+        font-style: italic;
     }
     
     // Responsive column hiding
@@ -336,10 +359,20 @@
         
         tr {
             background: white;
+            background: white;
             border: 1px solid var(--border-light);
             border-radius: var(--radius-md);
             margin-bottom: var(--spacing-md);
             padding: var(--spacing-md);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            }
+            
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
@@ -363,6 +396,12 @@
             padding: var(--spacing-sm) 0;
             flex: 1;
             min-width: 0;
+            transition: background-color 0.2s ease;
+            
+            &:hover {
+                background: rgba(59, 130, 246, 0.02);
+                border-radius: var(--radius-sm);
+            }
             transition: background-color 0.2s ease;
             
             &:hover {
@@ -408,6 +447,15 @@
                     transform: translateY(-1px);
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 }
+                padding: 4px 10px;
+                border-radius: var(--radius-sm);
+                font-weight: var(--font-weight-medium);
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
             }
             
             .admin-actions {
@@ -419,6 +467,14 @@
             
             .admin-action-btn {
                 font-size: var(--font-size-xs);
+                padding: 8px 12px;
+                border-radius: var(--radius-sm);
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
                 padding: 8px 12px;
                 border-radius: var(--radius-sm);
                 transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
