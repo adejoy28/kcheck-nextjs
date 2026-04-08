@@ -60,9 +60,9 @@
 //         await connection.execute(`
 //             INSERT INTO users (id, name, username, password, role, phone, unit, access_group, team_id, created_at) VALUES
 //             (1, 'Admin User', 'admin', ?, 'ADMIN', NULL, NULL, 'Administrator', NULL, NOW()),
-//             (2, 'John Doe', 'jdoe', ?, 'STAFF', '08012345678', 'Customer Care', 'Team Member', 1, NOW()),
-//             (3, 'Alice Smith', 'asmith', ?, 'STAFF', '08087654321', 'Customer Care', 'Team Member', 2, NOW()),
-//             (4, 'Bob Jones', 'bjones', ?, 'STAFF', '08055566677', 'Network Operations', 'Team Member', 3, NOW())
+//             (2, 'John Adebayo', 'JA254510', ?, 'STAFF', '08012345678', 'Customer Care', 'Team Member', 1, NOW()),
+//             (3, 'Alice Smith', 'AS332213', ?, 'STAFF', '08087654321', 'Customer Care', 'Team Member', 2, NOW()),
+//             (4, 'Bob Jones', 'BJ435336', ?, 'STAFF', '08055566677', 'Network Operations', 'Team Member', 3, NOW())
 //         `, [adminPassword, staffPassword, staffPassword, staffPassword])
 
 //         // Insert exams (matching seed.ts exactly)
@@ -356,8 +356,8 @@
 //         console.log('Seed complete. Test accounts:')
 //         console.log('  Admin   -> username: admin   password: admin123')
 //         console.log('  Staff 1 -> username: JA254510    password: staff123')
-//         console.log('  Staff 2 -> username: SO332213  password: staff123')
-//         console.log('  Staff 3 -> username: MF435T6  password: staff123')
+//         console.log('  Staff 2 -> username: AS332213  password: staff123')
+//         console.log('  Staff 3 -> username: BJ435336  password: staff123')
 
 //     } catch (error) {
 //         console.error('Error reseeding database:', error)

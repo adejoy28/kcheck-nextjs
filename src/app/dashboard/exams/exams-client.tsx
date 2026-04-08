@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { showToast } from '@/ui/dashboard/toast'
-import { DataTable, Column, Action } from '@/components/ui/DataTable'
+import { DataTable, Column, Action } from '@/components/ui/DataTable/index'
 
 export default function ExamsClient({ exams: initial }: { exams: any[] }) {
     const [exams, setExams] = useState(initial)
@@ -40,11 +39,11 @@ export default function ExamsClient({ exams: initial }: { exams: any[] }) {
             const data = await res.json()
             if (res.ok) {
                 setExams(prev => prev.map(e => e.id === id ? { ...e, is_active: data.is_active } : e))
-                showToast(`Exam ${data.is_active ? 'activated' : 'deactivated'}`, 'success')
+                // showToast(`Exam ${data.is_active ? 'activated' : 'deactivated'}`, 'success')
             } else {
-                showToast(data.message, 'error')
+                // showToast(data.message, 'error')
             }
-        } catch { showToast('Failed to update exam', 'error') }
+        } catch { /* showToast('Failed to update exam', 'error') */ }
     }
 
     async function deleteExam(id: string, title: string) {
@@ -53,12 +52,12 @@ export default function ExamsClient({ exams: initial }: { exams: any[] }) {
             const res = await fetch(`/api/exams/${id}`, { method: 'DELETE' })
             if (res.ok) {
                 setExams(prev => prev.filter(e => e.id !== id))
-                showToast('Exam deleted', 'success')
+                // showToast('Exam deleted', 'success')
             } else {
                 const data = await res.json()
-                showToast(data.message, 'error')
+                // showToast(data.message, 'error')
             }
-        } catch { showToast('Failed to delete exam', 'error') }
+        } catch { /* showToast('Failed to delete exam', 'error') */ }
     }
 
     return (

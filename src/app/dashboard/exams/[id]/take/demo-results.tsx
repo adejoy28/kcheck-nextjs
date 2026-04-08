@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { DataTable } from '@/components/ui/DataTable'
+import { DataTable } from '@/components/ui/DataTable/index'
 
 interface DemoResultsPageProps {
     score: number

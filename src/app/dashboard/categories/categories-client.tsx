@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { showToast } from '@/ui/dashboard/toast'
-import { DataTable, Column, Action } from '@/components/ui/DataTable'
+import { DataTable, Column, Action } from '@/components/ui/DataTable/index'
 
 export default function CategoriesClient({ categories: initial }: { categories: any[] }) {
     const [categories, setCategories] = useState(initial)
@@ -23,11 +22,11 @@ export default function CategoriesClient({ categories: initial }: { categories: 
             if (res.ok) {
                 setCategories(prev => [...prev, { ...data, exam_count: 0 }])
                 setNewName('')
-                showToast('Category created', 'success')
+                // showToast('Category created', 'success')
             } else {
-                showToast(data.message, 'error')
+                // showToast(data.message, 'error')
             }
-        } catch { showToast('Failed to create category', 'error') }
+        } catch { /* showToast('Failed to create category', 'error') */ }
         setSaving(false)
     }
 
@@ -41,7 +40,7 @@ export default function CategoriesClient({ categories: initial }: { categories: 
 
     async function handleDelete(id: string, name: string, examCount: number) {
         if (examCount > 0) {
-            showToast(`Cannot delete "${name}" — it has ${examCount} exam(s) assigned`, 'error')
+            // showToast(`Cannot delete "${name}" — it has ${examCount} exam(s) assigned`, 'error')
             return
         }
         if (!confirm(`Delete category "${name}"?`)) return
@@ -53,12 +52,12 @@ export default function CategoriesClient({ categories: initial }: { categories: 
             })
             if (res.ok) {
                 setCategories(prev => prev.filter(c => c.id !== id))
-                showToast('Category deleted', 'success')
+                // showToast('Category deleted', 'success')
             } else {
                 const data = await res.json()
-                showToast(data.message, 'error')
+                // showToast(data.message, 'error')
             }
-        } catch { showToast('Failed to delete category', 'error') }
+        } catch { /* showToast('Failed to delete category', 'error') */ }
     }
 
     return (

@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { showToast } from '@/ui/dashboard/toast'
-import { DataTable, Action } from '@/components/ui/DataTable'
+import { DataTable, Action } from '@/components/ui/DataTable/index'
 
 export default function UsersClient({ users: initial }: { users: any[] }) {
     const [users, setUsers] = useState(initial)
@@ -36,11 +35,11 @@ export default function UsersClient({ users: initial }: { users: any[] }) {
             const data = await res.json()
             if (res.ok) {
                 setUsers(prev => prev.map(u => u.id === id ? { ...u, is_active: data.is_active } : u))
-                showToast(`User ${data.is_active ? 'activated' : 'deactivated'}`, 'success')
+                // showToast(`User ${data.is_active ? 'activated' : 'deactivated'}`, 'success')
             } else {
-                showToast(data.message, 'error')
+                // showToast(data.message, 'error')
             }
-        } catch { showToast('Failed to update user', 'error') }
+        } catch { /* showToast('Failed to update user', 'error') */ }
     }
 
     return (
