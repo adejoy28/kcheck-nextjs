@@ -7,15 +7,19 @@ const nextConfig = {
   },
   // Prevent mysql2 from being bundled for client-side (Next.js 14.2.35 requires experimental)
   experimental: {
-    serverComponentsExternalPackages: ['mysql2'],
+    serverComponentsExternalPackages: ['mysql2', 'bcryptjs'],
   },
   webpack: (config, { isServer }) => {
-    // Handle MySQL2 for client-side build
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        "mysql2": false,
-        "mysql2/promise": false,
+        net: false,
+        tls: false,
+        fs: false,
+        dns: false,
+        crypto: false,
+        stream: false,
+        'diagnostics_channel': false,
       };
     }
 
