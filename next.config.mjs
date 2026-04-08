@@ -5,8 +5,10 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  // Prevent mysql2 from being bundled for client-side
-  serverExternalPackages: ['mysql2'],
+  // Prevent mysql2 from being bundled for client-side (Next.js 14.2.35 requires experimental)
+  experimental: {
+    serverComponentsExternalPackages: ['mysql2'],
+  },
   webpack: (config, { isServer }) => {
     // Handle MySQL2 for client-side build
     if (!isServer) {
