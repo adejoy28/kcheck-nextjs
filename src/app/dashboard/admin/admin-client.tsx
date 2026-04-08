@@ -1,6 +1,6 @@
 'use client'
 
-import { DataTable, Column } from '@/components/ui/DataTable/index'
+import { DataTable, Column } from '@/components/ui/DataTable'
 
 interface AdminResult {
     user_name: string

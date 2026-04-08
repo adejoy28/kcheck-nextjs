@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { DataTable, Column, Action } from '@/components/ui/DataTable/index'
+import { DataTable, Column, Action } from '@/components/ui/DataTable'
 
 export default function CategoriesClient({ categories: initial }: { categories: any[] }) {
     const [categories, setCategories] = useState(initial)

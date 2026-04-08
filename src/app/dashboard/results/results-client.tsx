@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { DataTable } from '@/components/ui/DataTable/index'
+import { DataTable } from '@/components/ui/DataTable'
 
 function formatDuration(seconds: number) {
     const m = Math.floor(seconds / 60)
