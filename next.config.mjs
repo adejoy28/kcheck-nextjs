@@ -10,6 +10,7 @@ const nextConfig = {
     serverComponentsExternalPackages: ['mysql2', 'bcryptjs'],
   },
   webpack: (config, { isServer }) => {
+    // Handle node: scheme imports
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -20,6 +21,19 @@ const nextConfig = {
         crypto: false,
         stream: false,
         'diagnostics_channel': false,
+      };
+
+      // Add node: scheme handling
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'node:diagnostics_channel': false,
+      };
+
+      // Externalize mysql2 completely for client builds
+      config.externals = {
+        ...config.externals,
+        mysql2: 'mysql2',
+        'mysql2/promise': 'mysql2/promise',
       };
     }
 
