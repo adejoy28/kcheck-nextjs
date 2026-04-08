@@ -140,7 +140,6 @@ export default function ExamForm({ categories, exam }: Props) {
                 <div className="exam-details-section">
                     <div className="questions-header">
                         <h3>Questions ({questions.length})</h3>
-                        <button type="button" className="btn btn--outline btn--sm" onClick={addQuestion}>+ Add Question</button>
                     </div>
                     
                     {questions.map((q, qIndex) => (
@@ -194,6 +193,10 @@ export default function ExamForm({ categories, exam }: Props) {
                             </div>
                         </div>
                     ))}
+                    
+                    <div className="form-actions" style={{ marginTop: 'var(--spacing-lg)', borderTop: '1px solid var(--border)', paddingTop: 'var(--spacing-lg)' }}>
+                        <button type="button" className="btn btn--outline btn--sm" onClick={addQuestion}>+ Add Question</button>
+                    </div>
                 </div>
             </div>
 

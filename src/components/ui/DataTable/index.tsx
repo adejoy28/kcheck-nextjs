@@ -28,10 +28,14 @@ interface DataTableProps<T = Record<string, unknown>> {
   useBemStyles?: boolean
 }
 
+// Global state to track open dropdown
+let openDropdownId: string | null = null
+
 function ActionDropdown<T>({ row, actions }: { row: T; actions: Action<T>[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = React.useRef<HTMLButtonElement>(null)
   const dropdownRef = React.useRef<HTMLDivElement>(null)
+  const dropdownId = React.useId() // Unique ID for this dropdown
 
   const dropdownStyles = {
     actionDropdown: 'admin-actions',
@@ -52,40 +56,93 @@ function ActionDropdown<T>({ row, actions }: { row: T; actions: Action<T>[] }) {
     }
   }, [isOpen])
 
+  // Close other dropdowns when this one opens
+  const handleToggle = () => {
+    if (openDropdownId && openDropdownId !== dropdownId) {
+      // Close the other dropdown by dispatching a custom event
+      window.dispatchEvent(new CustomEvent('closeDropdowns', { detail: { exceptId: dropdownId } }))
+    }
+    
+    if (openDropdownId === dropdownId) {
+      setIsOpen(false)
+      openDropdownId = null
+    } else {
+      setIsOpen(true)
+      openDropdownId = dropdownId
+    }
+  }
+
+  // Listen for close dropdowns event
+  React.useEffect(() => {
+    const handleCloseDropdowns = (e: CustomEvent) => {
+      if (e.detail.exceptId !== dropdownId) {
+        setIsOpen(false)
+      }
+    }
+
+    window.addEventListener('closeDropdowns', handleCloseDropdowns as EventListener)
+    return () => {
+      window.removeEventListener('closeDropdowns', handleCloseDropdowns as EventListener)
+    }
+  }, [dropdownId])
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && dropdownRef.current && !dropdownRef.current.contains(event.target as Node) && buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+        if (openDropdownId === dropdownId) {
+          openDropdownId = null
+        }
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen, dropdownId])
+
   return (
     <>
       <div className={dropdownStyles.actionDropdown}>
         <button 
           ref={buttonRef}
-          className={dropdownStyles.dropdownToggle}
-          onClick={() => setIsOpen(!isOpen)}
+          className="btn btn--sm btn--secondary"
+          onClick={handleToggle}
           type="button"
           aria-haspopup="true"
           aria-expanded={isOpen}
         >
-          Actions ▼
+          Actions <span className="btn__arrow">▼</span>
         </button>
       </div>
       
       {isOpen && createPortal(
         <div 
           ref={dropdownRef}
-          className={dropdownStyles.dropdownMenu}
+          className="topbar__dropdown"
           style={{
             position: 'fixed',
             top: `${dropdownPosition.top}px`,
             left: `${dropdownPosition.left}px`,
             right: 'auto',
-            zIndex: 1000
+            zIndex: 'var(--z-dropdown)',
+            opacity: 1,
+            visibility: 'visible',
+            transform: 'translateY(0)'
           }}
         >
           {actions.map((action, index) => (
             <button
               key={index}
-              className={dropdownStyles.dropdownItem}
+              className={`topbar__dropdown-item ${action.variant === 'danger' ? 'topbar__dropdown-item--danger' : ''}`}
               onClick={() => {
                 action.onClick(row)
                 setIsOpen(false)
+                if (openDropdownId === dropdownId) {
+                  openDropdownId = null
+                }
               }}
               type="button"
             >

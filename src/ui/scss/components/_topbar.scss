@@ -1,6 +1,6 @@
 // Topbar Component
 .topbar {
-    height: 44px;
+    height: 54px;
     background: var(--glo-blue);
     display: flex;
     align-items: center;
@@ -162,7 +162,7 @@
     
     // Mobile Responsive Styles
     @media (max-width: 767px) {
-        height: 44px;
+        height: 50px;
         padding: 0 var(--spacing-sm);
         
         &__left {

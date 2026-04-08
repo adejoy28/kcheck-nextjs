@@ -1,9 +1,10 @@
 import Image from 'next/image';
-import { signOut } from '@/auth';
+import { logout } from '@/lib/actions';
 import { ChevronDown, LogOut } from 'lucide-react';
 import Hamburger from '@/ui/dashboard/hamburger';
+import Link from 'next/link';
 
-export default async function TopBar({ user }: { user: { name?: string; role?: string } }) {
+export default function TopBar({ user }: { user: { name?: string; role?: string } }) {
     const userName = user?.name || 'User';
     const userRole = user?.role || '';
 
@@ -11,9 +12,9 @@ export default async function TopBar({ user }: { user: { name?: string; role?: s
         <div className="topbar">
             <div className="topbar__left">
                 <Hamburger />
-                <div className="topbar__logo">
+                <Link href="/" className="topbar__logo">
                     <Image src="/images/logo.png" alt="Logo" width={28} height={28} />
-                </div>
+                </Link>
                 <span className="topbar__title">KNOWLEDGE CHECK SYSTEM (CBT)</span>
             </div>
             <div className="topbar__right">
@@ -34,10 +35,7 @@ export default async function TopBar({ user }: { user: { name?: string; role?: s
                             <span>{userRole}</span>
                         </div>
                         <div className="topbar__dropdown-divider" />
-                        <form action={async () => {
-                            'use server';
-                            await signOut();
-                        }}>
+                        <form action={logout}>
                             <button type="submit" className="topbar__dropdown-item topbar__dropdown-item--danger">
                                 <LogOut size={14} strokeWidth={1.8} />
                                 Logout

@@ -3,7 +3,7 @@
 import { useSidebar } from '@/context/SidebarContext';
 
 export default function Hamburger() {
-    const { toggleSidebar, toggleCollapsed, isMobile } = useSidebar();
+    const { toggleCollapsed, toggleSidebar, isMobile } = useSidebar();
 
     const handleClick = () => {
         if (isMobile) {

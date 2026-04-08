@@ -5,11 +5,31 @@
     gap: var(--spacing-xs);
     cursor: pointer;
     padding: var(--spacing-xs);
+    border-radius: 4px;
+    transition: background var(--transition-fast);
+    
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    &:active {
+        transform: scale(0.95);
+    }
     
     &__line {
         display: block;
         width: 20px;
         height: 2px;
         background: var(--white);
+        transition: all var(--transition-fast);
+    }
+    
+    @media (max-width: 767px) {
+        padding: var(--spacing-sm);
+        
+        &__line {
+            width: 18px;
+            height: 2px;
+        }
     }
 }

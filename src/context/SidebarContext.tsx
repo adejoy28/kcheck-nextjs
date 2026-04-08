@@ -21,6 +21,14 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
+    const toggleSidebar = () => {
+        setSidebarOpen(prev => !prev);
+    };
+
+    const toggleCollapsed = () => {
+        setSidebarCollapsed(prev => !prev);
+    };
+
     useEffect(() => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth <= 767);
@@ -30,9 +38,6 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
-
-    const toggleSidebar = () => setSidebarOpen(p => !p);
-    const toggleCollapsed = () => setSidebarCollapsed(p => !p);
 
     return (
         <SidebarContext.Provider value={{ 

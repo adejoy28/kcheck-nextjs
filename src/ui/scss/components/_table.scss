@@ -2,45 +2,36 @@
 
 // Table Components - BEM Structure
 
-// Base/Mobile Styles
 .table {
     width: 100%;
     border-collapse: collapse;
-    
+
     @media (max-width: 767px) {
         font-size: var(--font-size-xs);
     }
-    
+
     &__wrap {
         border: 1px solid var(--border);
         background: var(--white);
-        overflow-x: hidden;
+        overflow-x: auto;
         border-radius: 12px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        
+
         @include respond-to(desktop) {
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
         }
-        
+
         @media (max-width: 767px) {
             border: none;
             background: transparent;
             border-radius: 0;
-            margin: var(--spacing-sm);
+            margin: 0;
             box-shadow: none;
-            box-shadow: none;
-        }
-        
-        @media (max-width: 480px) {
-            margin: var(--spacing-xs);
+            overflow-x: visible;
         }
     }
-    
+
     &__header {
         background: var(--glo-blue-dark);
         color: var(--white);
@@ -48,272 +39,148 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        padding: 16px 12px;
+        padding: 14px 16px;
         text-align: left;
-        border-right: 1px solid #e5e7eb;
+        border-right: 1px solid rgba(255,255,255,0.1);
         border-bottom: 3px solid #3b82f6;
         white-space: nowrap;
         user-select: none;
         position: sticky;
         top: 0;
         z-index: 10;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        
-        @media (max-width: 767px) {
-            white-space: normal;
-        }
-        
-        &:last-child {
-            border-right: none;
-        }
-        
-        @include respond-to(tablet) {
-            font-size: var(--font-size-xs);
-            padding: var(--spacing-sm) var(--spacing-md);
-            letter-spacing: 0.6px;
-        }
-        
+
+        &:last-child { border-right: none; }
+
         @include respond-to(desktop) {
             font-size: var(--font-size-xs);
-            padding: var(--spacing-md) var(--spacing-lg);
+            padding: 16px 20px;
             letter-spacing: 0.8px;
         }
-        
+
         @media (max-width: 767px) {
-            font-size: 10px;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            letter-spacing: 0.4px;
+            display: none; // hidden on mobile — cards replace headers
         }
     }
-    
-    &__sort {
-        font-size: 9px;
-        margin-left: var(--spacing-xs);
-        opacity: 0.85;
-    }
-    
-    &__filter-row {
-        th {
-            background: var(--white);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-bottom: 1px solid var(--border);
-            border-right: 1px solid var(--border-light);
-            
-            &:last-child {
-                border-right: none;
-            }
-        }
-    }
-    
-    &__filter-input {
-        width: 100%;
-        border: 1px solid var(--gray-300);
-        padding: var(--spacing-xs) var(--spacing-sm) var(--spacing-xs) var(--spacing-lg);
-        font-size: var(--font-size-sm);
-        color: var(--gray-700);
-        outline: none;
-        background: var(--white);
-        position: relative;
-        
-        &:focus {
-            border-color: var(--glo-blue);
-        }
-        
-        @include respond-to(tablet) {
-            font-size: var(--font-size-sm);
-            padding: var(--spacing-xs) var(--spacing-sm) var(--spacing-xs) var(--spacing-lg);
-        }
-        
-        @include respond-to(desktop) {
-            font-size: var(--font-size-base);
-            padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) var(--spacing-xl);
-        }
-        
-        @media (max-width: 767px) {
-            font-size: var(--font-size-xs);
-            padding: var(--spacing-xs) var(--spacing-sm) var(--spacing-xs) var(--spacing-md);
-        }
-    }
-    
-    &__filter-wrap {
-        position: relative;
-    }
-    
-    &__filter-icon {
-        position: absolute;
-        left: var(--spacing-sm);
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: var(--font-size-xs);
-        color: var(--gray-500);
-        pointer-events: none;
-    }
-    
-    &__date-wrap {
-        position: relative;
-    }
-    
-    &__date-input {
-        width: 100%;
-        border: 1px solid var(--gray-300);
-        padding: var(--spacing-xs) var(--spacing-sm) var(--spacing-xs) var(--spacing-lg);
-        font-size: var(--font-size-sm);
-        color: var(--gray-700);
-        outline: none;
-        background: var(--white);
-        
-        &:focus {
-            border-color: var(--glo-blue);
-        }
-        
-        @include respond-to(tablet) {
-            font-size: var(--font-size-sm);
-            padding: var(--spacing-xs) var(--spacing-sm) var(--spacing-xs) var(--spacing-lg);
-        }
-        
-        @include respond-to(desktop) {
-            font-size: var(--font-size-base);
-            padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) var(--spacing-xl);
-        }
-        
-        @media (max-width: 767px) {
-            font-size: var(--font-size-xs);
-            padding: var(--spacing-xs) var(--spacing-sm) var(--spacing-xs) var(--spacing-md);
-        }
-    }
-    
-    &__empty-row {
-        td {
-            padding: var(--spacing-lg) var(--spacing-md);
-            font-size: var(--font-size-sm);
-            color: var(--gray-600);
-            border-bottom: 1px solid var(--border-light);
-            
-            @include respond-to(tablet) {
-                padding: var(--spacing-lg) var(--spacing-md);
-                font-size: var(--font-size-sm);
-            }
-            
-            @include respond-to(desktop) {
-                padding: var(--spacing-xl) var(--spacing-lg);
-                font-size: var(--font-size-base);
-            }
-            
-            @media (max-width: 767px) {
-                padding: var(--spacing-md) var(--spacing-sm);
-                font-size: var(--font-size-xs);
-            }
-        }
-    }
-    
+
     &__row {
         border-bottom: 1px solid var(--border-light);
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        
+        transition: background 0.15s ease, box-shadow 0.15s ease;
+
+        &:last-child { border-bottom: none; }
+
         &:hover {
-            background: #f8fafc;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            background: #f8fafc;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            background: #f0f7ff;
+            box-shadow: inset 3px 0 0 var(--glo-blue);
+        }
+
+        @media (max-width: 767px) {
+            // Becomes a card on mobile
+            display: block;
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+            &:hover {
+                background: var(--white);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+                transform: translateY(-1px);
+                inset: none;
+            }
         }
     }
-    
+
     &__cell {
-        padding: var(--spacing-sm) var(--spacing-md);
+        padding: 12px 16px;
         font-size: var(--font-size-sm);
         color: var(--gray-800);
         border-right: 1px solid var(--border-light);
-        transition: all 0.2s ease;
-        transition: all 0.2s ease;
-        
-        &:last-child {
-            border-right: none;
-        }
-        
-        @include respond-to(tablet) {
-            padding: var(--spacing-sm) var(--spacing-md);
-            font-size: var(--font-size-sm);
-        }
-        
+        vertical-align: middle;
+
+        &:last-child { border-right: none; }
+
         @include respond-to(desktop) {
-            padding: var(--spacing-md) var(--spacing-lg);
+            padding: 14px 20px;
             font-size: var(--font-size-base);
         }
-        
+
+        // Mobile: each cell becomes a label-value row
         @media (max-width: 767px) {
-            padding: var(--spacing-xs) var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-right: none;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: var(--font-size-sm);
+            min-height: 44px;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            // The label (from data-label attribute)
+            &::before {
+                content: attr(data-label);
+                font-size: 10px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: var(--gray-500);
+                flex-shrink: 0;
+                width: 100px;
+                margin-right: 12px;
+            }
+
+            // The value (right side)
+            > * {
+                flex: 1;
+                text-align: right;
+            }
+
+            // Name cell — full width, styled as card header
+            &--bold {
+                background: var(--glo-blue-dark);
+                color: var(--white) !important;
+                font-size: var(--font-size-base) !important;
+                font-weight: 700;
+                padding: 14px 16px;
+                border-bottom: none;
+
+                &::before {
+                    display: none; // no label for name
+                }
+
+                > * {
+                    text-align: left;
+                    color: var(--white);
+                }
+            }
+
+            // Actions cell — full width
+            &:last-child {
+                justify-content: flex-end;
+                padding: 12px 16px;
+                background: #f8fafc;
+
+                &::before {
+                    display: none;
+                }
+            }
+        }
+
+        // Desktop modifiers
+        &--bold {
+            font-weight: var(--font-weight-semibold);
+            color: var(--glo-blue-dark);
+        }
+
+        &--muted {
+            color: var(--gray-500);
             font-size: var(--font-size-xs);
-        }
-        
-        &--bold { 
-            font-weight: var(--font-weight-semibold); 
-            color: var(--glo-blue-dark); 
-        }
-        
-        &--muted { 
-            color: var(--gray-600); 
-            font-size: var(--font-size-xs); 
-        }
-        &--bold { 
-            font-weight: var(--font-weight-semibold); 
-            color: var(--glo-blue-dark); 
-        }
-        
-        &--muted { 
-            color: var(--gray-600); 
-            font-size: var(--font-size-xs); 
-        }
-        
-        // Column Width Modifiers
-        &--id {
-            width: 120px;
-            
-            @media (max-width: 767px) {
-                width: 80px;
-            }
-        }
-        
-        &--msisdn {
-            width: 180px;
-            
-            @media (max-width: 767px) {
-                width: 120px;
-            }
-        }
-        
-        &--imsi {
-            width: 220px;
-            
-            @media (max-width: 767px) {
-                width: 150px;
-            }
-        }
-        
-        &--category {
-            width: 200px;
-            
-            @media (max-width: 767px) {
-                width: 140px;
-            }
-        }
-        
-        &--date {
-            width: 200px;
-            
-            @media (max-width: 767px) {
-                width: 140px;
-            }
-        }
-        
-        &--action {
-            width: 60px;
-            
-            @media (max-width: 767px) {
-                width: 50px;
-            }
         }
     }
 
@@ -324,166 +191,31 @@
         color: var(--gray-500);
         background: white;
         border-radius: var(--radius-md);
-        margin: var(--spacing-md) 0;
-        font-style: italic;
-        background: white;
-        border-radius: var(--radius-md);
-        margin: var(--spacing-md) 0;
         font-style: italic;
     }
-    
-    // Responsive column hiding
+
+    // Responsive hiding
     @media (max-width: 767px) {
-        .hide-mobile {
-            display: none;
-        }
+        .hide-mobile { display: none; }
     }
-    
+
     @media (max-width: 480px) {
-        .hide-small {
-            display: none;
-        }
+        .hide-small { display: none; }
     }
-    
-    // Card-based layout for very small screens
-    @media (max-width: 480px) {
+
+    // Desktop: thead needs to show
+    @media (min-width: 768px) {
+        thead { display: table-header-group; }
+        tbody { display: table-row-group; }
+        tr { display: table-row; }
+        td, th { display: table-cell; }
+    }
+
+    // Mobile: table becomes block layout
+    @media (max-width: 767px) {
         display: block;
-        
-        thead {
-            display: none;
-        }
-        
-        tbody, tr {
-            display: block;
-        }
-        
-        tr {
-            background: white;
-            background: white;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--spacing-md);
-            padding: var(--spacing-md);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-            
-            &:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            }
-            
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-            
-            &:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            }
-            
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--spacing-sm);
-            align-items: start;
-        }
-        
-        td {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: none;
-            padding: var(--spacing-sm) 0;
-            flex: 1;
-            min-width: 0;
-            transition: background-color 0.2s ease;
-            
-            &:hover {
-                background: rgba(59, 130, 246, 0.02);
-                border-radius: var(--radius-sm);
-            }
-            transition: background-color 0.2s ease;
-            
-            &:hover {
-                background: rgba(59, 130, 246, 0.02);
-                border-radius: var(--radius-sm);
-            }
-            
-            &:before {
-                content: attr(data-label);
-                font-weight: var(--font-weight-semibold);
-                color: var(--gray-600);
-                font-size: var(--font-size-xs);
-                text-transform: uppercase;
-                letter-spacing: 0.4px;
-                flex-shrink: 0;
-                margin-right: var(--spacing-sm);
-                min-width: 65px;
-            }
-            
-            // Full width for important columns
-            &:has(.admin-actions),
-            &[data-label="Test"],
-            &[data-label="Exam"],
-            &[data-label="Staff"],
-            &[data-label="User"],
-            &[data-label="Name"],
-            &[data-label="Title"] {
-                grid-column: 1 / -1;
-                border-bottom: 1px solid var(--border-light);
-                padding-bottom: var(--spacing-sm);
-                margin-bottom: var(--spacing-sm);
-            }
-            
-            // Properly sized badges and action buttons
-            .badge {
-                font-size: var(--font-size-xs);
-                padding: 4px 10px;
-                border-radius: var(--radius-sm);
-                font-weight: var(--font-weight-medium);
-                transition: all 0.2s ease;
-                
-                &:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-                padding: 4px 10px;
-                border-radius: var(--radius-sm);
-                font-weight: var(--font-weight-medium);
-                transition: all 0.2s ease;
-                
-                &:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-            }
-            
-            .admin-actions {
-                display: flex;
-                gap: var(--spacing-sm);
-                flex-wrap: wrap;
-                margin-top: var(--spacing-xs);
-            }
-            
-            .admin-action-btn {
-                font-size: var(--font-size-xs);
-                padding: 8px 12px;
-                border-radius: var(--radius-sm);
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                
-                &:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-                padding: 8px 12px;
-                border-radius: var(--radius-sm);
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                
-                &:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-            }
-        }
+
+        thead { display: none; }
+        tbody { display: block; }
     }
 }

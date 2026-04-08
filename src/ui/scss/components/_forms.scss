@@ -11,8 +11,11 @@
     }
 
     input[type="text"],
+    input[type="email"],
+    input[type="tel"],
     input[type="number"],
-    textarea {
+    textarea,
+    select {
         width: 100%;
         padding: var(--spacing-sm);
         border: 1px solid var(--border);
@@ -75,15 +78,13 @@
 }
 
 // Questions Section
-.questions-section {
-    margin-top: var(--spacing-lg);
-}
-
 .questions-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--glo-blue);
 
     h3 {
         margin: 0;
@@ -105,39 +106,80 @@
 
 .question-card,
 .question-block {
-    background: var(--gray-50);
+    background: var(--white);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 10px;
     margin-bottom: var(--spacing-md);
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
 
     &:last-child {
         margin-bottom: 0;
     }
+
+    // The form-group inside question body
+    .form-group {
+        padding: 0 var(--spacing-md);
+
+        margin: var(--spacing-md) 0;
+
+        &:last-child {
+            padding-bottom: var(--spacing-md);
+        }
+    }
+
+    // Weight row narrower
+    .form-row {
+        padding: 0 var(--spacing-md) var(--spacing-md);
+
+        .form-group {
+            padding: 0;
+        }
+    }
 }
 
 .question-header {
-    background: var(--gray-100);
-    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--glo-blue-dark);
+    padding: 12px var(--spacing-md);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--border);
+    border-bottom: none;
 
     h4 {
         margin: 0;
-        color: var(--gray-800);
-        font-size: var(--font-size-base);
-        font-weight: var(--font-weight-medium);
+        color: var(--white);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+    }
+
+    // Override Remove button for dark background
+    .btn--outline {
+        border-color: rgba(255, 255, 255, 0.4);
+        color: var(--glo-blue);
+        font-size: 11px;
+        padding: 4px 10px;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--white);
+        }
     }
 }
 
 .question-body {
-    padding: var(--spacing-md);
+    padding: 0;
 }
 
 .options-group {
-    margin-top: var(--spacing-md);
+    margin-top: 0;
 }
 
 .option-row {
@@ -158,4 +200,107 @@
     input[type="text"] {
         flex: 1;
     }
+}
+
+// Option rows with correct answer highlight
+.option-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border: 2px solid var(--border-light);
+    border-radius: 8px;
+    background: var(--gray-50);
+    transition: all 0.15s ease;
+
+    &:hover {
+        border-color: var(--glo-blue);
+        background: #f0f7ff;
+    }
+
+    // When the radio inside is checked - highlight the whole row
+    &:has(input[type="radio"]:checked) {
+        border-color: #22c55e;
+        background: #f0fdf4;
+
+        input[type="text"] {
+            color: #15803d;
+            font-weight: var(--font-weight-medium);
+        }
+    }
+
+    input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        accent-color: #22c55e;
+        cursor: pointer;
+    }
+
+    input[type="text"] {
+        flex: 1;
+        border: none !important;
+        background: transparent !important;
+        padding: 4px 0 !important;
+        font-size: var(--font-size-sm);
+        outline: none;
+
+        &::placeholder {
+            color: var(--gray-400);
+        }
+    }
+}
+
+// Options label with hint
+.form-group {
+    label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &::after {
+            content: '';
+        }
+    }
+}
+
+// Options hint (add this via a wrapper if needed)
+.options-hint {
+    font-size: 11px;
+    color: var(--gray-500);
+    font-weight: normal;
+    font-style: italic;
+}
+
+// Checkbox and additional form styles
+.form-checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.form-checkbox {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.form-checkbox-label {
+    font-weight: var(--font-weight-normal);
+    color: var(--gray-700);
+    font-size: var(--font-size-base);
+    margin: 0;
+}
+
+.form-help {
+    font-size: var(--font-size-sm);
+    color: var(--gray-500);
+    margin: var(--spacing-xs) 0 0 0;
+    font-style: italic;
+}
+
+.form-select {
+    background-color: var(--white);
+    cursor: pointer;
 }

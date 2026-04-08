@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSidebar } from '@/context/SidebarContext';
 import {
     LayoutDashboard,
     ClipboardList,
@@ -36,20 +37,28 @@ const adminItems = [
             { id: 'users',      label: 'Users',      icon: <Users {...iconProps} />,         href: '/dashboard/users' },
             { id: 'categories', label: 'Categories', icon: <Tag {...iconProps} />,           href: '/dashboard/categories' },
             { id: 'batches',    label: 'Batches',    icon: <Layers {...iconProps} />,        href: '/dashboard/batches' },
+            { id: 'reports',  label: 'Reports',  icon: <TrendingUp {...iconProps} />, href: '/dashboard/reports' },
         ],
     },
     {
         section: 'System',
         items: [
-            { id: 'reports',  label: 'Reports',  icon: <TrendingUp {...iconProps} />, href: '/dashboard/reports' },
-            { id: 'settings', label: 'Settings', icon: <Settings {...iconProps} />,   href: '/dashboard/settings' },
+            // { id: 'reports',  label: 'Reports',  icon: <TrendingUp {...iconProps} />, href: '/dashboard/reports' },
+            // { id: 'settings', label: 'Settings', icon: <Settings {...iconProps} />,   href: '/dashboard/settings' },
         ],
     },
 ];
 
 export default function NavLinks({ role }: { role: string }) {
     const pathname = usePathname();
+    const { toggleSidebar, isMobile } = useSidebar();
     const isAdmin = role === 'ADMIN';
+
+    const handleLinkClick = () => {
+        if (isMobile) {
+            toggleSidebar();
+        }
+    };
 
     return (
         <nav className="sidebar__nav">
@@ -63,6 +72,7 @@ export default function NavLinks({ role }: { role: string }) {
                         href={item.href}
                         className={`sidebar__item ${pathname === item.href ? 'sidebar__item--active' : ''}`}
                         data-label={item.label}
+                        onClick={handleLinkClick}
                     >
                         <span className="sidebar__icon">{item.icon}</span>
                         <span>{item.label}</span>
@@ -81,6 +91,7 @@ export default function NavLinks({ role }: { role: string }) {
                             href={item.href}
                             className={`sidebar__item ${pathname === item.href ? 'sidebar__item--active' : ''}`}
                             data-label={item.label}
+                            onClick={handleLinkClick}
                         >
                             <span className="sidebar__icon">{item.icon}</span>
                             <span>{item.label}</span>
