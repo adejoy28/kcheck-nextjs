@@ -1,5 +1,6 @@
 'use client'
 
+// SimpleTable component - replacement for complex DataTable
 import React from 'react'
 
 export interface Column<T = Record<string, unknown>> {
