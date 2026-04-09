@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { showToast } from '@/ui/dashboard/toast'
 
 interface Question {
     id: string
@@ -46,13 +45,11 @@ export default function TakeExamClient({
                 })
                 router.push(`/dashboard/exams/${exam.id}/take/demo-results?${params.toString()}`)
             } else {
-                showToast(
+                console.log(
                     result.passed
                         ? `Congratulations! You passed with ${result.percentage}%` 
-                        : `You scored ${result.percentage}%. Keep studying!`,
-                    result.passed ? 'success' : 'error'
+                        : `You scored ${result.percentage}%. Keep studying!`
                 )
-                router.push('/dashboard/results')
             }
             return
         }
@@ -155,7 +152,7 @@ export default function TakeExamClient({
                 const data = await res.json()
 
                 if (!res.ok) {
-                    showToast(data.message || 'Failed to submit exam', 'error')
+                    console.error(data.message || 'Failed to submit exam')
                     setSubmitting(false)
                     return
                 }
@@ -174,17 +171,15 @@ export default function TakeExamClient({
                     })
                     router.push(`/dashboard/exams/${exam.id}/take/demo-results?${params.toString()}`)
                 } else {
-                    showToast(
+                    console.log(
                         data.passed
                             ? `Congratulations! You passed with ${data.percentage}%` 
-                            : `You scored ${data.percentage}%. Keep studying!`,
-                        data.passed ? 'success' : 'error'
+                            : `You scored ${data.percentage}%. Keep studying!`
                     )
-                    router.push('/dashboard/results')
                 }
+                router.push('/dashboard/results')
             } catch (error) {
                 console.error('[submitExam]', error)
-                showToast('Something went wrong. Please try again.', 'error')
                 setSubmitting(false)
             }
         },

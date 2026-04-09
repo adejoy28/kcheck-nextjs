@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { showToast } from '@/ui/dashboard/toast'
 
 interface Question {
     text: string
@@ -60,13 +59,13 @@ export default function ExamForm({ categories, exam }: Props) {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
-        if (!title.trim()) { showToast('Title is required', 'error'); return }
-        if (questions.length === 0) { showToast('Add at least one question', 'error'); return }
+        if (!title.trim()) { return }
+        if (questions.length === 0) { return }
         for (let i = 0; i < questions.length; i++) {
             const q = questions[i]
-            if (!q.text.trim()) { showToast(`Question ${i + 1}: text is required`, 'error'); return }
+            if (!q.text.trim()) { return }
             const validOpts = q.options.filter(o => o.trim())
-            if (validOpts.length < 2) { showToast(`Question ${i + 1}: at least 2 options required`, 'error'); return }
+            if (validOpts.length < 2) { return }
         }
 
         setSaving(true)
@@ -77,12 +76,11 @@ export default function ExamForm({ categories, exam }: Props) {
             const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
             const data = await res.json()
             if (res.ok) {
-                showToast(isEdit ? 'Exam updated' : 'Exam created', 'success')
                 router.push('/dashboard/exams')
             } else {
-                showToast(data.message || 'Failed to save exam', 'error')
+                console.error(data.message || 'Failed to save exam')
             }
-        } catch { showToast('Failed to save exam', 'error') }
+        } catch { console.error('Failed to save exam') }
         setSaving(false)
     }
 

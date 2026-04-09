@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { signIn, getCsrfToken, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { showToast } from '@/ui/dashboard/toast'
 
 export default function LoginForm() {
     const [loading, setLoading] = useState(false)
@@ -53,17 +52,14 @@ export default function LoginForm() {
 
             if (result?.error) {
                 setError('Invalid username or password')
-                showToast('Invalid username or password', 'error')
                 return
             }
 
-            showToast('Login successful', 'success')
             window.location.href = redirectUrl
             window.location.href = redirectUrl
         } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
             setLoading(false)
             setError('Login failed. Please try again.')
-            showToast('Login failed. Please try again.', 'error')
         }
     }
 

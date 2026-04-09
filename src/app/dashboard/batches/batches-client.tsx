@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { showToast } from '@/ui/dashboard/toast'
 import { SimpleTable as DataTable, Column, Action } from '@/components/SimpleTable'
 
 export default function BatchesClient({ batches: initial }: { batches: any[] }) {
@@ -38,12 +37,11 @@ export default function BatchesClient({ batches: initial }: { batches: any[] }) 
             const res = await fetch(`/api/batches/${id}`, { method: 'DELETE' })
             if (res.ok) {
                 setBatches(prev => prev.filter(b => b.id !== id))
-                showToast('Batch deleted', 'success')
             } else {
                 const data = await res.json()
-                showToast(data.message, 'error')
+                console.error(data.message)
             }
-        } catch { showToast('Failed to delete batch', 'error') }
+        } catch { console.error('Failed to delete batch') }
     }
 
     return (

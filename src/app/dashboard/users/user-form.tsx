@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { showToast } from '@/ui/dashboard/toast'
 
 interface Props {
     teams: { id: string; name: string; unit: string }[]
@@ -25,10 +24,10 @@ export default function UserForm({ teams, user }: Props) {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
-        if (!name.trim()) { showToast('Name is required', 'error'); return }
-        if (!username.trim()) { showToast('Username is required', 'error'); return }
-        if (!isEdit && !password) { showToast('Password is required', 'error'); return }
-        if (password && password.length < 6) { showToast('Password must be at least 6 characters', 'error'); return }
+        if (!name.trim()) { return }
+        if (!username.trim()) { return }
+        if (!isEdit && !password) { return }
+        if (password && password.length < 6) { return }
 
         setSaving(true)
         try {
@@ -38,12 +37,11 @@ export default function UserForm({ teams, user }: Props) {
             const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
             const data = await res.json()
             if (res.ok) {
-                showToast(isEdit ? 'User updated' : 'User created', 'success')
                 router.push('/dashboard/users')
             } else {
-                showToast(data.message, 'error')
+                console.error(data.message)
             }
-        } catch { showToast('Failed to save user', 'error') }
+        } catch { console.error('Failed to save user') }
         setSaving(false)
     }
 

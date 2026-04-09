@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { showToast } from '@/ui/dashboard/toast'
 import { exportToPDF, exportToExcel } from '@/lib/export-utils'
 import { SimpleTable as DataTable } from '@/components/SimpleTable'
 
@@ -44,36 +43,31 @@ export default function ReportsClient({ exams, teams, batches }: Props) {
                 setResults(data)
                 setSearched(true)
             } else {
-                showToast(data.message || 'Failed to load reports', 'error')
+                console.error(data.message || 'Failed to load reports')
             }
-        } catch { showToast('Failed to load reports', 'error') }
+        } catch { console.error('Failed to load reports') }
         setLoading(false)
     }, [view, examId, teamId, batchId, from, to])
 
     const handleExportPDF = useCallback(async () => {
         if (results.length === 0) {
-            showToast('No data to export', 'warning')
             return
         }
         try {
             await exportToPDF(results, view)
-            showToast('PDF exported successfully', 'success')
         } catch (error) {
             console.error('[PDF Export] Error:', error)
-            showToast('Failed to export PDF', 'error')
         }
     }, [results, view])
 
     const handleExportExcel = useCallback(() => {
         if (results.length === 0) {
-            showToast('No data to export', 'warning')
             return
         }
         try {
             exportToExcel(results, view)
-            showToast('Excel exported successfully', 'success')
         } catch (error) {
-            showToast('Failed to export Excel', 'error')
+            console.error('Failed to export Excel:', error)
         }
     }, [results, view])
 

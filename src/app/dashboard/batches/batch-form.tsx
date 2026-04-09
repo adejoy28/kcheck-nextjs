@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { showToast } from '@/ui/dashboard/toast'
 
 interface Props {
     exams: any[]
@@ -34,12 +33,12 @@ export default function BatchForm({ exams, teams, users, batch }: Props) {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
-        if (!name.trim()) { showToast('Batch name is required', 'error'); return }
-        if (!examId) { showToast('Please select an exam', 'error'); return }
-        if (!startDate || !endDate) { showToast('Start and end dates are required', 'error'); return }
-        if (new Date(endDate) <= new Date(startDate)) { showToast('End date must be after start date', 'error'); return }
+        if (!name.trim()) { return }
+        if (!examId) { return }
+        if (!startDate || !endDate) { return }
+        if (new Date(endDate) <= new Date(startDate)) { return }
         if (selectedTeams.length === 0 && selectedUsers.length === 0) {
-            showToast('Assign at least one team or user', 'error'); return
+            return
         }
 
         setSaving(true)
@@ -50,12 +49,11 @@ export default function BatchForm({ exams, teams, users, batch }: Props) {
             const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
             const data = await res.json()
             if (res.ok) {
-                showToast(isEdit ? 'Batch updated' : 'Batch created', 'success')
                 router.push('/dashboard/batches')
             } else {
-                showToast(data.message || 'Failed to save batch', 'error')
+                console.error(data.message || 'Failed to save batch')
             }
-        } catch { showToast('Failed to save batch', 'error') }
+        } catch { console.error('Failed to save batch') }
         setSaving(false)
     }
 

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { showToast } from '@/ui/dashboard/toast'
 import { SimpleTable as DataTable } from '@/components/SimpleTable'
 
 function formatDuration(seconds: number) {
@@ -22,11 +21,10 @@ export default function UserResults({ results: initial, userId }: { results: any
             const data = await res.json()
             if (res.ok) {
                 setResults(prev => prev.filter(r => r.exam_id !== examId))
-                showToast('Retake granted. Result deleted.', 'success')
             } else {
-                showToast(data.message, 'error')
+                console.error(data.message)
             }
-        } catch { showToast('Failed to grant retake', 'error') }
+        } catch { console.error('Failed to grant retake') }
     }
 
     if (results.length === 0) {
