@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { showToast } from '@/ui/dashboard/toast'
 import { exportToPDF, exportToExcel } from '@/lib/export-utils'
-import { SimpleTable as DataTable } from '@/components/ui/SimpleTable'
+import { SimpleTable as DataTable } from '@/components/SimpleTable'
 
 function formatDuration(seconds: number) {
     if (!seconds) return '—'

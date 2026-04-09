@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { SimpleTable as DataTable, Action } from '@/components/ui/SimpleTable'
+import { SimpleTable as DataTable, Action } from '@/components/SimpleTable'
 
 export default function UsersClient({ users: initial }: { users: any[] }) {
     const [users, setUsers] = useState(initial)

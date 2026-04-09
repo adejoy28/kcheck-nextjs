@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { SimpleTable as DataTable, Column } from '@/components/ui/SimpleTable'
+import { SimpleTable as DataTable, Column } from '@/components/SimpleTable'
 
 interface Test {
     id: string
