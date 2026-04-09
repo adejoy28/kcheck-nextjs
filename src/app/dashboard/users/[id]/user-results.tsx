@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { showToast } from '@/ui/dashboard/toast'
-import { DataTable } from '@/components/ui/DataTable'
+import { SimpleTable as DataTable } from '@/components/ui/SimpleTable'
 
 function formatDuration(seconds: number) {
     return `${Math.floor(seconds / 60)}m ${seconds % 60}s` 

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { showToast } from '@/ui/dashboard/toast'
-import { DataTable, Column, Action } from '@/components/ui/DataTable'
+import { SimpleTable as DataTable, Column, Action } from '@/components/ui/SimpleTable'
 
 export default function BatchesClient({ batches: initial }: { batches: any[] }) {
     const [batches, setBatches] = useState(initial)
