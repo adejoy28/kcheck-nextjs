@@ -54,14 +54,22 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         await sql.query('DELETE FROM batch_teams WHERE batch_id = ?', [params.id]) 
 
         if (user_ids?.length > 0) {
-            for (const userId of user_ids) {
-                await sql.query('INSERT INTO batch_members (batch_id, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE batch_id=batch_id', [params.id, userId]) 
-            }
+            const placeholders = user_ids.map(() => '(?, ?)').join(', ')
+            const values: any[] = []
+            for (const userId of user_ids) values.push(params.id, userId)
+            await sql.query(
+                `INSERT INTO batch_members (batch_id, user_id) VALUES ${placeholders} ON DUPLICATE KEY UPDATE batch_id=batch_id`,
+                values
+            )
         }
         if (team_ids?.length > 0) {
-            for (const teamId of team_ids) {
-                await sql.query('INSERT INTO batch_teams (batch_id, team_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE batch_id=batch_id', [params.id, teamId]) 
-            }
+            const placeholders = team_ids.map(() => '(?, ?)').join(', ')
+            const values: any[] = []
+            for (const teamId of team_ids) values.push(params.id, teamId)
+            await sql.query(
+                `INSERT INTO batch_teams (batch_id, team_id) VALUES ${placeholders} ON DUPLICATE KEY UPDATE batch_id=batch_id`,
+                values
+            )
         }
 
         return NextResponse.json({ message: 'Batch updated' })

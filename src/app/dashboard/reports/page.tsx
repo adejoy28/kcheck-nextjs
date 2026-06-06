@@ -1,15 +1,14 @@
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import sql from '@/lib/db'
-import { withRetry } from '@/lib/db'
 import ReportsClient from '@/app/dashboard/reports/reports-client'
 
 async function getFilterOptions() {
     try {
         const [exams, teams, batches] = await Promise.all([
-            withRetry(() => sql.query('SELECT id, title FROM exams ORDER BY title')),
-            withRetry(() => sql.query('SELECT id, name FROM teams ORDER BY name')),
-            withRetry(() => sql.query('SELECT id, name FROM batches ORDER BY name')),
+            sql.query('SELECT id, title FROM exams ORDER BY title'),
+            sql.query('SELECT id, name FROM teams ORDER BY name'),
+            sql.query('SELECT id, name FROM batches ORDER BY name'),
         ])
         return { exams, teams, batches }
     } catch (error) {

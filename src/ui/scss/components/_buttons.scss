@@ -1,111 +1,144 @@
-// Button Components
+// Button system
 .btn {
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: none;
-    border-radius: 4px;
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-xs);
+    gap: var(--sp-2);
+    padding: 8px var(--sp-4);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-semibold);
+    font-family: var(--font-family);
+    line-height: 1;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast), transform 80ms;
+    white-space: nowrap;
+    user-select: none;
+    touch-action: manipulation;
 
+    &:disabled, &[aria-disabled="true"] {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+    }
+
+    &:active:not(:disabled) { transform: scale(0.97); }
+
+    /* Variants */
     &--primary {
-        background: linear-gradient(135deg, #1758b7 0%, #0d3a7a 100%);
-        color: var(--white);
-        box-shadow: 0 2px 8px rgba(23, 88, 183, 0.2);
-        border: none;
-        font-weight: 600;
+        background: var(--brand-500);
+        border-color: var(--brand-500);
+        color: #fff;
 
-        &:hover {
-            background: linear-gradient(135deg, #0d3a7a 0%, #1758b7 100%);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(23, 88, 183, 0.3);
-        }
-
-        &:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 6px rgba(23, 88, 183, 0.2);
+        &:hover:not(:disabled) {
+            background: var(--brand-600);
+            border-color: var(--brand-600);
         }
     }
 
     &--secondary {
-        background: var(--gray-200);
+        background: var(--gray-100);
+        border-color: var(--gray-200);
         color: var(--gray-700);
 
-        &:hover {
-            background: var(--gray-300);
+        &:hover:not(:disabled) {
+            background: var(--gray-150);
+            border-color: var(--gray-300);
+        }
+    }
+
+    &--outline {
+        background: transparent;
+        border-color: var(--brand-500);
+        color: var(--brand-500);
+
+        &:hover:not(:disabled) {
+            background: var(--brand-50);
+        }
+    }
+
+    &--ghost {
+        background: transparent;
+        border-color: transparent;
+        color: var(--gray-600);
+
+        &:hover:not(:disabled) {
+            background: var(--gray-100);
+            color: var(--gray-800);
         }
     }
 
     &--danger {
-        background: #dc3545;
-        color: var(--white);
+        background: var(--color-danger);
+        border-color: var(--color-danger);
+        color: #fff;
 
-        &:hover {
-            background: #c82333;
-        }
-    }
-
-    &--small {
-        padding: var(--spacing-xs) var(--spacing-sm);
-        font-size: var(--font-size-xs);
-    }
-
-    &--sm {
-        padding: var(--spacing-xs) var(--spacing-sm);
-        font-size: var(--font-size-xs);
-        border-radius: var(--radius-sm);
-    }
-
-    &--outline {
-        background: var(--white);
-        color: #1758b7;
-        border: 2px solid #1758b7;
-        font-weight: 500;
-
-        &:hover {
-            background: #1758b7;
-            color: var(--white);
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(23, 88, 183, 0.2);
+        &:hover:not(:disabled) {
+            background: var(--color-danger-dark);
+            border-color: var(--color-danger-dark);
         }
     }
 
     &--success {
-        background: #28a745;
-        color: var(--white);
+        background: var(--color-success);
+        border-color: var(--color-success);
+        color: #fff;
 
-        &:hover {
-            background: #218838;
+        &:hover:not(:disabled) {
+            background: var(--color-success-dark);
+            border-color: var(--color-success-dark);
         }
     }
+
+    /* Sizes */
+    &--xs {
+        padding: 4px var(--sp-2);
+        font-size: var(--text-xs);
+        border-radius: var(--radius-sm);
+    }
+
+    &--sm {
+        padding: 6px var(--sp-3);
+        font-size: var(--text-sm);
+        border-radius: var(--radius-sm);
+    }
+
+    &--lg {
+        padding: 11px var(--sp-6);
+        font-size: var(--text-md);
+    }
+
+    /* Keep old alias */
+    &--small { @extend .btn--sm; }
+
+    /* Icon-only */
+    &--icon {
+        padding: var(--sp-2);
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius-md);
+    }
+
+    /* Full width */
+    &--block { width: 100%; }
 }
 
-// Role Badges
-.role-badge {
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    
-    &.role-admin {
-        background: #dc2626;
-        color: white;
-    }
-    
-    &.role-user {
-        background: #1758b7;
-        color: white;
-    }
-    
-    &.role-staff {
-        background: #10b981;
-        color: white;
-    }
+/* Standalone link-style button */
+.btn-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--color-primary);
+    cursor: pointer;
+    text-decoration: underline;
+
+    &:hover { color: var(--brand-700); }
 }

@@ -1,33 +1,40 @@
-// Hamburger Component
-.hamburger {
+// Topbar Toggle Button
+.topbar__toggle-btn {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: var(--sp-1);
     cursor: pointer;
-    padding: var(--spacing-xs);
-    border-radius: 4px;
-    transition: background var(--transition-fast);
+    padding: var(--sp-2);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    transition: all var(--t-fast);
     
     &:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--gray-100);
     }
     
     &:active {
         transform: scale(0.95);
     }
     
-    &__line {
+    &:focus {
+        outline: 2px solid var(--brand-500);
+        outline-offset: 2px;
+    }
+    
+    .hamburger__line {
         display: block;
         width: 20px;
         height: 2px;
-        background: var(--white);
-        transition: all var(--transition-fast);
+        background: var(--gray-700);
+        transition: all var(--t-fast);
     }
     
     @media (max-width: 767px) {
-        padding: var(--spacing-sm);
+        padding: var(--sp-3);
         
-        &__line {
+        .hamburger__line {
             width: 18px;
             height: 2px;
         }

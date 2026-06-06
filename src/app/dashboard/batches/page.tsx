@@ -1,23 +1,20 @@
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import sql from '@/lib/db'
-import { withRetry } from '@/lib/db'
 import BatchesClient from './batches-client'
 
 async function getBatches() {
     try {
-        return await withRetry(() => sql.query(`
-            SELECT b.id, b.name, b.start_date, b.end_date, b.is_active, b.created_at,
+        return await sql.query(`
+            SELECT
+                b.id, b.name, b.start_date, b.end_date, b.is_active, b.created_at,
                 e.title AS exam_title,
-                COUNT(DISTINCT bm.user_id) AS member_count,
-                COUNT(DISTINCT bt.team_id) AS team_count
+                (SELECT COUNT(*) FROM batch_members WHERE batch_id = b.id) AS member_count,
+                (SELECT COUNT(*) FROM batch_teams   WHERE batch_id = b.id) AS team_count
             FROM batches b
             JOIN exams e ON b.exam_id = e.id
-            LEFT JOIN batch_members bm ON bm.batch_id = b.id
-            LEFT JOIN batch_teams bt ON bt.batch_id = b.id
-            GROUP BY b.id, e.title
             ORDER BY b.created_at DESC
-        `))
+        `)
     } catch (error) {
         console.error('[getBatches]', error)
         return []

@@ -14,10 +14,8 @@ export default function Hamburger() {
     };
 
     return (
-        <div
-            className="hamburger"
-            role="button"
-            tabIndex={0}
+        <button
+            className="topbar__toggle-btn"
             onClick={handleClick}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') handleClick();
@@ -26,6 +24,6 @@ export default function Hamburger() {
             <span className="hamburger__line"></span>
             <span className="hamburger__line"></span>
             <span className="hamburger__line"></span>
-        </div>
+        </button>
     );
 }

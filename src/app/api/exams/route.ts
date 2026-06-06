@@ -61,11 +61,16 @@ export async function POST(req: NextRequest) {
         ]) as any
         const exam = { id: result.insertId }
 
-        for (const q of questions) {
-            await sql.query(`
-                INSERT INTO questions (text, options, correct_answer, weight, exam_id)
-                VALUES (?, ?, ?, ?, ?)
-            `, [q.text, q.options, q.correct_answer, q.weight || 1, exam.id])
+        if (questions.length > 0) {
+            const placeholders = questions.map(() => '(?, ?, ?, ?, ?)').join(', ')
+            const values: any[] = []
+            for (const q of questions) {
+                values.push(q.text, JSON.stringify(q.options), q.correct_answer, q.weight || 1, exam.id)
+            }
+            await sql.query(
+                `INSERT INTO questions (text, options, correct_answer, weight, exam_id) VALUES ${placeholders}`,
+                values
+            )
         }
 
         return NextResponse.json({ message: 'Exam created', id: exam.id }, { status: 201 })

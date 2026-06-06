@@ -3,10 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { SimpleTable as DataTable, Column, Action } from '@/components/SimpleTable'
+import { Dialog } from '@/components/ui/dialog'
 
 export default function ExamsClient({ exams: initial }: { exams: any[] }) {
     const [exams, setExams] = useState(initial)
     const [search, setSearch] = useState('')
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+    const [examToDelete, setExamToDelete] = useState<{ id: string; title: string } | null>(null)
 
     const filtered = exams.filter(e =>
         e.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -28,7 +31,10 @@ export default function ExamsClient({ exams: initial }: { exams: any[] }) {
         },
         {
             label: 'Delete',
-            onClick: () => deleteExam(row.id, row.title),
+            onClick: () => {
+                setExamToDelete({ id: row.id, title: row.title })
+                setShowDeleteDialog(true)
+            },
             variant: 'danger'
         }
     ]
@@ -47,7 +53,6 @@ export default function ExamsClient({ exams: initial }: { exams: any[] }) {
     }
 
     async function deleteExam(id: string, title: string) {
-        if (!confirm(`Delete "${title}"? This will also delete all results for this exam.`)) return
         try {
             const res = await fetch(`/api/exams/${id}`, { method: 'DELETE' })
             if (res.ok) {
@@ -58,6 +63,19 @@ export default function ExamsClient({ exams: initial }: { exams: any[] }) {
                 // showToast(data.message, 'error')
             }
         } catch { /* showToast('Failed to delete exam', 'error') */ }
+    }
+
+    const handleDeleteConfirm = () => {
+        if (examToDelete) {
+            deleteExam(examToDelete.id, examToDelete.title)
+            setShowDeleteDialog(false)
+            setExamToDelete(null)
+        }
+    }
+
+    const handleDeleteCancel = () => {
+        setShowDeleteDialog(false)
+        setExamToDelete(null)
     }
 
     return (
@@ -99,6 +117,18 @@ export default function ExamsClient({ exams: initial }: { exams: any[] }) {
                 data={filtered}
                 actions={getActions}
                 emptyMessage="No exams found."
+            />
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog
+                isOpen={showDeleteDialog}
+                onClose={handleDeleteCancel}
+                onConfirm={handleDeleteConfirm}
+                title="Delete Exam?"
+                message={`Are you sure you want to delete "${examToDelete?.title}"? This will also delete all results for this exam.`}
+                confirmText="Delete"
+                cancelText="Cancel"
+                type="danger"
             />
         </div>
     )

@@ -87,9 +87,9 @@
             transform: translateX(0);
         }
 
-        &--success { background: #1D9E75; }
-        &--error   { background: #E24B4A; }
-        &--warning { background: #BA7517; }
+        &--success { background: var(--color-success); }
+        &--error   { background: var(--color-danger); }
+        &--warning { background: var(--color-warning); }
         &--info    { background: var(--glo-blue); }
     }
 }

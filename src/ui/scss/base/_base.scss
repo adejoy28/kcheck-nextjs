@@ -1,133 +1,97 @@
-// Base Reset
-* {
-    font-family: var(--font-family);
+// Base Reset + Global Typography
+*, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-html,
-body {
-    height: 100%;
-    background: var(--page-bg);
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
+html {
+    font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-#root,
-#__next {
+body {
+    font-family: var(--font-family);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    color: var(--gray-800);
+    background: var(--surface-page);
+    min-height: 100vh;
+}
+
+#root, #__next {
     height: 100%;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-/* Universal Alert Styles */
-.alert {
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-lg);
-    font-size: var(--font-size-base);
-    border: 1px solid;
-    font-weight: 500;
+a {
+    color: var(--color-primary);
+    text-decoration: none;
 
-    &--success {
-        background: #efe;
-        border-color: #cfc;
-        color: #3c3;
-    }
-
-    &--error {
-        background: #fee;
-        border-color: #fcc;
-        color: #c33;
-    }
-
-    &--warning {
-        background: #fff3cd;
-        border-color: #ffeaa7;
-        color: #856404;
-    }
-
-    &--info {
-        background: #d1ecf1;
-        border-color: #bee5eb;
-        color: #0c5460;
+    &:hover { text-decoration: underline; }
+    &:focus-visible {
+        outline: 2px solid var(--border-focus);
+        outline-offset: 2px;
+        border-radius: 2px;
     }
 }
 
-/* Toast Container */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.3;
+    color: var(--gray-900);
+}
+
+img, svg { display: block; max-width: 100%; }
+
+/* ── Alert ──────────────────────────────────────────── */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--sp-4);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    border: 1px solid transparent;
+    line-height: 1.5;
+
+    &--success {
+        background: var(--color-success-bg);
+        border-color: var(--color-success-border);
+        color: var(--color-success-text);
+    }
+    &--error {
+        background: var(--color-danger-bg);
+        border-color: var(--color-danger-border);
+        color: var(--color-danger-text);
+    }
+    &--warning {
+        background: var(--color-warning-bg);
+        border-color: var(--color-warning-border);
+        color: var(--color-warning-text);
+    }
+    &--info {
+        background: var(--color-info-bg);
+        border-color: var(--color-info-border);
+        color: var(--color-info-text);
+    }
+}
+
+/* ── Toast Container ────────────────────────────────── */
 .toast-container {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: var(--z-modal);
-    pointer-events: none;
-    
-    @media (max-width: 768px) {
-        top: 10px;
-        right: 10px;
-        left: 10px;
-        right: 10px;
-    }
-}
-
-/* Toast Styles */
-.toast {
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-md);
-    font-size: var(--font-size-base);
-    border: 1px solid;
-    font-weight: 500;
-    min-width: 300px;
-    max-width: 400px;
-    pointer-events: auto;
-    animation: slideInRight 0.3s ease-out;
-    box-shadow: var(--shadow-lg);
-    
-    @media (max-width: 768px) {
-        min-width: auto;
-        max-width: 100%;
-        width: 100%;
-        font-size: var(--font-size-sm);
-        padding: var(--spacing-sm) var(--spacing-md);
-    }
-
-    &--success {
-        background: #efe;
-        border-color: #cfc;
-        color: #3c3;
-    }
-
-    &--error {
-        background: #fee;
-        border-color: #fcc;
-        color: #c33;
-    }
-
-    &--warning {
-        background: #fff3cd;
-        border-color: #ffeaa7;
-        color: #856404;
-    }
-
-    &--info {
-        background: #d1ecf1;
-        border-color: #bee5eb;
-        color: #0c5460;
-    }
-}
-
-/* Slide in from right animation */
-@keyframes slideInRight {
-    0% {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
+    bottom: var(--sp-6);
+    right: var(--sp-6);
+    z-index: var(--z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    max-width: 340px;
 }

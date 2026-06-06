@@ -1,103 +1,99 @@
+// Dark sidebar navigation
 .sidebar {
     &__nav {
         display: flex;
         flex-direction: column;
-        padding: var(--spacing-sm) 0;
+        padding: var(--sp-2) 0 var(--sp-4);
     }
 
-    &__section {
-        display: flex;
-        flex-direction: column;
-
-        // Hide section labels in collapsed mode
-        .layout--collapsed & {
-            @media (min-width: 768px) {
-                .sidebar__section-label {
-                    display: none;
-                }
-                
-                .sidebar__divider {
-                    margin: var(--spacing-xs) var(--spacing-sm);
-                }
-            }
-        }
-    }
+    &__section { display: flex; flex-direction: column; }
 
     &__section-label {
         font-size: 10px;
-        font-weight: 600;
-        color: var(--gray-500);
+        font-weight: var(--font-weight-semibold);
+        color: var(--sidebar-muted);
         text-transform: uppercase;
-        letter-spacing: .6px;
-        padding: 10px var(--spacing-lg) 4px;
-        transition: opacity var(--transition-fast);
+        letter-spacing: 0.8px;
+        padding: var(--sp-4) var(--sp-4) var(--sp-1);
+        transition: opacity var(--t-fast);
+        white-space: nowrap;
+
+        .layout--collapsed & {
+            @media (min-width: 768px) { opacity: 0; pointer-events: none; }
+        }
     }
 
     &__divider {
         height: 1px;
-        background: var(--border-light);
-        margin: var(--spacing-sm) 0 0;
+        background: var(--sidebar-border);
+        margin: var(--sp-2) var(--sp-3);
     }
 
     &__item {
         display: flex;
         align-items: center;
-        gap: var(--spacing-sm);
-        padding: 9px var(--spacing-lg);
-        font-size: 13px;
-        color: var(--gray-700);
+        gap: var(--sp-3);
+        padding: 9px var(--sp-4);
+        font-size: var(--text-base);
+        color: var(--sidebar-text);
         cursor: pointer;
         text-decoration: none;
-        transition: background var(--transition-fast), color var(--transition-fast), padding var(--transition-fast);
         border-left: 3px solid transparent;
+        border-radius: 0;
+        transition: background var(--t-fast), color var(--t-fast);
         position: relative;
+        white-space: nowrap;
 
         &:hover {
-            background: #eef2f8;
-            color: var(--glo-blue);
+            background: var(--sidebar-hover);
+            color: #fff;
+            text-decoration: none;
         }
 
         &--active {
-            background: var(--sidebar-active);
-            color: var(--glo-blue);
+            background: var(--sidebar-active-bg);
+            color: var(--sidebar-active-text);
             font-weight: var(--font-weight-medium);
-            border-left: 3px solid var(--glo-blue);
+            border-left-color: var(--sidebar-active-text);
         }
 
-        @media (max-width: 767px) {
-            padding: var(--spacing-sm) var(--spacing-md);
-            font-size: var(--font-size-sm);
+        &:focus-visible {
+            outline: 2px solid var(--sidebar-active-text);
+            outline-offset: -2px;
         }
 
-        // Collapsed state styles
+        // Collapsed - icon-only with tooltip
         .layout--collapsed & {
             @media (min-width: 768px) {
-                padding: 9px var(--spacing-sm);
+                padding: 9px 0;
                 justify-content: center;
-                
-                // Hide text but keep it accessible for screen readers
+
                 span:not(.sidebar__icon) {
                     display: none;
                 }
-                
-                // Show tooltip on hover
+
                 &:hover::after {
                     content: attr(data-label);
                     position: absolute;
-                    left: calc(100% + 8px);
+                    left: calc(100% + 10px);
                     top: 50%;
                     transform: translateY(-50%);
                     background: var(--gray-800);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: 4px;
-                    font-size: 12px;
+                    color: #fff;
+                    padding: var(--sp-1) var(--sp-3);
+                    border-radius: var(--radius-sm);
+                    font-size: var(--text-sm);
                     white-space: nowrap;
-                    z-index: 1000;
+                    z-index: var(--z-toast);
                     pointer-events: none;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                    box-shadow: var(--shadow-lg);
                 }
             }
+        }
+
+        @media (max-width: 767px) {
+            padding: var(--sp-2) var(--sp-4);
+            font-size: var(--text-sm);
         }
     }
 
@@ -108,17 +104,19 @@
         width: 20px;
         flex-shrink: 0;
         color: inherit;
+        opacity: 0.8;
+
+        .sidebar__item--active &,
+        .sidebar__item:hover & { opacity: 1; }
     }
 
     &__mobile-header {
         display: none;
-        padding: var(--spacing-sm) var(--spacing-md);
-        border-bottom: 1px solid var(--border-light);
+        padding: var(--sp-2) var(--sp-3);
+        border-bottom: 1px solid var(--sidebar-border);
         justify-content: flex-end;
-        
-        @media (max-width: 767px) {
-            display: flex;
-        }
+
+        @media (max-width: 767px) { display: flex; }
     }
 
     &__close-btn {
@@ -128,19 +126,28 @@
         width: 32px;
         height: 32px;
         border: none;
-        background: none;
-        color: var(--gray-600);
+        background: var(--sidebar-hover);
+        color: var(--sidebar-text);
         cursor: pointer;
-        border-radius: 4px;
-        transition: all var(--transition-fast);
-        
-        &:hover {
-            background: var(--gray-100);
-            color: var(--gray-800);
-        }
-        
-        &:active {
-            transform: scale(0.95);
+        border-radius: var(--radius-sm);
+        transition: background var(--t-fast);
+
+        &:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    }
+
+    /* Sidebar logo area */
+    &__logo-area {
+        padding: var(--sp-4) var(--sp-4) var(--sp-3);
+        border-bottom: 1px solid var(--sidebar-border);
+        display: flex;
+        align-items: center;
+        gap: var(--sp-2);
+
+        .layout--collapsed & {
+            @media (min-width: 768px) {
+                padding: var(--sp-3) 0;
+                justify-content: center;
+            }
         }
     }
 }

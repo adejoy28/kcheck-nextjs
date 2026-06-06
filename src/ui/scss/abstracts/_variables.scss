@@ -1,91 +1,183 @@
-// CSS Variables - Design System
+// Design System Tokens — KCheck Exam Portal v2
 :root {
-    /* Colors */
-    --glo-blue: #1758b7;
-    --glo-blue-dark: #0d3a7a;
-    --glo-blue-header: #1758b7;
-    --glo-blue-col: #1758b7;
-    --glo-blue-light: #4a7cc7;
-    --glo-blue-gradient: linear-gradient(135deg, #1758b7 0%, #0d3a7a 100%);
-    --glo-login-gradient: linear-gradient(135deg, #1758b7 0%, #0d3a7a 100%);
-    
-    /* Neutral Colors */
-    --white: #ffffff;
-    --black: #000000;
-    --gray-50: #f8f9fa;
-    --gray-100: #e1e5e9;
-    --gray-200: #d0d0d0;
-    --gray-300: #ddd;
-    --gray-400: #ccc;
-    --gray-500: #aaa;
-    --gray-600: #666;
-    --gray-700: #555;
-    --gray-800: #333;
-    --gray-900: #222;
-    
-    /* Status Colors */
-    --success-bg: #efe;
-    --success-border: #cfc;
-    --success-text: #3c3;
-    --error-bg: #fee;
-    --error-border: #fcc;
-    --error-text: #c33;
-    
-    /* Layout */
-    --sidebar-bg: #f5f5f5;
-    --sidebar-active: #e8edf5;
-    --border: #d0d0d0;
-    --border-light: #eee;
-    --page-bg: #f0f0f0;
-    --content-bg: #ffffff;
-    
-    /* Spacing */
-    --spacing-xs: 4px;
-    --spacing-sm: 8px;
-    --spacing-md: 16px;
-    --spacing-lg: 24px;
-    --spacing-xl: 32px;
-    --spacing-xxl: 48px;
-    
-    /* Typography */
-    --font-family: 'Roboto', sans-serif;
-    --font-size-xs: 11.5px;
-    --font-size-sm: 12px;
-    --font-size-base: 14px;
-    --font-size-md: 16px;
-    --font-size-lg: 18px;
-    --font-size-xl: 20px;
-    --font-size-xxl: 24px;
-    --font-size-xxxl: 32px;
-    --font-size-xxxxl: 36px;
-    --font-weight-normal: 400;
-    --font-weight-medium: 500;
+    /* ─── Brand Palette ─────────────────────────────── */
+    --brand-50:  #eef4ff;
+    --brand-100: #dce9ff;
+    --brand-200: #b4cfff;
+    --brand-300: #7aaaff;
+    --brand-400: #3d80ff;
+    --brand-500: #1758b7;   /* primary */
+    --brand-600: #1348a0;
+    --brand-700: #0f3a87;
+    --brand-800: #0d3070;
+    --brand-900: #0a2558;
+
+    /* ─── Semantic Colors ────────────────────────────── */
+    --color-primary:        var(--brand-500);
+    --color-primary-dark:   var(--brand-700);
+    --color-primary-light:  var(--brand-300);
+    --color-primary-ghost:  var(--brand-50);
+
+    /* Status */
+    --color-success:        #10b981;
+    --color-success-bg:     #ecfdf5;
+    --color-success-border: #a7f3d0;
+    --color-success-text:   #065f46;
+
+    --color-danger:         #ef4444;
+    --color-danger-bg:      #fef2f2;
+    --color-danger-border:  #fecaca;
+    --color-danger-text:    #991b1b;
+
+    --color-warning:        #f59e0b;
+    --color-warning-bg:     #fffbeb;
+    --color-warning-border: #fde68a;
+    --color-warning-text:   #92400e;
+
+    --color-info:           #3b82f6;
+    --color-info-bg:        #eff6ff;
+    --color-info-border:    #bfdbfe;
+    --color-info-text:      #1e40af;
+
+    /* ─── Neutral Scale ──────────────────────────────── */
+    --white:     #ffffff;
+    --black:     #000000;
+
+    --gray-25:   #fdfdfd;
+    --gray-50:   #f8fafc;
+    --gray-100:  #f1f5f9;
+    --gray-150:  #e9eff5;
+    --gray-200:  #e2e8f0;
+    --gray-300:  #cbd5e1;
+    --gray-400:  #94a3b8;
+    --gray-500:  #64748b;
+    --gray-600:  #475569;
+    --gray-700:  #334155;
+    --gray-800:  #1e293b;
+    --gray-900:  #0f172a;
+
+    /* ─── Surfaces ───────────────────────────────────── */
+    --surface-page:    #f0f4f8;
+    --surface-card:    #ffffff;
+    --surface-sunken:  #f8fafc;
+    --surface-raised:  #ffffff;
+
+    /* ─── Sidebar ────────────────────────────────────── */
+    --sidebar-bg:          #1e2a3a;
+    --sidebar-hover:       rgba(255,255,255,0.07);
+    --sidebar-active-bg:   rgba(55,148,255,0.15);
+    --sidebar-active-text: #7aaaff;
+    --sidebar-text:        rgba(255,255,255,0.75);
+    --sidebar-muted:       rgba(255,255,255,0.4);
+    --sidebar-border:      rgba(255,255,255,0.08);
+    --sidebar-width:       220px;
+    --sidebar-collapsed:   56px;
+
+    /* ─── Topbar ─────────────────────────────────────── */
+    --topbar-bg:     #ffffff;
+    --topbar-border: var(--gray-200);
+    --topbar-height: 52px;
+
+    /* ─── Border ─────────────────────────────────────── */
+    --border:          var(--gray-200);
+    --border-light:    var(--gray-150);
+    --border-focus:    var(--brand-400);
+
+    /* ─── Spacing ────────────────────────────────────── */
+    --sp-1:   4px;
+    --sp-2:   8px;
+    --sp-3:   12px;
+    --sp-4:   16px;
+    --sp-5:   20px;
+    --sp-6:   24px;
+    --sp-8:   32px;
+    --sp-10:  40px;
+    --sp-12:  48px;
+
+    /* Legacy aliases (keep for backwards compat) */
+    --spacing-xs:  var(--sp-1);
+    --spacing-sm:  var(--sp-2);
+    --spacing-md:  var(--sp-4);
+    --spacing-lg:  var(--sp-6);
+    --spacing-xl:  var(--sp-8);
+    --spacing-xxl: var(--sp-12);
+
+    /* ─── Typography ─────────────────────────────────── */
+    --font-family:        'Inter', 'Roboto', system-ui, sans-serif;
+    --font-mono:          'JetBrains Mono', 'Fira Code', monospace;
+
+    --text-xs:   11px;
+    --text-sm:   12px;
+    --text-base: 13px;
+    --text-md:   14px;
+    --text-lg:   16px;
+    --text-xl:   18px;
+    --text-2xl:  22px;
+    --text-3xl:  28px;
+
+    /* Legacy aliases */
+    --font-size-xs:    var(--text-xs);
+    --font-size-sm:    var(--text-sm);
+    --font-size-base:  var(--text-base);
+    --font-size-md:    var(--text-md);
+    --font-size-lg:    var(--text-lg);
+    --font-size-xl:    var(--text-xl);
+    --font-size-xxl:   var(--text-2xl);
+    --font-size-xxxl:  var(--text-3xl);
+    --font-size-xxxxl: 32px;
+
+    --font-weight-normal:   400;
+    --font-weight-medium:   500;
     --font-weight-semibold: 600;
-    --font-weight-bold: 700;
-    
-    /* Border Radius */
-    --radius-sm: 6px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 15px;
-    --radius-full: 50%;
-    
-    /* Shadows */
-    --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
-    --shadow-focus: 0 0 0 3px rgba(101, 138, 195, 0.1);
-    
-    /* Transitions */
-    --transition-fast: 0.15s;
-    --transition-normal: 0.3s;
-    --transition-slow: 0.6s;
-    
-    /* Z-index */
+    --font-weight-bold:     700;
+
+    /* ─── Radius ─────────────────────────────────────── */
+    --radius-sm:   5px;
+    --radius-md:   8px;
+    --radius-lg:   12px;
+    --radius-xl:   16px;
+    --radius-2xl:  20px;
+    --radius-full: 9999px;
+
+    /* ─── Shadows ────────────────────────────────────── */
+    --shadow-xs:    0 1px 2px rgba(15,23,42,0.06);
+    --shadow-sm:    0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.06);
+    --shadow-md:    0 4px 6px rgba(15,23,42,0.07), 0 2px 4px rgba(15,23,42,0.06);
+    --shadow-lg:    0 10px 15px rgba(15,23,42,0.08), 0 4px 6px rgba(15,23,42,0.05);
+    --shadow-focus: 0 0 0 3px rgba(55,130,237,0.25);
+
+    /* ─── Transitions ────────────────────────────────── */
+    --ease:            cubic-bezier(0.4,0,0.2,1);
+    --ease-out:        cubic-bezier(0,0,0.2,1);
+    --t-fast:          120ms;
+    --t-normal:        200ms;
+    --t-slow:          350ms;
+
+    /* Legacy aliases */
+    --transition-fast:   var(--t-fast);
+    --transition-normal: var(--t-normal);
+
+    /* ─── Z-index ─────────────────────────────────────── */
+    --z-base:     1;
     --z-dropdown: 100;
-    --z-modal: 1000;
-    
-    /* Breakpoints */
+    --z-sidebar:  200;
+    --z-topbar:   300;
+    --z-modal:    1000;
+    --z-toast:    2000;
+
+    /* Backward compat keys */
+    --content-bg:    var(--surface-card);
+    --page-bg:       var(--surface-page);
+    --glo-blue:          var(--brand-500);
+    --glo-blue-dark:     var(--brand-700);
+    --glo-blue-header:   var(--brand-500);
+    --glo-blue-col:      var(--brand-500);
+    --glo-blue-light:    var(--brand-300);
+    --glo-blue-gradient: linear-gradient(135deg, var(--brand-500) 0%, var(--brand-700) 100%);
+    --glo-login-gradient:linear-gradient(135deg, var(--brand-600) 0%, var(--brand-800) 100%);
+    --sidebar-active:    var(--sidebar-active-bg);
+
+    /* Breakpoints (as CSS custom props — cannot be used in media queries, but used by JS) */
     --breakpoint-sm: 768px;
     --breakpoint-md: 992px;
     --breakpoint-lg: 1200px;

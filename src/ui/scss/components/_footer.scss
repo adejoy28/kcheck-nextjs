@@ -1,13 +1,56 @@
 // Footer Component
 .footer {
-    height: 36px;
-    background: var(--glo-blue);
+    // position: fixed;
+    margin-top: var(--sp-4);
+    bottom: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    height: var(--sp-12);
+    // background: var(--brand-500);
+    // color: var(--brand-600);
     display: flex;
     align-items: center;
-    padding: 0 var(--spacing-md);
+    justify-content: center;
+    padding: 0 var(--sp-6);
+    z-index: var(--z-base);
+    transition: left var(--t-normal) var(--ease);
+    // border-top: 1px solid var(--brand-600);
+    
+    // Responsive adjustments
+    @media (max-width: 767px) {
+        left: 0;
+        padding: 0 var(--sp-4);
+        height: var(--sp-10);
+    }
+    
+    // When sidebar is collapsed
+    .layout--collapsed & {
+        @media (min-width: 768px) {
+            left: var(--sidebar-collapsed);
+        }
+    }
     
     &__text {
-        color: var(--white);
-        font-size: var(--font-size-sm);
+        color: var(--brand-600);
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-medium);
+        text-align: center;
+        line-height: 1.2;
+        opacity: 0.9;
+        transition: opacity var(--t-fast);
+        
+        &:hover {
+            opacity: 1;
+        }
+        
+        // Responsive text sizing
+        @media (max-width: 767px) {
+            font-size: var(--text-xs);
+        }
     }
+    
+    // Add subtle hover effect for the entire footer
+    // &:hover {
+    //     // background: var(--brand-600);
+    // }
 }

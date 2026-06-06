@@ -17,6 +17,14 @@ export async function POST(req: NextRequest) {
         // Delete old result
         await sql.query('DELETE FROM results WHERE user_id = ? AND exam_id = ?', [user_id, exam_id]) 
 
+        // Void any in-progress attempts so they can start fresh
+        await sql.query(
+            `UPDATE exam_attempts 
+             SET status = 'submitted'
+             WHERE exam_id = ? AND user_id = ? AND status = 'in_progress'`,
+            [exam_id, user_id]
+        )
+
         // Remove any existing retake request
         await sql.query('DELETE FROM retake_requests WHERE user_id = ? AND exam_id = ?', [user_id, exam_id]) 
 

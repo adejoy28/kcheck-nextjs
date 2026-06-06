@@ -16,13 +16,25 @@ async function getMyResults(userId: string) {
                 e.title AS exam_title,
                 e.duration,
                 e.passing_score,
-                b.name AS batch_name
+                (
+                    SELECT b.name
+                    FROM batches b
+                    LEFT JOIN batch_members bm ON bm.batch_id = b.id AND bm.user_id = ?
+                    WHERE b.exam_id = e.id
+                      AND (bm.user_id IS NOT NULL
+                           OR b.id IN (
+                               SELECT bt.batch_id FROM batch_teams bt
+                               JOIN users u ON u.team_id = bt.team_id
+                               WHERE u.id = ?
+                           ))
+                    ORDER BY b.end_date DESC
+                    LIMIT 1
+                ) AS batch_name
             FROM results r
             JOIN exams e ON r.exam_id = e.id
-            LEFT JOIN batches b ON b.exam_id = e.id
             WHERE r.user_id = ?
             ORDER BY r.completed_at DESC
-        `, [userId]);
+        `, [userId, userId, userId]);
         return rows;
     } catch (error) {
         console.error('[getMyResults]', error);

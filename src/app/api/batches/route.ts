@@ -53,23 +53,23 @@ export async function POST(req: NextRequest) {
         const batch = { id: result.insertId }
 
         if (user_ids?.length > 0) {
-            for (const userId of user_ids) {
-                await sql.query(`
-                    INSERT INTO batch_members (batch_id, user_id)
-                    VALUES (?, ?)
-                    ON DUPLICATE KEY UPDATE batch_id=batch_id
-                `, [batch.id, userId])
-            }
+            const placeholders = user_ids.map(() => '(?, ?)').join(', ')
+            const values: any[] = []
+            for (const userId of user_ids) values.push(batch.id, userId)
+            await sql.query(
+                `INSERT INTO batch_members (batch_id, user_id) VALUES ${placeholders} ON DUPLICATE KEY UPDATE batch_id=batch_id`,
+                values
+            )
         }
 
         if (team_ids?.length > 0) {
-            for (const teamId of team_ids) {
-                await sql.query(`
-                    INSERT INTO batch_teams (batch_id, team_id)
-                    VALUES (?, ?)
-                    ON DUPLICATE KEY UPDATE batch_id=batch_id
-                `, [batch.id, teamId])
-            }
+            const placeholders = team_ids.map(() => '(?, ?)').join(', ')
+            const values: any[] = []
+            for (const teamId of team_ids) values.push(batch.id, teamId)
+            await sql.query(
+                `INSERT INTO batch_teams (batch_id, team_id) VALUES ${placeholders} ON DUPLICATE KEY UPDATE batch_id=batch_id`,
+                values
+            )
         }
 
         return NextResponse.json({ message: 'Batch created', id: batch.id }, { status: 201 })

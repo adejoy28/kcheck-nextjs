@@ -1,9 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
+    // TODO: re-enable strict type checking once outstanding errors are resolved.
+    // Currently ignored because there are pre-existing type errors in the codebase.
     ignoreBuildErrors: true,
   },
   eslint: {
+    // TODO: re-enable lint during builds once outstanding errors are resolved.
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
