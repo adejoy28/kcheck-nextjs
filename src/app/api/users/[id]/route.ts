@@ -76,12 +76,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         const session = await requireAdmin()
         if (!session) return NextResponse.json({ message: 'Forbidden' }, { status: 403 })
 
-        const result = await sql.query(`
+        await sql.query(`
             UPDATE users SET is_active = NOT is_active, updated_at = NOW()
             WHERE id = ?
-        `, [params.id]) as any
-        const user = { is_active: result.changedRows > 0 ? !!(result as any).is_active : false }
-        return NextResponse.json({ is_active: user.is_active })
+        `, [params.id])
+        const [user] = await sql.query('SELECT is_active FROM users WHERE id = ?', [params.id])
+        return NextResponse.json({ is_active: user ? user.is_active : false })
     } catch (error) {
         console.error('[PATCH /api/users/:id]', error)
         return NextResponse.json({ message: 'Server error' }, { status: 500 })

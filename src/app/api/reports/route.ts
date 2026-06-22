@@ -46,19 +46,26 @@ export async function GET(req: NextRequest) {
                 u.id AS user_id, u.name AS user_name, u.username,
                 t.name AS team_name,
                 e.id AS exam_id, e.title AS exam_title, e.passing_score,
-                b.name AS batch_name
+                (
+                    SELECT b2.name FROM batches b2
+                    LEFT JOIN batch_members bm ON bm.batch_id = b2.id AND bm.user_id = u.id
+                    LEFT JOIN batch_teams bt ON bt.batch_id = b2.id AND bt.team_id = u.team_id
+                    WHERE b2.exam_id = e.id
+                      AND (bm.user_id IS NOT NULL OR bt.team_id IS NOT NULL)
+                      AND (? IS NULL OR b2.id = ?)
+                    ORDER BY b2.end_date DESC
+                    LIMIT 1
+                ) AS batch_name
             FROM results r
             JOIN users u ON r.user_id = u.id
             JOIN exams e ON r.exam_id = e.id
             LEFT JOIN teams t ON u.team_id = t.id
-            LEFT JOIN batches b ON b.exam_id = e.id
             WHERE (? IS NULL OR e.id = ?)
             AND (? IS NULL OR t.id = ?)
-            AND (? IS NULL OR b.id = ?)
             AND (? IS NULL OR r.completed_at >= ?)
             AND (? IS NULL OR r.completed_at <= ?)
             ORDER BY r.completed_at DESC
-        `, [examId, examId, teamId, teamId, batchId, batchId, from, from, to, to])
+        `, [batchId, batchId, examId, examId, teamId, teamId, from, from, to, to])
         return NextResponse.json(rows)
     } catch (error) {
         console.error('[GET /api/reports]', error)

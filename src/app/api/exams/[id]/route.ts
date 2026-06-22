@@ -127,8 +127,17 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
         const session = await requireAdmin()
         if (!session) return NextResponse.json({ message: 'Forbidden' }, { status: 403 })
 
-        await sql.query('DELETE FROM results WHERE exam_id = ?', [params.id]) 
-        await sql.query('DELETE FROM exams WHERE id = ?', [params.id]) 
+        await sql.query('DELETE FROM attempt_answers WHERE attempt_id IN (SELECT id FROM exam_attempts WHERE exam_id = ?)', [params.id])
+        await sql.query('DELETE FROM exam_sessions WHERE attempt_id IN (SELECT id FROM exam_attempts WHERE exam_id = ?)', [params.id])
+        await sql.query('DELETE FROM exam_attempts WHERE exam_id = ?', [params.id])
+        await sql.query('DELETE FROM exam_progress WHERE exam_id = ?', [params.id])
+        await sql.query('DELETE FROM retake_requests WHERE exam_id = ?', [params.id])
+        await sql.query('DELETE FROM batch_members WHERE batch_id IN (SELECT id FROM batches WHERE exam_id = ?)', [params.id])
+        await sql.query('DELETE FROM batch_teams WHERE batch_id IN (SELECT id FROM batches WHERE exam_id = ?)', [params.id])
+        await sql.query('DELETE FROM batches WHERE exam_id = ?', [params.id])
+        await sql.query('DELETE FROM results WHERE exam_id = ?', [params.id])
+        await sql.query('DELETE FROM questions WHERE exam_id = ?', [params.id])
+        await sql.query('DELETE FROM exams WHERE id = ?', [params.id])
 
         return NextResponse.json({ message: 'Exam deleted' })
     } catch (error) {

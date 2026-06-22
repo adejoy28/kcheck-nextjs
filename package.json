@@ -12,9 +12,9 @@
     "lint": "next lint",
     "db:migrate": "tsx src/lib/migrate.ts",
     "db:seed": "tsx src/lib/seed.ts",
-    "db:import": "tsx src/lib/import-data.ts",
-    "db:setup": "tsx src/lib/setup-database.ts",
-    "db:recreate": "tsx src/lib/recreate-database.ts"
+    "db:import": "echo 'No import script available'",
+    "db:setup": "echo 'No setup script available'",
+    "db:recreate": "echo 'No recreate script available'"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

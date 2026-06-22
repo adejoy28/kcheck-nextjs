@@ -22,6 +22,7 @@ export default function BatchForm({ exams, teams, users, batch }: Props) {
     const [selectedTeams, setSelectedTeams] = useState<string[]>(batch?.teams?.map((t: any) => t.id) || [])
     const [selectedUsers, setSelectedUsers] = useState<string[]>(batch?.members?.map((m: any) => m.id) || [])
     const [saving, setSaving] = useState(false)
+    const [error, setError] = useState('')
 
     function toggleTeam(id: string) {
         setSelectedTeams(prev => prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id])
@@ -42,6 +43,7 @@ export default function BatchForm({ exams, teams, users, batch }: Props) {
         }
 
         setSaving(true)
+        setError('')
         try {
             const body = { name, exam_id: examId, start_date: startDate, end_date: endDate, is_active: isActive, team_ids: selectedTeams, user_ids: selectedUsers }
             const url = isEdit ? `/api/batches/${batch.id}` : '/api/batches'
@@ -51,14 +53,15 @@ export default function BatchForm({ exams, teams, users, batch }: Props) {
             if (res.ok) {
                 router.push('/dashboard/batches')
             } else {
-                console.error(data.message || 'Failed to save batch')
+                setError(data.message || 'Failed to save batch')
             }
-        } catch { console.error('Failed to save batch') }
+        } catch { setError('Failed to save batch') }
         setSaving(false)
     }
 
     return (
         <form onSubmit={handleSubmit}>
+            {error && <div className="login__alert login__alert--error" style={{ marginBottom: '16px' }}>{error}</div>}
             <div className="exam-creation-container">
                 <div className="exam-details-section">
                     <h3>Batch Details</h3>

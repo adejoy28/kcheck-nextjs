@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import sql from '@/lib/db'
-import { withRetry } from '@/lib/db'
 import { apiRequireAdmin } from '@/lib/auth-utils'
 
 async function requireAdmin() {
@@ -42,11 +41,11 @@ export async function POST(req: NextRequest) {
             INSERT INTO categories (name) VALUES (?)
         `, [name.trim()]) as any
         const category = { id: result.insertId, name: name.trim() }
-        if (!category) {
+        return NextResponse.json(category, { status: 201 })
+    } catch (error: any) {
+        if (error?.errno === 1062) {
             return NextResponse.json({ message: 'Category already exists' }, { status: 409 })
         }
-        return NextResponse.json(category, { status: 201 })
-    } catch (error) {
         console.error('[POST /api/categories]', error)
         return NextResponse.json({ message: 'Server error' }, { status: 500 })
     }

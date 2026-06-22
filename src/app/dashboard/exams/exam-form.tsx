@@ -35,6 +35,7 @@ export default function ExamForm({ categories, exam }: Props) {
         })) || []
     )
     const [saving, setSaving] = useState(false)
+    const [error, setError] = useState('')
 
     function addQuestion() {
         setQuestions(prev => [...prev, { text: '', options: ['', '', '', ''], correct_answer: 0, weight: 1 }])
@@ -69,6 +70,7 @@ export default function ExamForm({ categories, exam }: Props) {
         }
 
         setSaving(true)
+        setError('')
         try {
             const body = { title, description, duration, passing_score: passingScore, category_id: categoryId || null, retake_allowed: retakeAllowed, is_active: isActive, questions }
             const url = isEdit ? `/api/exams/${exam.id}` : '/api/exams'
@@ -78,14 +80,15 @@ export default function ExamForm({ categories, exam }: Props) {
             if (res.ok) {
                 router.push('/dashboard/exams')
             } else {
-                console.error(data.message || 'Failed to save exam')
+                setError(data.message || 'Failed to save exam')
             }
-        } catch { console.error('Failed to save exam') }
+        } catch { setError('Failed to save exam') }
         setSaving(false)
     }
 
     return (
         <form onSubmit={handleSubmit}>
+            {error && <div className="login__alert login__alert--error" style={{ marginBottom: '16px' }}>{error}</div>}
             <div className="exam-creation-container">
                 <div className="exam-details-section">
                     <h3>Exam Details</h3>

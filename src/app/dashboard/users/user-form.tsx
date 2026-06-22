@@ -21,6 +21,7 @@ export default function UserForm({ teams, user }: Props) {
     const [unit, setUnit] = useState(user?.unit || '')
     const [accessGroup, setAccessGroup] = useState(user?.access_group || '')
     const [saving, setSaving] = useState(false)
+    const [error, setError] = useState('')
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
@@ -30,6 +31,7 @@ export default function UserForm({ teams, user }: Props) {
         if (password && password.length < 6) { return }
 
         setSaving(true)
+        setError('')
         try {
             const body = { name, username, password: password || undefined, role, phone, team_id: teamId || null, unit, access_group: accessGroup }
             const url = isEdit ? `/api/users/${user.id}` : '/api/users'
@@ -39,14 +41,15 @@ export default function UserForm({ teams, user }: Props) {
             if (res.ok) {
                 router.push('/dashboard/users')
             } else {
-                console.error(data.message)
+                setError(data.message || 'Failed to save user')
             }
-        } catch { console.error('Failed to save user') }
+        } catch { setError('Failed to save user') }
         setSaving(false)
     }
 
     return (
         <form onSubmit={handleSubmit}>
+            {error && <div className="login__alert login__alert--error" style={{ marginBottom: '16px' }}>{error}</div>}
             <div className="exam-creation-container">
                 <div className="exam-details-section">
                     <h3>User Details</h3>

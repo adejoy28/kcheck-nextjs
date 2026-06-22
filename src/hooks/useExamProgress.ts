@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface ExamProgress {
@@ -15,7 +15,7 @@ interface UseExamProgressOptions {
     examId: string
     userId: string
     totalQuestions: number
-    duration: number // in minutes
+    duration: number
     onProgressComplete?: () => void
 }
 
@@ -36,11 +36,16 @@ export function useExamProgress({
     const [isLoading, setIsLoading] = useState(true)
     const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
-    // Local storage key
     const storageKey = `exam_progress_${examId}_${userId}`
+    const stateRef = useRef({ currentIndex: 0, answers: new Array(totalQuestions).fill(null), timeLeft: duration * 60 })
+    const isLoadingRef = useRef(true)
 
-    // Save progress to both local storage and server
+    const syncRef = () => {
+        stateRef.current = { currentIndex, answers, timeLeft }
+    }
+
     const saveProgress = useCallback(async () => {
+        const { currentIndex, answers, timeLeft } = stateRef.current
         const progressData: ExamProgress = {
             currentQuestionIndex: currentIndex,
             answers,
@@ -49,7 +54,6 @@ export function useExamProgress({
             lastUpdated: new Date().toISOString()
         }
 
-        // Save to local storage (immediate)
         try {
             localStorage.setItem(storageKey, JSON.stringify(progressData))
             setLastSaved(new Date())
@@ -57,7 +61,6 @@ export function useExamProgress({
             console.warn('Failed to save to localStorage:', error)
         }
 
-        // Save to server (async, don't wait)
         fetch(`/api/exams/${examId}/progress`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -69,21 +72,18 @@ export function useExamProgress({
         }).catch(error => {
             console.warn('Failed to save to server:', error)
         })
-    }, [currentIndex, answers, timeLeft, startTime, examId, storageKey])
+    }, [startTime, examId, storageKey])
 
-    // Load progress from local storage first, then server
     const loadProgress = useCallback(async () => {
         setIsLoading(true)
+        isLoadingRef.current = true
 
         try {
-            // Try local storage first (fastest)
             const localData = localStorage.getItem(storageKey)
             if (localData) {
                 const progress: ExamProgress = JSON.parse(localData)
-                
-                // Check if local data is recent (less than 1 hour old)
                 const age = Date.now() - new Date(progress.lastUpdated).getTime()
-                if (age < 60 * 60 * 1000) { // 1 hour
+                if (age < 60 * 60 * 1000) {
                     setCurrentIndex(progress.currentQuestionIndex)
                     setAnswers(progress.answers)
                     setTimeLeft(progress.timeLeft)
@@ -91,24 +91,20 @@ export function useExamProgress({
                 }
             }
 
-            // Then try server (authoritative)
             const response = await fetch(`/api/exams/${examId}/progress`)
             if (response.ok) {
                 const data = await response.json()
                 if (data.progress) {
                     const serverProgress = data.progress as ExamProgress
-                    
-                    // Use server data if it's newer than local data
                     const serverTime = new Date(serverProgress.lastUpdated).getTime()
                     const localTime = lastSaved?.getTime() || 0
-                    
+
                     if (serverTime > localTime) {
                         setCurrentIndex(serverProgress.currentQuestionIndex)
                         setAnswers(serverProgress.answers)
                         setTimeLeft(serverProgress.timeLeft)
                         setLastSaved(new Date(serverProgress.lastUpdated))
-                        
-                        // Update local storage with server data
+
                         localStorage.setItem(storageKey, JSON.stringify(serverProgress))
                     }
                 }
@@ -117,16 +113,15 @@ export function useExamProgress({
             console.error('Failed to load progress:', error)
         } finally {
             setIsLoading(false)
+            isLoadingRef.current = false
         }
     }, [examId, storageKey, lastSaved])
 
-    // Clear progress (when exam is completed)
     const clearProgress = useCallback(async () => {
         try {
             localStorage.removeItem(storageKey)
             setLastSaved(null)
-            
-            // Clear from server
+
             await fetch(`/api/exams/${examId}/progress`, {
                 method: 'DELETE'
             })
@@ -135,21 +130,27 @@ export function useExamProgress({
         }
     }, [examId, storageKey])
 
-    // Auto-save every 30 seconds or when answers change
+    // Keep ref in sync whenever state changes
     useEffect(() => {
-        const saveInterval = setInterval(saveProgress, 30000) // 30 seconds
+        syncRef()
+    })
+
+    // Auto-save every 30 seconds using ref (no stale closure)
+    useEffect(() => {
+        const saveInterval = setInterval(() => {
+            if (!isLoadingRef.current) saveProgress()
+        }, 30000)
         return () => clearInterval(saveInterval)
     }, [saveProgress])
 
-    // Save immediately when answers or current index changes
+    // Debounced save on state change
     useEffect(() => {
         if (!isLoading) {
-            const timeout = setTimeout(saveProgress, 1000) // Debounce 1 second
+            const timeout = setTimeout(saveProgress, 1000)
             return () => clearTimeout(timeout)
         }
     }, [currentIndex, answers, saveProgress, isLoading])
 
-    // Load progress on mount
     useEffect(() => {
         loadProgress()
     }, [loadProgress])

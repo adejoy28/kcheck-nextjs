@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { SimpleTable as DataTable } from '@/components/SimpleTable'
 
 interface DemoResultsPageProps {
@@ -19,6 +19,7 @@ export default function DemoResultsPage({
     examTitle
 }: DemoResultsPageProps) {
     const router = useRouter()
+    const params = useParams()
 
     return (
         <div>
@@ -111,7 +112,7 @@ export default function DemoResultsPage({
             <div className="toolbar-row" style={{ marginTop: '24px' }}>
                 <div className="export-btns">
                     <button
-                        onClick={() => router.back()}
+                        onClick={() => router.push(`/dashboard/exams/${params?.id || ''}/take`)}
                         className="btn btn--primary btn--sm"
                     >
                         Retake Demo Test

@@ -38,6 +38,9 @@ export default function TakeExamClient({
     const router = useRouter()
     const attemptRef = useRef<{ attemptId: string; sessionToken: string; endTime: Date } | null>(null)
     const saveTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>({})
+    const submittingRef = useRef(false)
+    const originalRouterPushRef = useRef<typeof router.push | null>(null)
+    const startTimeRef = useRef(Date.now())
     
     // Check if exam was auto-submitted and redirect
     useEffect(() => {
@@ -85,9 +88,6 @@ export default function TakeExamClient({
     const [showNavigationDialog, setShowNavigationDialog] = useState(false)
     const [pendingNavigation, setPendingNavigation] = useState<string | null>(null)
     const [showSubmitDialog, setShowSubmitDialog] = useState(false)
-    const [originalRouterPush, setOriginalRouterPush] = useState<typeof router.push | null>(null)
-    
-    const startTime = Date.now()
 
     // Start/resume on mount
     useEffect(() => {
@@ -161,7 +161,7 @@ export default function TakeExamClient({
 
         // Override router push to show our dialog
         const originalPush = router.push
-        setOriginalRouterPush(() => originalPush)
+        originalRouterPushRef.current = originalPush
         router.push = (url: string) => {
             if (url !== window.location.pathname) {
                 setPendingNavigation(url)
@@ -175,44 +175,12 @@ export default function TakeExamClient({
         window.history.pushState(null, '', window.location.pathname)
 
         const handleUnload = () => {
-            // Submit exam when page is unloaded
-            const submitOnUnload = async () => {
-                try {
-                    const res = await fetch(`/api/exams/${exam.id}/submit`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            ...(attemptRef.current ? { 'x-exam-session': attemptRef.current.sessionToken } : {}),
-                        },
-                        body: JSON.stringify({ 
-                            answers, 
-                            timeTaken: Math.floor((Date.now() - startTime) / 1000),
-                            autoSubmit: true
-                        }),
-                    })
-                    
-                    if (res.ok) {
-                        const data = await res.json()
-                        // Store result info for redirect after page reload
-                        sessionStorage.setItem('examAutoSubmitResult', JSON.stringify({
-                            score: data.score,
-                            total: data.total,
-                            percentage: data.percentage,
-                            passed: data.passed,
-                            isDemo: data.isDemo,
-                            examTitle: exam.title
-                        }))
-                    }
-                } catch (error) {
-                    console.error('Auto-submit failed:', error)
-                }
-            }
+            const currentTimeTaken = Math.floor((Date.now() - startTimeRef.current) / 1000)
             
-            // Use sendBeacon for more reliable submission during page unload
             const data = new Blob([
                 JSON.stringify({
                     answers,
-                    timeTaken: Math.floor((Date.now() - startTime) / 1000),
+                    timeTaken: currentTimeTaken,
                     autoSubmit: true
                 })
             ], { type: 'application/json' })
@@ -230,7 +198,7 @@ export default function TakeExamClient({
             window.removeEventListener('popstate', handlePopState)
             router.push = originalPush
         }
-    }, [answers, exam.id, startTime, router, setOriginalRouterPush, resumeData])
+    }, [answers, exam.id, router, resumeData])
 
     const saveAnswer = useCallback((questionIndex: number, questionId: string, answerIndex: number) => {
         const updated = [...answers];
@@ -282,20 +250,22 @@ export default function TakeExamClient({
 
     const submitExam = useCallback(
         async (autoSubmit = false) => {
-            if (submitting) {
+            if (submittingRef.current) {
                 return
             }
+            submittingRef.current = true
             setSubmitting(true)
 
             const unanswered = answers.filter((a) => a === null).length
             
             if (!autoSubmit && unanswered > 0) {
                 setShowSubmitDialog(true)
+                submittingRef.current = false
                 setSubmitting(false)
                 return
             }
 
-            const timeTaken = Math.floor((Date.now() - startTime) / 1000)
+            const timeTaken = Math.floor((Date.now() - startTimeRef.current) / 1000)
 
             try {
                 const res = await fetch(`/api/exams/${exam.id}/submit`, {
@@ -311,15 +281,12 @@ export default function TakeExamClient({
 
                 if (!res.ok) {
                     console.error(data.message || 'Failed to submit exam')
+                    submittingRef.current = false
                     setSubmitting(false)
                     return
                 }
 
-                // No progress to clear
-
-                // Show different messages for demo vs regular exams
                 if (data.isDemo) {
-                    // Navigate to demo results page with score data
                     const params = new URLSearchParams({
                         score: data.score.toString(),
                         total: data.total.toString(),
@@ -329,9 +296,8 @@ export default function TakeExamClient({
                     })
                     const demoUrl = `/dashboard/exams/${exam.id}/take/demo-results?${params.toString()}`
                     
-                    // Use originalRouterPush directly to bypass navigation interception
-                    if (originalRouterPush) {
-                        originalRouterPush(demoUrl)
+                    if (originalRouterPushRef.current) {
+                        originalRouterPushRef.current(demoUrl)
                     } else {
                         window.location.href = demoUrl
                     }
@@ -343,19 +309,19 @@ export default function TakeExamClient({
                     )
                     const resultsUrl = '/dashboard/results'
                     
-                    // Use originalRouterPush directly to bypass navigation interception
-                    if (originalRouterPush) {
-                        originalRouterPush(resultsUrl)
+                    if (originalRouterPushRef.current) {
+                        originalRouterPushRef.current(resultsUrl)
                     } else {
                         window.location.href = resultsUrl
                     }
                 }
             } catch (error) {
                 console.error('submitExam error:', error)
+                submittingRef.current = false
                 setSubmitting(false)
             }
         },
-        [answers, exam.id, router, startTime, submitting]
+        [answers, exam.id]
     )
 
     // Get dynamic dialog message based on navigation type
@@ -394,10 +360,9 @@ export default function TakeExamClient({
             // For demo exams, don't navigate elsewhere - let the demo results redirect happen
             // For regular exams, navigate to intended destination
             setTimeout(() => {
-                // Check if we're still on the exam page (meaning no redirect happened)
                 if (window.location.pathname.includes('/take')) {
-                    if (originalRouterPush) {
-                        originalRouterPush(pendingNavigation)
+                    if (originalRouterPushRef.current) {
+                        originalRouterPushRef.current(pendingNavigation)
                     } else {
                         window.location.href = pendingNavigation
                     }
@@ -406,7 +371,7 @@ export default function TakeExamClient({
         } else {
             setShowNavigationDialog(false)
         }
-    }, [pendingNavigation, submitExam, originalRouterPush])
+    }, [pendingNavigation, submitExam])
 
     const handleNavigationCancel = useCallback(() => {
         setShowNavigationDialog(false)
@@ -415,9 +380,8 @@ export default function TakeExamClient({
 
     const handleSubmitConfirm = useCallback(async () => {
         setShowSubmitDialog(false)
-        // Directly submit without showing dialog again
         setSubmitting(true)
-        const timeTaken = Math.floor((Date.now() - startTime) / 1000)
+        const timeTaken = Math.floor((Date.now() - startTimeRef.current) / 1000)
 
         try {
             const res = await fetch(`/api/exams/${exam.id}/submit`, {
@@ -445,9 +409,8 @@ export default function TakeExamClient({
                     passed: data.passed.toString(),
                     examTitle: exam.title
                 })
-                // Use originalRouterPush directly to bypass navigation interception
-                if (originalRouterPush) {
-                    originalRouterPush(`/dashboard/exams/${exam.id}/take/demo-results?${params.toString()}`)
+                if (originalRouterPushRef.current) {
+                    originalRouterPushRef.current(`/dashboard/exams/${exam.id}/take/demo-results?${params.toString()}`)
                 } else {
                     window.location.href = `/dashboard/exams/${exam.id}/take/demo-results?${params.toString()}`;
                 }
@@ -457,9 +420,8 @@ export default function TakeExamClient({
                         ? `Congratulations! You passed with ${data.percentage}%` 
                         : `You scored ${data.percentage}%. Keep studying!`
                 )
-                // Use originalRouterPush directly to bypass navigation interception
-                if (originalRouterPush) {
-                    originalRouterPush('/dashboard/results')
+                if (originalRouterPushRef.current) {
+                    originalRouterPushRef.current('/dashboard/results')
                 } else {
                     window.location.href = '/dashboard/results';
                 }
@@ -468,7 +430,7 @@ export default function TakeExamClient({
             console.error('[submitExam]', error)
             setSubmitting(false)
         }
-    }, [answers, exam.id, exam.title, router, startTime])
+    }, [answers, exam.id, exam.title])
 
     const handleSubmitCancel = useCallback(() => {
         setShowSubmitDialog(false)

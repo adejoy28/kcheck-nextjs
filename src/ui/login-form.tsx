@@ -114,7 +114,7 @@ export default function LoginForm() {
             </form>
 
             <div className="login__forgot">
-                <a className="login__forgot-link" href="/auth/forgot-password">Forgot Password?</a>
+                <span className="login__forgot-link" style={{ color: '#6b7280', opacity: 0.6 }}>Forgot Password? (Contact Admin)</span>
             </div>
         </>
     )
