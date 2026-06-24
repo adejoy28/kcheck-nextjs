@@ -18,7 +18,7 @@ export async function canStartExam(examId: string, userId: string): Promise<Acce
             rr.id           AS retake_id
          FROM exams e
          LEFT JOIN results         r  ON r.exam_id  = e.id AND r.user_id  = ?
-         LEFT JOIN retake_requests rr ON rr.exam_id = e.id AND rr.user_id = ? AND rr.status = 'approved'
+         LEFT JOIN retake_requests rr ON rr.exam_id = e.id AND rr.user_id = ?
          WHERE e.id = ?
          LIMIT 1`,
         [userId, userId, examId]

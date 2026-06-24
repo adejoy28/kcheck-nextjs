@@ -25,6 +25,11 @@ async function runMigrations() {
         await sql.unsafe(attemptsMigration)
         console.log('✓ Attempts table migration complete')
         
+        // Fix retake_requests schema (add missing columns)
+        const fixRetakeMigration = readFileSync(join(process.cwd(), 'src/lib/migrations/fix_retake_requests_schema.sql'), 'utf-8')
+        await sql.unsafe(fixRetakeMigration)
+        console.log('✓ Retake requests schema fix complete')
+        
         console.log('✓ All migrations completed successfully')
         
     } catch (error: unknown) {

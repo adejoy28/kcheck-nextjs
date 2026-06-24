@@ -40,7 +40,7 @@ export async function POST(
         const [examRows, existingRows, retakeRows] = await Promise.all([
             sql.query('SELECT id, title, passing_score FROM exams WHERE id = ?', [examId]),
             sql.query('SELECT id FROM results WHERE exam_id = ? AND user_id = ?', [examId, userId]),
-            sql.query(`SELECT id FROM retake_requests WHERE exam_id = ? AND user_id = ? AND status = 'approved'`, [examId, userId]),
+            sql.query(`SELECT id FROM retake_requests WHERE exam_id = ? AND user_id = ?`, [examId, userId]),
         ]);
 
         const exam = (examRows as any[])[0];
@@ -63,7 +63,7 @@ export async function POST(
             if (retakeRows.length > 0) {
                 await Promise.all([
                     sql.query('DELETE FROM results WHERE exam_id = ? AND user_id = ?', [examId, userId]),
-                    sql.query(`DELETE FROM retake_requests WHERE exam_id = ? AND user_id = ? AND status = 'approved'`, [examId, userId]),
+                    sql.query(`DELETE FROM retake_requests WHERE exam_id = ? AND user_id = ?`, [examId, userId]),
                 ]);
             }
         }
