@@ -4,18 +4,15 @@ import Link from 'next/link';
 import { getDemoExam } from '@/lib/demo-exam';
 import TestsClient from './tests-client';
 
-interface Test {
+interface AvailableTest {
     id: string
     title: string
     duration: number
     batch_name: string
-    start_date: string
     end_date: string
-    status: string
-    is_missed: boolean
 }
 
-async function getAvailableTests(userId: string): Promise<Test[]> {
+async function getAvailableTests(userId: string): Promise<AvailableTest[]> {
     try {
         const now = new Date().toISOString();
         const rows = await sql.query(`
@@ -23,19 +20,8 @@ async function getAvailableTests(userId: string): Promise<Test[]> {
                 e.id,
                 e.title,
                 e.duration,
-                b.id AS batch_id,
                 b.name AS batch_name,
-                b.start_date,
-                b.end_date,
-                CASE
-                    WHEN b.end_date < ? THEN 'expired'
-                    WHEN b.start_date > ? THEN 'upcoming'
-                    ELSE 'active'
-                END AS status,
-                CASE
-                    WHEN r.id IS NULL AND b.end_date < ? THEN true
-                    ELSE false
-                END AS is_missed
+                b.end_date
             FROM batches b
             JOIN exams e ON b.exam_id = e.id
             LEFT JOIN results r ON r.exam_id = e.id AND r.user_id = ?
@@ -49,9 +35,10 @@ async function getAvailableTests(userId: string): Promise<Test[]> {
                 )
             )
             AND r.id IS NULL
+            AND b.start_date <= ? AND b.end_date >= ?
             ORDER BY b.end_date ASC
-        `, [now, now, now, userId, userId, userId]);
-        return rows as unknown as Test[];
+        `, [userId, userId, userId, now, now]);
+        return rows as unknown as AvailableTest[];
     } catch (error) {
         console.error('[getAvailableTests]', error);
         return [];
@@ -100,16 +87,12 @@ export default async function NewTestsPage() {
             </div>
 
             <div className="toolbar-row">
-                <div className="export-btns">
-                    <button className="btn btn--outline btn--sm">Export PDF</button>
-                    <button className="btn btn--outline btn--sm">Export Excel</button>
-                </div>
                 <span className="pag-info">
-                    {tests.length} {tests.length === 1 ? 'test' : 'tests'}
+                    {tests.length} available {tests.length === 1 ? 'test' : 'tests'}
                 </span>
             </div>
 
-            <TestsClient tests={tests as Test[]} />
+            <TestsClient tests={tests as AvailableTest[]} />
         </div>
     );
 }
