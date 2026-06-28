@@ -153,9 +153,16 @@ export default function TakeExamClient({
 
         // Handle browser back/forward buttons
         const handlePopState = (e: PopStateEvent) => {
+            // Ignore if we just confirmed navigation (avoids loop from
+            // window.history.pushState in the else branch below).
+            if (sessionStorage.getItem('skipNextPopState')) {
+                sessionStorage.removeItem('skipNextPopState')
+                return
+            }
             e.preventDefault()
+            setPendingNavigation('BROWSER_BACK')
             setShowNavigationDialog(true)
-            // Prevent the actual navigation
+            // Push back so the user stays on the page
             window.history.pushState(null, '', window.location.pathname)
         }
 
@@ -336,42 +343,27 @@ export default function TakeExamClient({
     // Handle navigation dialog actions
     const handleNavigationConfirm = useCallback(async () => {
         if (pendingNavigation === 'BROWSER_BACK') {
-            // Submit exam before going back
+            // Submit exam, then redirect to results. We avoid window.history.back()
+            // because handlePopState pushes a new history entry, creating a loop.
             await submitExam(true)
-            
-            // After submission, use actual browser back navigation
-            setTimeout(() => {
-                // Check if we're still on the exam page (meaning no redirect happened)
-                if (window.location.pathname.includes('/take')) {
-                    // Use a flag to prevent the popstate handler from triggering again
-                    sessionStorage.setItem('skipNextPopState', 'true')
-                    // Then go back
-                    window.history.back()
-                }
-            }, 200)
+            if (!exam.isDemo && window.location.pathname.includes('/take')) {
+                sessionStorage.setItem('skipNextPopState', 'true')
+                window.location.href = '/dashboard/results'
+            }
+            // Demo exams already redirect inside submitExam via originalRouterPushRef
         } else if (pendingNavigation) {
-            // Submit exam before navigating
             await submitExam(true)
-            
-            // Check if the exam submission already caused a redirect (for demo exams)
-            // If it's a demo exam, the submission will redirect to demo results
-            // So we don't need to navigate to the intended destination
-            
-            // For demo exams, don't navigate elsewhere - let the demo results redirect happen
-            // For regular exams, navigate to intended destination
-            setTimeout(() => {
-                if (window.location.pathname.includes('/take')) {
-                    if (originalRouterPushRef.current) {
-                        originalRouterPushRef.current(pendingNavigation)
-                    } else {
-                        window.location.href = pendingNavigation
-                    }
+            if (window.location.pathname.includes('/take')) {
+                if (originalRouterPushRef.current) {
+                    originalRouterPushRef.current(pendingNavigation)
+                } else {
+                    window.location.href = pendingNavigation
                 }
-            }, 200)
+            }
         } else {
             setShowNavigationDialog(false)
         }
-    }, [pendingNavigation, submitExam])
+    }, [pendingNavigation, submitExam, exam.isDemo])
 
     const handleNavigationCancel = useCallback(() => {
         setShowNavigationDialog(false)
